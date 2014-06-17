@@ -1,0 +1,96 @@
+""" 
+    LoGfilterTest20140429.py
+    1.  to test the LoG/mexican hat filter
+    2.  to use this filter to test the data
+
+Plan:
+    0.  import the filter
+            SOURCE CODE:    https://github.com/scipy/scipy/blob/v0.13.0/scipy/ndimage/filters.py#L406
+            DOC:            http://docs.scipy.org/doc/scipy-0.8.x/reference/generated/scipy.ndimage.filters.gaussian_laplace.html
+    1.  construct the sample functions
+    2.  test the sample functions
+    3.  test the data
+"""
+
+from scipy import ndimage
+import matplotlib.pyplot as plt
+LoG = ndimage.filters.gaussian_laplace
+import numpy as np
+cos = np.cos
+sin = np.sin
+exp = np.exp
+pi  = np.pi
+from armor import pattern
+
+coords  = [(50., 50., 20., 20., 0),           # x, y, sigma1, sigma2, theta
+          (100., 100., 30., 10., np.pi/3), 
+          (150., 150., 50., 10., np.pi*0.75),
+          (150, 50, 10, 5, np.pi*0.25),
+           (50,150, 12, 10, np.pi*1.25),
+
+            (100, 50, 10, 10, 0),
+            (100, 150, 10, 10, 0),
+            (50, 100, 10, 10, 0),
+            (150, 100, 10, 10,0),
+            ]
+
+def doubleGaussian(Z, x, y, sigma1, sigma2, theta):
+    """not tested
+    """
+    height, width = Z.shape
+    X, Y    = np.meshgrid(range(width), range(height))    
+    X2  = (cos(theta)*(X-x0)/sigma1 - sin(theta)*(Y-y0)/sigma2)
+    Y2  = (sin(theta)*(X-x0)/sigma1 + cos(theta)*(Y-y0)/sigma2)
+    X2  = (cos(theta)*(X-x0) - sin(theta)*(Y-y0))/sigma1
+    Y2  = (sin(theta)*(X-x0) + cos(theta)*(Y-y0))/sigma2
+    Z   += 50* np.exp(-(X2**2 + Y2**2) /2)
+    return Z
+
+
+
+
+
+def main(width=200, height=200, display=True, sigmaPower=2):
+    X, Y    = np.meshgrid(range(width), range(height))    
+    #I, J    = Y, X
+    Z       = np.zeros((height, width))
+    for x0, y0, sigma1, sigma2, theta in coords:
+        X2  = (cos(theta)*(X-x0)/sigma1 - sin(theta)*(Y-y0)/sigma2)
+        Y2  = (sin(theta)*(X-x0)/sigma1 + cos(theta)*(Y-y0)/sigma2)
+        X2  = (cos(theta)*(X-x0) - sin(theta)*(Y-y0))/sigma1
+        Y2  = (sin(theta)*(X-x0) + cos(theta)*(Y-y0))/sigma2
+        Z   += 50* np.exp(-(X2**2 + Y2**2) /2)
+
+    if display:
+        plt.imshow(Z)
+        plt.title('sample landscape')
+        plt.show()
+    #return Z
+
+    #filter
+    sigmas  = [1, 2, 4, 8, 10, 16, 20, 32, 50, 64, 128]
+    spec    = []
+    for sigma in sigmas:
+        specPoint   = abs(LoG(Z, sigma=sigma, mode='constant', cval=0.)).sum() * sigma** sigmaPower
+        spec.append(specPoint)
+    if display:
+        plt.plot(sigmas, spec, '*-')
+        plt.title('Absolute sum of L-o-G filter time sigma raised to the power' + str(sigmaPower))
+        plt.show()
+
+    return {'Z': Z, 'spec':spec}    
+
+if __name__=="__main__":
+    Z0=main(sigmaPower=0)
+    Z05=main(sigmaPower=0.5)    
+    Z1=main(sigmaPower=1)
+    Z2=main(sigmaPower=2)
+    
+    
+
+
+
+
+
+
+

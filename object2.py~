@@ -1,0 +1,23 @@
+"""
+
+"""
+
+print "loading module 'objects2'"
+
+from armor import pattern
+
+dbz =pattern.DBZ
+DBZ =pattern.DBZ
+DS  = pattern.DBZstream
+
+a = DBZ('20120612.0200')
+b = DBZ('20120612.0230')
+c = DBZ('20120612.0300')
+d = DBZ('20120612.0210')
+e = DBZ('20120612.0240')
+f = DBZ('20120612.0310')
+
+kongrey = DS('/home/k/ARMOR/data/KONG-REY/OBS')
+kongreywrf  =  
+soulik  = 
+monsoon = 

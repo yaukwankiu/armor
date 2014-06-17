@@ -1,0 +1,74 @@
+ARMOR Lab Notes, 2013-09-03
+    In this test we define some tentative scoring mechanisms and study the 
+    effectiveness of the various weather pattern matching algorithms.  We humbly
+    thank Miss Tina Chen from the CWB for her great help in getting and coasing 
+    the data.
+
+
+BASIC IDEA:
+    Weather patterns should be matched by a mix of various criteria:  local, 
+    regional and global similarity, similarity of the predicted onland rainfall,
+    similarity/dissimilarity of shape/size/intensity, etc.
+
+
+METHODOLOGY:
+    We take a set (or several sets) of data and run the various matching tests 
+    on them, and compare the matching scores with human decisions.
+
+    Human decisions should follow the BASIC IDEA outlined above, with some 
+    flexibility for judgement - to be written down a posteriori, so that we can 
+    build a more sophisticated algorithm next.
+
+
+PROCEDURE:
+    1.  Obtain the data sets for KONG-REY from the Central Weather Bureau (CWB) 
+        via Miss Tina Chen [DONE; see below]
+    2.  Construct the DBZstreams (sort out the input/output attribtues etc)
+    3.  Define the testing algorithms, and write up the ideas behind each one.
+
+OUR DATA:
+    Our data consists of 20 model output as well as radar observations from the 
+    CWB from UTC 2013-08-29.0000 - 2013-08during the approach of Severe Tropical
+    Storm Kong-Rey to Taiwan.
+
+ORGANISATION:
+    1.  This test is organised and presented in two ways: 
+        a.  We split the data into 20 models.  For each model for each day we 
+            perform the sequence matching to see the performance of each model
+        b.  We split the data into days, with 6 sets of images for each model
+            each day. For each day we choose the best match.
+
+    2.  After we perform the tests, we write up as described above.
+
+ALGORITHMS TO BE TESTED:
+    Baseline tests:
+        1.  global correlation test
+        2.  global moment test
+    Regional tests:
+        3.  local moment test (after Mr. Chen Sin Gam)
+        4.  Clustering test
+    Local/differential feature tests:
+        5.  gabor filter test
+    Transformation tests:
+        6.  Professor Lee's test
+    Mix-and-match:
+        7.  bla
+ 
+REPORT FORMAT:
+    Data:
+        data source, data type, data structures,
+    Algorithms:
+        basic idea, outline, sample codes, references
+    Results:
+        charts, pictures
+    Summary and conclusion:
+        1.  discussion on the strengths and weaknesses of each algorithm,
+            and how these algorithms can work together
+        2.  suggestion of what to do next
+    
+BONUS:
+    Need a reference manual for the python armor module soon.
+            
+
+
+

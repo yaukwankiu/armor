@@ -1,0 +1,139 @@
+# components.py
+# module for counting the connected components and stuff
+# ref: http://homepages.inf.ed.ac.uk/rbf/HIPR2/label.htm
+# see also:
+#       http://stackoverflow.com/questions/5298884/finding-number-of-colored-shapes-from-picture-using-python
+#       http://blancosilva.wordpress.com/2010/12/15/image-processing-with-numpy-scipy-and-matplotlibs-in-sage/
+
+#       http://pythonvision.org/basic-tutorial
+#       http://stackoverflow.com/questions/11016256/connected-components-in-a-graph-with-100-million-nodes
+#       http://en.wikipedia.org/wiki/Segmentation_(image_processing)
+
+"""
+USE
+from armor import pattern
+a = pattern.a
+
+from armor.geometry import components
+components.connected(a.matrix.mask)
+
+"""
+
+import numpy as np
+
+def connected(phi):
+    """ computing the connected components of a 0-1 matrix
+    NOTE FOR SELF:  I cut off the edge for laziness!!!
+    input: phi a 0-1 / true false matrix
+            convention:  1=masked, 0=data point (as in DBZ.matrix.mask)
+    output: an integer coloured matrix separating the connected components
+    algorithm:
+    # 1. loop over all points, label/note equivalences
+    # 2. compute dictionary equivalent classes {2:1, 3:1, 5:4}, etc
+    # 3. loop over all points and convert
+    
+    """
+    height, width = phi.shape
+    # 1. loop over all points, label/note equivalences
+    labels          = [0]
+    equivalences    = []
+    phiColoured     = np.zeros((height, width))
+    #phiColoured2     = np.zeros((height, width)) #debug
+    #
+    # NOTE FOR SELF:  I cut off the edge for laziness!!!
+    #  v    v   v   v   v   v
+    for i in range(1, height-1):
+        for j in range(1, width-1):
+            if phi[i,j] == 1:
+                continue
+            neighbours = set([phiColoured[i-1, j  ], phiColoured[i+1, j  ], 
+                              phiColoured[i  , j-1], phiColoured[i  , j+1]])
+            neighbours-= set([0])       # label 0: unexamined or missing data
+            #### debug ########
+            #
+            print (i,j), "neighbours", neighbours, 
+            #
+            ###################
+            if neighbours != set([]):            
+                phiColoured[i,j] = min(neighbours)
+                equivalences.extend(sum([[(p,q) for p in neighbours if p>q] \
+                                                for q in neighbours        ],[]))
+            else:
+                phiColoured[i,j] = len(labels)
+                labels.append(len(labels))
+                print "label:", len(labels)
+                #import time
+                #time.sleep(0.2)
+    # get the list d=[(10,1), (10,0),(1,0)] for example which gives 
+    # dict(d) = {1:0, 10:0}
+    equivalences = sorted(list(set(equivalences)), reverse=True)
+            
+    # 2. compute dictionary equivalent classes {2:1, 3:1, 5:4}, etc
+
+    equivalenceMap = dict(equivalences)
+    # reduce {10:1, 1:0} etc to {10:0, 1:0}
+    # if a value is in the keys of the equivalence map: reduce
+    # ie. when keys intersect values != empty
+    import time
+    print 'sleeping 2 seconds'
+    time.sleep(2)
+    print "size of equivalence map:", len(equivalenceMap.keys())
+    print "reducing the keys..."
+    print 'sleeping 2 seconds'
+    time.sleep(2)
+    while set(equivalenceMap.values()).intersection(equivalenceMap.keys()) != set([]):
+        keySet = set(equivalenceMap.values()).intersection(equivalenceMap.keys())
+        for v in equivalenceMap.keys():
+            if equivalenceMap[v] in keySet:
+                print v, equivalenceMap[v], equivalenceMap[equivalenceMap[v]]
+                equivalenceMap[v] = equivalenceMap[equivalenceMap[v]]
+
+    # adding (0,0), (1,1), (2,2) etc. if it's not in the key
+    for v in range(len(labels)+1):
+        if v not in equivalenceMap.keys():
+            equivalenceMap[v] = v
+
+    # 3. loop over all points and convert
+    for i in range(1, height-1):
+        for j in range(1, height-1):
+            # phiColoured2[i,j] = equivalenceMap[phiColoured[i,j]] # debug
+            phiColoured[i,j] = equivalenceMap[phiColoured[i,j]]
+    return phiColoured      #, phiColoured2, equivalenceMap #debug
+    
+def rings(phiColoured, radius=-999, background=0):
+    """
+    draw rings around the coloured components
+    priority to the lower indices (e.g. we could presort it so that
+                                    larger systems have lower indices)
+    input: coloured map, and np.ndarray object, background = 0
+    output: coloured map with rings
+    """
+    height, width = phiColoured.shape
+    phiColouredRinged = phiColoured.copy()
+    if radius == -999:
+        radius = int((height*width)**.5 //20 )       #default value
+    disc = sum([[(i, j) for i in range(-radius, radius+1) if i**2+j**2 < radius**2]\
+                        for j in range(-radius, radius+1)                          ],[])
+    valueSet = set(phiColoured.flatten()) - set([background])
+    print valueSet #debug
+    for i in range(height):
+        # print i,'...', #debug
+        for j in range(width):
+            # only change it if it was the background colour
+            if phiColoured[i,j] == background:
+              print (i,j), 
+              try:
+                neighbourhood = [phiColoured[i+v[0],j+v[1]] for v in disc]
+                if sum(neighbourhood)>10:
+                    print sorted(neighbourhood, reverse=True)[:10]
+                
+                for k in valueSet:
+                    # only change it if the disc is "tangential" to the region
+                    #if neighbourhood.count(k)>0 and \
+                    #   neighbourhood.count(k) < radius**.5/2:
+                    if neighbourhood.count(k) ==1:
+                        phiColouredRinged[i,j]=k
+                        break
+              except IndexError:    # if gets out of bound, ignore
+                continue
+    return phiColouredRinged

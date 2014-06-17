@@ -1,0 +1,115 @@
+#   powerSpec1.py
+#   test script for computing power spectrum
+#   2014-06-10
+"""
+== Spectral analysis ==
+
+0.  RADAR domain -> normalise to WRF domain
+
+tests to do - 
+1.  average each 4x4 grid in RADAR then compare the spectrum of the resulting image
+    to the original RADAR image
+    
+2.  filter (gaussian with various sigmas)   and then averge each 4x4 grid
+3.  oversampling (compute 4x4 averages 16 times)
+
+4.  plot power spec for WRF and various preprocessings
+    A.  WRF + RADAR/4x4 normalised (with or without oversampling)/no pre-filtering
+    B.  WRF + RADAR/4x4 normalised (with or without oversampling)/pre-filter 1,2,3...
+        (unspecified/trial and error)
+    C.  RADAR/normalise/no filtering  + RADAR/normalised/pre-filtered 1,2,3...
+        + difference
+        
+    D.  test successive gaussian filtering - is the result the same as doing it once
+        with a variance equal to the sum of variances?
+        
+"""
+#   imports
+
+import pickle, os, shutil, time
+from armor import defaultParameters as dp
+from armor import pattern
+from armor import objects4 as ob
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d
+root = dp.rootFolder
+timeString  = str(int(time.time()))
+
+
+#   defining the parameters
+
+thisScript      = "powerSpec1.py"
+scriptFolder    = root + "python/armor/tests/"
+outputFolder    = root + "labLogs/powerSpec1/" + timeString + "/"
+
+sigmaPreprocessing=20
+thresPreprocessing=0
+
+radarLL = np.array([18., 115.])
+wrfLL   = np.array([20.,117.5])
+radar_wrf_grid_ratio    = 4.
+
+#   setting up the output folder
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+
+shutil.copyfile(scriptFolder+thisScript, outputFolder+thisScript)
+
+#   defining the functions:
+#       filtering, averaging, oversampling
+
+def filtering(a, sigma=sigmaPreprocessing):
+    """gaussian filter with appropriate sigmas"""
+    a.matrix = a.gaussianFilter(sigma=sigma).matrix
+
+def averaging(a, starting=(0,0)):
+    """4x4 to 1x1 averaging"""
+    starting = 
+
+    return a1
+
+def oversampling():
+    """4x4 to 1x1 avaraging with various starting points"""
+    pass
+
+def applyingLaplacianOfGaussian():
+    pass
+
+def saving():
+    pass
+    
+def plotting():
+    pass
+#   defining the workflows
+#       testA, testB, testC, testD
+
+def testA():
+    a.matrix = a.threshold(thresPreprocessing).matrix
+    pass
+
+def testB():
+    pass*
+
+def testC():
+    pass
+
+def testD():
+    pass
+###   loading /setting up the objects ################################
+##   old type
+#   kongrey
+kongrey     = ob.kongrey
+kongreywrf  = ob.kongreywrf 
+
+#   march2014
+march2014   = ob.march2014
+march2014wrf= ob.march2014wrf
+
+#   may2014
+
+##   new type
+#   may2014
+
+#   run
+

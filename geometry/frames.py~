@@ -1,0 +1,29 @@
+
+############################################
+#   imports
+
+import numpy as np
+ma  = np.ma
+from armor import pattern
+dbz=pattern.DBZ
+
+############################################
+#   setups
+
+############################################
+#   functions
+
+def setSideBySide(a, b=""):
+    if isinstance(a, dbz) and isinstance(b, dbz):
+        cmatrix = ma.hstack([a.matrix, b.matrix])
+        c = dbz(name=a.name + '+' + b.name, matrix=cmatrix)
+
+    elif b=="" and isinstance(a, list):
+        L = a
+        c = L[0]
+        for p in L[1:]:
+            c = setSideBySide(c, p)
+    else:
+        c = 0
+    return c
+

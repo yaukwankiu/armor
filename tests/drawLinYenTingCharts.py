@@ -1,0 +1,199 @@
+#drawLinYenTingCharts.py
+
+"""
+    1.  imports
+    2.  define the parameters
+    3.  transform the coordinates to grid squares
+    4.  draw grid squares
+    5.  get shiiba vector field
+    6.  draw shifted + bigger squares
+"""
+#    1.  imports
+import numpy as np
+from armor import pattern
+from armor import defaultParameters as dp
+from armor.taiwanReliefData import convertToGrid as cg
+from armor import objects4 as ob
+DBZ = pattern.DBZ
+a   = pattern.a
+b   = DBZ('20120612.0210')
+a.load()
+b.load()
+#a.show()
+#b.show()
+ 
+#    2.  define the parameters  - decimal first, will transform later
+outputFolder = dp.root + 'labLogs2/localNonstandardKer/'
+
+"""
+se  =[[21.50, 120.50],
+      [24.23, 122.10]]
+
+ne  =[[24.23, 121.23],
+      [25.12, 122.07]]
+
+ss  =[[21.50, 120.18],
+      [22.45, 120.50]]
+
+sw  =[[22.45, 120.00],
+      [23.52, 121.06]]
+
+mw  =[[23.52, 120.+0.201*60/100],
+      [24.30, 121.13]]
+
+nw  =[[24.30, 120.+ 0.007*60/100],
+      [25.36, 121.44]]
+"""
+
+z1  = [[24.05, 119.07],
+       [25.17, 120.17]] 
+
+z2  = [[24.05, 119.07],
+       [25.36, 121.43]]
+
+z3  = [[24.30, 120.36],
+       [25.36, 121.43]]
+
+
+dbzstream = ob.march2014
+dbzstream   = ob.monsoon
+#    3.  transform the coordinates to grid squares
+
+
+
+
+
+regions = []
+#for region in [se, ne, ss, sw, mw, nw]:
+for region in [z1, z2, z3]:
+    region  = np.array(region)
+    #region[1,:] = region[1,:] - region[0,:]
+    reg4    = region.flatten()
+    reg4    = [int(v) + 100./60. * (v%1) for v in reg4]
+    #print reg4
+    reg4    = [reg4[1], reg4[0], reg4[3], reg4[2]]
+    reg4    = cg.convert(reg4, lowerLeft=(115, 18), upperRight= (126.5, 29), 
+                         width=920, height=880, verbose=True)
+    print reg4
+    reg4    = np.array([reg4[1], reg4[0], reg4[3], reg4[2]]).astype(int)
+    #reg4    = reg4.astype(int)
+    reg4[2:4] -= reg4[0:2]
+    print "region:", reg4
+    regions.append(reg4)
+
+    #    4.  draw grid squares
+for a in dbzstream:
+    a.load()
+    a.backupMatrix("original")
+    for reg4 in regions:
+        a.drawRectangle(newObject=False, *reg4)
+
+    a.backupMatrix("sqaures")
+    #a.showWithCoast()
+    a.drawCoast()
+    a.saveImage(imagePath=outputFolder+a.name+'.png')
+
+
+#    5.  get shiiba vector field
+#    6.  draw shifted + bigger squares
+#
+################################################################################
+
+    ####    ####    ####    ####    ####    ####    ####    ####    ####
+
+
+z1, z2, z3  = regions
+
+
+    ####    ####    ####    ####    ####    ####    ####    ####    ####
+
+
+################################################################################
+#   codes adapted from python/armor/start4.py
+
+import time
+import shutil
+import os
+
+time0   = time.time()
+startTime   =time.asctime()
+
+from armor import defaultParameters as dp
+from armor import misc
+from armor import pattern, pattern2
+p2  = pattern2
+from armor.patternMatching import pipeline as pp, algorithms
+from armor.filter import filters
+##################################################################################
+#   set up
+hualien4        = misc.getFourCorners(dp.hualienCounty)
+yilan4          = misc.getFourCorners(dp.yilanCounty)
+kaohsiung4      = misc.getFourCorners(dp.kaohsiungCounty)
+taichung4        = misc.getFourCorners(dp.taichungCounty)
+tainan4         = misc.getFourCorners(dp.tainanCounty)
+taipei4         = misc.getFourCorners(dp.taipeiCounty)
+taitung4        = misc.getFourCorners(dp.taitungCounty)
+taipei4a        = misc.getFourCorners(z3)
+
+regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
+            #{'name': "kaohsiung",   'points':kaohsiung4,    'weight':0.5},  
+            #{'name': "taipei",      'points':taipei4,       'weight':0.5},  # the rainband comes from north east
+            #{'name': "taichung",    'points':taichung4,     'weight':0.2},
+            #{'name': "tainan",      'points':tainan4,       'weight':0.2},
+            #{'name':"taitung",      'points':taitung4, 'weight':0.25},
+            #{'name':"yilan",        'points':yilan4, 'weight':0.25},        # no need to add to 1
+            {'name': "taipei_a",      'points':taipei4a,       'weight':1.},    #2014-06-03
+            ]
+
+regionsString   = "_".join([v['name']+str(round(v['weight'],2)) for v in regions])
+dss = p2.march12            #   edit here
+obs = dss.obs               #   edit here
+#obs.list = [v for v in obs.list if dss.wrfs[0][0].dataTime[:8] in v.dataTime]            #   (e.g. "20140312")
+#print "obs.list trimmed to length", len(obs.list)       #debug
+
+scriptFileName = "start4.py"
+volumeProportionWeight    = 0.1
+testName       = "nonstanKer" + str(1-volumeProportionWeight)+"_and_volume" + str(volumeProportionWeight)
+outputFolder    = dp.defaultRootFolder + "labReports/" + testName + "/" + dss.name + "/" +regionsString +'/'
+#obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
+obs.shortlist = [v for v in obs if v.dataTime>="20140312.1250" and v.dataTime<="20140312.1300"]   # trim
+
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+shutil.copyfile(dp.defaultRootFolder+"python/armor/"+ scriptFileName, outputFolder+ scriptFileName)
+shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/algorithms.py", outputFolder+ "algorithms.py")
+shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/pipeline.py", outputFolder+ "pipeline.py")
+
+################################################################################
+#   looping the code
+
+
+for a in obs.shortlist:
+    #obsTime="20130829.1800"
+    #kongreyDSS.load()   # reload
+    dss.unload()
+    obsTime = a.dataTime
+    pp.pipeline(dss=dss,
+            filteringAlgorithm      = filters.gaussianFilter,
+            filteringAlgorithmArgs  = {'sigma':5,
+                                       'stream_key': "all" },
+            matchingAlgorithm       = algorithms.nonstandardKernel,
+            matchingAlgorithmArgs   = {'obsTime': obsTime, 'maxHourDiff':6, 
+                                       'regions':regions,
+                                       'k'      : 24,   # steps of semi-lagrangian advections performed
+                                        'shiibaArgs':{'searchWindowWidth':15, 'searchWindowHeight':9, },
+                                        'outputFolder':outputFolder,
+                                        'volumeProportionWeight':volumeProportionWeight,
+                                       } ,
+            outputFolder=outputFolder,
+            toLoad=False,
+            #remarks= "Covariance used, rather than correlation:  algorithms.py line 221:   tempScore   = a1.cov(w1)[0,1]",
+            remarks = "Correlation used"
+            )
+
+
+print 'start time:', startTime
+print 'total time spent:', time.time()-time0
+
+
+

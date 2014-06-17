@@ -1,0 +1,18 @@
+In [7]: %paste
+
+import struct
+fileD = open('/media/TOSHIBA EXT/ARMOR/data/COMPREF/20130709/compref_mosaic/COMPREF.20130709.0000','rb')
+i=1
+data   = []
+while i < 201:
+    dataV = struct.unpack("!183f", fileD.read(4*183))
+    data.append(dataV)
+    # raw_input()
+    i=i+1
+fileD.close()
+print data[0][:10]
+## -- End pasted text --
+(-6.07985949695017e+17, 9.62964972193618e-35, 1.5407439555097887e-33, 0.0, 0.0, 0.0, -6.772541265277914e-24, 6.486805805855393e+29, 2.350988701644575e-38, 53510272.0)
+
+In [8]: 
+

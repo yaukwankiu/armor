@@ -1,0 +1,120 @@
+# transformed correlation test
+# as described in Ch.4.4 of the ARMOR report 2013-07-10
+# as proposed by Professor Lee in the previous meeting at CWB
+# 2013-07-05
+
+"""
+USE
+cd /media/KINGSTON/ARMOR/python
+python
+
+from armor.tests import transformedCorrelationTest as test
+x = test.main()
+
+PLAN
+1.  Define the objects (two double gaussian distributions)
+2.  Compute the centroids
+3.  Compute the moment of inertia matrix
+4.  Compute the major and minor axes
+5.  Transform
+6.  Interpolate
+7.  Compute correlation
+"""
+################################################################################
+# imports
+import numpy as np
+from scipy.signal import convolve
+from matplotlib import pyplot as plt
+
+################################################################################
+# defining the functions
+
+
+def weight(height=881, width=921):
+    """
+    weight function, indicating significance/reliability of the data point at (x,y)
+    """
+    return np.ones((height,width))   # placeholder
+
+def getCentroid(arr):
+    """
+    input:      an array
+    output:     centroid of the array
+    """
+    a           = arr * weight()
+    height, width = a.shape
+    X, Y = np.meshgrid(range(width), range(height))
+    I, J    = Y,X                               # numpy order:  (i,j) = (x,y)
+    a_mean      = a.mean()
+    i_centroid  = (I*a).mean() / a_mean     #
+    j_centroid  = (J*a).mean() / a_mean     # 
+    return (i_centroid, j_centroid)
+
+def getMomentMatrix(arr):
+    a           = arr * weight()
+    height, width   = a.shape
+    X, Y            = np.meshgrid(range(width), range(height))
+    I, J            = Y,X                       # numpy order:  (i,j) = (x,y)
+    a_mean        = a.mean()
+    i0, j0 = getCentroid(a)
+    I   -= i0                               # resetting the centre
+    J   -= j0
+    cov_ii  = (I**2 * a).mean() / a_mean
+    cov_jj  = (J**2 * a).mean() / a_mean
+    cov_ij  = (I*J  * a).mean() / a_mean
+    M =     np.array([[cov_ii, cov_ij],
+                     [cov_ij, cov_jj]])
+    return M
+
+def getAxes(M):
+    """ 
+    input:  moment matrix M
+    output: eigenvalues, eigenvectors
+    """
+    eigenvalues, eigenvectors =  np.linalg.eig(M)
+    if eigenvalues[1]>eigenvalues[0]:
+        eigenvectors = np.fliplr(eigenvectors)  #flip
+    return eigenvalues, eigenvectors
+
+
+def drawArrow(x=.5, y=.7, dx=.2, dy=-0.3, fc="k", ec="k"):
+    """wrapping the matplotlib.pyplot.arrow function
+    """
+    # plt.arrow( x, y, dx, dy, **kwargs )
+    head_width = (dx**2 +dy**2)*0.05
+    head_length = (dx**2 +dy**2)*0.1
+    plt.arrow(x, y, dx, dy, fc=fc, ec=ec, head_width=head_width, head_length=head_length)
+
+def showArrayWithAxes(arr):
+    """ Intermediate step.  showing the array with the axes
+    """
+    ########
+    # set up
+    height, width = arr.shape
+    ########
+    # computation
+    i0, j0  = getCentroid(arr)
+    M       = getMomentMatrix(arr)
+    eigenvalues, eigenvectors   = getAxes(M)
+    
+    v0 = eigenvectors[:,0]
+    v1 = eigenvectors[:,1]
+    v0_size = eigenvalues[0]**.5
+    v1_size = eigenvalues[1]**.5
+    
+    ########
+    # display
+    #plt.xlim(0, width)     # or other attributes of arr if desired?!
+    #plt.ylim(0, height)
+    plt.imshow(arr)
+    drawArrow(x=j0, y=i0, dx=v0[1]*v0_size, dy=v0[0]*v0_size)
+    drawArrow(x=j0, y=i0, dx=v1[1]*v1_size, dy=v1[0]*v1_size)
+
+"""
+5.  Transform
+6.  Interpolate
+7.  Compute correlation
+"""
+
+def main():
+    pass

@@ -1,0 +1,174 @@
+# regression4
+# adapted from regression3
+# removing the iteration
+# 21 march 2013
+
+# upWind scheme:  
+#   phi_hat = phi - dt*( (u_hat/dx)*(phi(i)-phi(i-1)) + (v_hat/dy)*(phi(j)-phi(j-1)) )
+
+
+
+###################################################################
+#   imports
+
+import numpy as np
+import numpy.ma as ma
+from .. import pattern
+import copy
+
+from imp import reload
+import time
+lsq = np.linalg.lstsq
+
+time0= time.time()
+
+def tic():
+    global timeStart
+    timeStart = time.time()
+
+def toc():
+    print "time spent:", time.time()-timeStart
+
+dbz=pattern.DBZ
+
+################################################################
+#   the functions
+
+
+
+def regress(a, b):
+    """upwindScheme
+    """
+    dt = a.dt
+    dx = a.dx
+    dy = a.dy
+
+    #phi0 = a.matrix.copy()
+    #phi1 = b.matrix.copy()
+    phi0 = a.matrix             # to save time
+    phi1 = b.matrix
+    phi0.coordinateOrigin = a.coordinateOrigin   # can do this with masked arrays
+    phi1.coordinateOrigin = b.coordinateOrigin
+    ##################
+    # test
+    #phi0.sharedmask #check
+    #phi0.unshare_mask()        # commented out to save time
+    #phi1.unshare_mask()
+
+    phi0_up     = np.roll(phi0, 1, axis=0)
+    phi0_right  = np.roll(phi0, 1, axis=1)
+    #phi0.down   = np.roll(phi0,-1, axis=0)
+    #phi0.left   = np.roll(phi0,-1, axis=1)
+
+    #masking the new edges
+    #for v in [phi0.up, phi0.down, phi0.left, phi0.right]:
+    for v in [phi0_up, phi0_right]:
+        v.mask[ :, 0]   = True
+        v.mask[ 0, :]   = True
+        #v.mask[ :,-1]   = True
+        #v.mask[-1, :]   = True    
+
+    #########################################################################
+    # UPWIND SCHEME, u, v assumed positive
+
+    # preparing for the regression:  defining the X and Y
+    # advection equation:  
+    #  phi1-phi0 = -dt [ (u,v). ((phidown-phiup)/2dI, (phileft-phiright)/2dJ) - q]
+    # shiiba assumption:  u = c1*I+c2*J+c3, v=c4*I+c5*J+c6, q=c7*I+c8*J+c9
+    #  for simplicity we let dt=dI=dJ=1
+
+    print "\n=================================\nUPWIND SCHEME, u, v assumed positive"
+    #xxx= raw_input('press enter:')
+
+    height, width = phi0.shape
+    X, Y = np.meshgrid(range(width), range(height))
+    ##################################################
+    # COORDINATE TRANSFORM ADDED 13 MARCH 2013
+    Y   -= a.coordinateOrigin[0]
+    X   -= a.coordinateOrigin[1]
+    #
+    ##################################################
+
+    #
+    # get the union of masks...
+    #
+    mask = phi0.mask + phi1.mask + phi0_up.mask + phi0_right.mask
+
+    # ... and share it
+    phi0.mask = mask
+    phi1.mask = mask
+    phi0_up.mask = mask
+    phi0_right.mask = mask
+
+    I, J = Y, X
+
+    I = ma.array(data=I, mask=mask)
+    J = ma.array(data=J, mask=mask)
+
+    #
+    #  
+    ######################################################################
+
+    #################################################################################
+    #
+    # and compress the data into one dim before we do further computation.
+    # the two-dimensional structure is no longer needed.
+    #
+    #phi0.sharedmask  # check
+    #phi1.sharedmask
+
+    phi         =phi0.compressed()		# compressing phi0 into 1-dimensional phi
+    phi_next    =phi1.compressed()		# same
+    phiup       =phi0_up.compressed() 
+    phiright    =phi0_right.compressed()
+    #phidown     =phi0.down.compressed()
+    #phileft     =phi0.left.compressed()
+
+    I = I.compressed()
+    J = J.compressed()
+
+    #xxx = np.vstack([phi, phi_next, phiup, phiright, I, J])   #test
+    #xxx[:,:10]
+    #xxx[:,10:20]
+    #xxx[:,20:]
+
+    regressand = phi_next - phi
+    A = -(phi-phiup)*(dt/dx)
+    B = -(phi-phiright)*(dt/dy)
+    regressor = np.zeros((9, len(regressand)))  # c1; c2; ... c9  one row for each coeff
+
+    regressor[0,:] = A*I
+    regressor[1,:] = A*J
+    regressor[2,:] = A
+    regressor[3,:] = B*I
+    regressor[4,:] = B*J
+    regressor[5,:] = B
+    regressor[6,:] = I
+    regressor[7,:] = J
+    regressor[8,:] = 1
+
+    #regressor[:,:10]
+    #regressor[:,10:20]
+    #regressor[:,20:]
+
+    C, residual, rank, s = lsq(regressor.T, regressand)
+    residual = residual[0]
+    ##############################################################
+    # the following line was changed on 8 march 2013
+    #SStotal = regressand.var() * len(regressand)
+    SStotal = phi_next.var() * len(phi_next)
+    print "len(regressand):", len(regressand)
+    print "len(phi_next):",len(phi_next)
+    print "phi_next.var():", phi_next.var() 
+    print "residual:", residual
+    # end the following line was changed on 8 march 2013
+    ##############################################################
+
+    Rsquared = 1 - residual/SStotal
+    print "For the upwind scheme, assuming 0<=u,v<=1,\nwe have C, Rsquared =" , C, Rsquared
+
+    return {'C': C, 'Rsquared': Rsquared}
+
+    #
+    # the above - 21 march 2013
+    ######################################################################

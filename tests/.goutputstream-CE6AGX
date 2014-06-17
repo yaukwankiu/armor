@@ -1,0 +1,73 @@
+import pickle, os, time
+from armor import pattern
+from armor import defaultParameters as dp
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d
+
+root = dp.rootFolder
+
+inputFolder = root+ "labLogs/2014-5-13-modifiedMexicanHatTest13/"
+#inputFolder="/media/TOSHIBA EXT/ARMOR/labLogs/2014-5-13-modifiedMexicanHatTest13_2/"
+
+outputFolder    = root+"labLogs/%d-%d-%d-modifiedMexicanHatTest17/" % (dp.year, dp.month, dp.day)
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+
+    
+L   = os.listdir(inputFolder)
+L   = [v for v in L if ".pydump" in v and "responseImagesList" in v]
+L   = [inputFolder+v for v in L]
+
+print len(L)
+N   = len(L)
+##  test/parameter setup
+sigmas = []
+for i in range(3):
+
+    responseImages   = pickle.load(open(L[i],'r'))
+    M       = responseImages[0]['matrix']
+    sigma   = responseImages[0]['sigma']
+
+    height, width   = M.shape
+    for j in range(len(responseImages)):
+        M       = responseImages[j]['matrix']
+        M       = M*(M>0)
+        sigma   = responseImages[j]['sigma']
+        sigmas.append(sigma)
+        print j, sigma, '\t', M.min(), '\t', M.max()
+        
+    print "sleeping 2 seconds"
+    time.sleep(2)
+
+sigmas  = sorted(list(set(sigmas)))
+### end test/parameter setup
+
+#   makeing the 3d plot
+X, Y    = np.meshgrid(range(20), sigmas)
+I, J    = Y, X
+Z       = np.zeros(X.shape)
+
+for i in range(len(L)):
+
+    responseImages   = pickle.load(open(L[i],'r'))
+    M       = responseImages[0]['matrix']
+    sigma   = responseImages[0]['sigma']
+    z   = np.zeros(X.shape) 
+    for j in range(len(responseImages)):
+        M       = responseImages[j]['matrix']
+        M       = M*(M>0)
+        sigma   = responseImages[j]['sigma']
+        print j, sigma, '\t', M.min(), '\t', M.max()
+        h   = np.histogram(M, bins=20, range=(0,20))
+        z[j,:] = h[0]
+    Z   += z
+    #   making the chart
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_wireframe(X, Y, Z, rstride=10, cstride=10)
+    plt.savefig("")
+
+    #   saving the data
+    
+

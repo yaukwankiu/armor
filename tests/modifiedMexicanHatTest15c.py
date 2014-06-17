@@ -1,0 +1,174 @@
+"""
+2014-05-16
+from modifiedMexicanHatTest11c.py
+
+"""
+
+#   step 1 #######################################################################
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import ndimage
+from scipy import interpolate
+sigmasWRF       =	[1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128, 160, 256]
+streamMeanWRF   =	[1381.206049669092, 766.9449898527139, 465.13169172532434, 396.03296402466646, 268.86513570798974, 214.50983377609896, 118.74949622879356, 84.95042581086544, 37.76274219749431, 24.521686569243133, 8.824130597528843, 5.152874313125069, 1.3509955832946774, 0.6389387868793891, 0.11477507648006322]
+sigmasCOMPREF   =	[1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128, 160, 256]
+#streamMeanCOMPREF=	[1548.7279363424148, 1515.6672966031422, 1372.0790316075663, 1289.3993105680263, 1035.2560324487156, 883.62306195371, 573.0020660967625, 453.77712052522213, 266.1197173491085, 204.54731685918773, 111.37808820322483, 80.23573119500423, 35.586178943368324, 22.121660471738906, 6.758680083520854]
+streamMeanCOMPREF=	[1993.727995932973, 1947.3956203558316, 1760.7290006381527, 1650.8805395581173, 1312.0354638968115, 1109.907031445121, 678.8742812522369, 505.41158145517403, 251.6407023738663, 182.13265183228373, 96.87821564224363, 70.11983626699457, 31.324129624638708, 19.7656570841436, 6.320385253963474]
+
+
+
+sigmasWRF       = sigmasWRF[:-4]
+streamMeanWRF   = streamMeanWRF[:-4]
+sigmasWRF       =	np.array(sigmasWRF )
+streamMeanWRF   =	np.array(streamMeanWRF )
+sigmasCOMPREF   =	np.array(sigmasCOMPREF)
+streamMeanCOMPREF=	np.array(streamMeanCOMPREF)
+
+factor           = 1.*881*921/140/150/16
+streamMeanWRF   *= factor
+
+
+s1  = np.log(streamMeanCOMPREF)
+s2  = np.log(streamMeanWRF)
+
+plt.plot(sigmasCOMPREF, s1)
+plt.plot(sigmasWRF*4, s2)
+plt.title("COMPREF and WRF numerical spectra for L-O-G filter\n- logarithmic scale")
+plt.show()
+
+#   step 2 #################################################3
+
+streamMeanCOMPREF1      = streamMeanCOMPREF[:2]
+streamMeanCOMPREF2      = streamMeanCOMPREF[2:]
+sigmasCOMPREF2          = sigmasCOMPREF[2:]
+sum1                    = streamMeanCOMPREF1.sum()
+sum2                    = streamMeanCOMPREF2.sum()
+highFreqPercentage      = sum1 / (sum1+sum2)
+
+streamMeanCOMPREF2adjusted  = streamMeanCOMPREF[2:] / (1-highFreqPercentage)
+
+##test
+sum3        = streamMeanWRF.sum()
+sum4        = streamMeanCOMPREF2.sum()
+streamMeanCOMPREF2adjusted2  = streamMeanCOMPREF2 * sum3/sum4 * 13./11.
+
+print "sum3, sum4", sum3, sum4, 
+print "streamMeanCOMPREF2adjusted", streamMeanCOMPREF2adjusted2
+print "streamMeanWRF", streamMeanWRF
+
+plt.plot(sigmasCOMPREF2, streamMeanCOMPREF2adjusted)
+plt.plot(sigmasWRF*4, streamMeanWRF)
+plt.title("COMPREF and WRF numerical spectra for L-O-G filter")
+plt.show()
+
+
+s1  = np.log(streamMeanCOMPREF2adjusted)
+s2  = np.log(streamMeanWRF)
+plt.plot(sigmasCOMPREF2, s1)
+plt.plot(sigmasWRF*4, s2)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies Adjusted\n" +\
+          "- logarithmic scale")
+plt.show()
+
+s1  = np.log(streamMeanCOMPREF2adjusted2)
+s2  = np.log(streamMeanWRF)
+plt.plot(sigmasCOMPREF2, s1)
+plt.plot(sigmasWRF*4, s2)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies Adjusted\n" +\
+          "- logarithmic scale")
+plt.show()
+
+
+
+
+plt.plot(sigmasCOMPREF2, streamMeanCOMPREF2adjusted2)
+plt.plot(sigmasWRF*4, streamMeanWRF)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies Adjusted\n" +\
+          "- natural scale")
+plt.show()
+
+
+#   step 3  ################################################################
+
+sum5    = np.trapz(streamMeanWRF, sigmasWRF*4)
+sum6    = np.trapz(streamMeanCOMPREF2, sigmasCOMPREF2)
+streamMeanCOMPREF2adjusted3  = streamMeanCOMPREF2 * sum5/sum6
+print "sum5, sum6 =", sum5, sum6
+
+##  log scale
+s1  = np.log(streamMeanCOMPREF2adjusted3)
+s2  = np.log(streamMeanWRF)
+plt.plot(sigmasCOMPREF2, s1)
+plt.plot(sigmasWRF*4, s2)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies, Adjusted by volume\n" +\
+          "- logarithmic scale")
+plt.show()
+
+##  natural scale
+plt.plot(sigmasCOMPREF2, streamMeanCOMPREF2adjusted3)
+plt.plot(sigmasWRF*4, streamMeanWRF)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies Adjusted by volume\n" +\
+          "- natural scale")
+plt.show()
+
+##  log-log scale
+
+s1  = np.log(streamMeanCOMPREF2adjusted3)
+s2  = np.log(streamMeanWRF)
+r1  = np.log(sigmasCOMPREF2)
+r2  = np.log(sigmasWRF*4)
+plt.plot(r1, s1)
+plt.plot(r2, s2)
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies, Adjusted by volume\n" +\
+          "- log-log scale")
+plt.show()
+
+
+##  dual axes
+#   codes adapted from http://matplotlib.org/examples/api/two_scales.html
+
+
+#diffComprefWrf  = f1(t) - f2(t)
+
+s1  = np.log2(streamMeanCOMPREF2adjusted3)
+s2  = np.log2(streamMeanWRF)
+r1  = np.log2(sigmasCOMPREF2)
+r2  = np.log2(sigmasWRF*4)
+
+t   = np.linspace(r1.min(), r1.max(), 100)
+f1  = interpolate.interp1d(r1, s1, kind='cubic')
+f2  = interpolate.interp1d(r2, s2, kind='cubic')
+
+plt.plot(r1, s1)
+plt.plot(r2, s2)
+plt.plot(t, (f1(t) - f2(t))*10)
+plt.plot(t,[0]*len(t), 'k')
+plt.title("COMPREF(blue) and WRF(green) numerical spectra for L-O-G filter\n" +\
+          "With high frequences [1,2] truncated and frequncies, Adjusted by volume\n" +\
+          "And their difference x 10 (red)- log-log (based 2)scale")
+plt.show()
+
+"""
+fig, ax1 = plt.subplots()
+ax1.plot(t, s1, 'b-')
+ax1.set_xlabel('time (s)')
+# Make the y-axis label and tick labels match the line color.
+ax1.set_ylabel('exp', color='b')
+for tl in ax1.get_yticklabels():
+    tl.set_color('b')
+
+
+ax2 = ax1.twinx()
+s2 = np.sin(2*np.pi*t)
+ax2.plot(t, s2, 'r.')
+ax2.set_ylabel('sin', color='r')
+for tl in ax2.get_yticklabels():
+    tl.set_color('r')
+plt.show()
+"""

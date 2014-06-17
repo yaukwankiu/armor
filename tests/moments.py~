@@ -1,0 +1,35 @@
+# moments.py
+# testing the invariant moments for the report on tuesday 25 june 2013
+# date:  24-06-2013
+
+"""
+cd /media/KINGSTON/ARMOR/python
+python
+
+from armor.tests import moments
+reload(moments)
+G=moments.gaussiandemo()
+
+"""
+import numpy as np
+from numpy import exp
+from armor import pattern
+dbz = pattern.DBZ
+from armor.geometry import moments
+
+def gaussian(x,y, x0=0, y0=0, varx=2. ,vary=2.):
+    g = exp(-(x-x0)**2/varx -(y-y0)**2/vary)
+    return g
+
+def gaussiandemo():
+    X,Y = np.meshgrid(range(400),range(400))
+    g   = 10.*gaussian(x=X,y=Y, x0=240, y0=260, varx=5000., vary=9800.)
+    G   = dbz(matrix=g, vmin=-4, vmax=10)
+    G.show()
+    return G
+    
+def main():
+    pass
+
+if __name__ =='__main__':
+    main()

@@ -1,0 +1,45 @@
+"""
+cd /media/TOSHIBA\ EXT/ARMOR/python/
+ipython -pylab
+
+"""
+import time, datetime
+import numpy as np
+import matplotlib.pyplot as plt
+from armor import defaultParameters as dp
+from armor import pattern
+
+##################
+#   regridding
+#from armor.dataStreamTools import kongrey as kr
+#WRFstreams  = kr.constructAllWRFstreams()
+#WRFstreams2  = kr.constructAllWRFstreamsRegridded()
+#   end regridding
+##################
+
+from armor import pattern2 as p2
+dss = p2.kongreyDSS
+
+print dss.name
+print dss.obs.name
+print dss.wrfs[0].name
+
+wrfs    = dss.wrfs
+obs     = dss.obs
+obs[0].load()
+#obs[0].show()
+
+from armor.filter import filters
+from armor.patternMatching import algorithms
+#dss.backupMatrices()
+
+reload(p2)
+dss = p2.kongreyDSS
+dss.obs.load()
+
+#dss.load()
+dss.filtering(filters.gaussianFilter, sigma=5, verbose=False)
+results = dss.matching(algorithms.plainCorr, obsTime="20130828.0600", maxHourDiff=7)
+results1 = [v['wrf']+', ' + str(v['timeShift']) + 'H;  score: ' + str(v['score']) for v in results]
+results1
+

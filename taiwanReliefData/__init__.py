@@ -1,0 +1,29 @@
+"""
+# copy of taiwanReliefData inside armor module
+# to create the taiwan coastlines etc for display given a particular grid size
+# use:
+
+kwargs =    {'files'  :['100','1000','2000','3000', 'Coast'],
+             'width'  : 921,
+             'height' : 881,
+             'lowerLeft' : (115, 18),
+             'upperRight' : (126.5, 29),
+             'folder' : '',
+             'suffix' : ".DAT",
+             }
+
+kwargs =    {'files'  :['100','1000','2000','3000', 'Coast'],
+             'width'  : 921,
+             'height' : 881,
+             'lowerLeft' : (115, 18),
+             'upperRight' : (126.5, 29),
+             'folder' : '',
+             'suffix' : ".DAT",
+             }
+
+
+from armor.taiwanReliefData import convertToGrid
+
+convertToGrid.main(**kwargs)
+
+"""

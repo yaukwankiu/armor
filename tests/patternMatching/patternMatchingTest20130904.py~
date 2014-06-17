@@ -1,0 +1,121 @@
+# -*- coding: utf-8 -*-
+"""
+patternMatchingTest20130904
+    purpose
+        to carry out the plan in the document 
+        2013-09-03-test-of-matching-algorithms.txt
+    outline
+        1.  massage the data, build the DBZstream objects (without loading),
+            and store them
+        2.  create the images, and store them
+        3.  inspect the data and verify
+        4.  construct a set of transformed data (881,921) with the right coords
+            and store them for quick access
+        5.  write the tests
+        6.  carry out the tests --> output summaries and reports
+    For details, see __init__.py
+
+    Runs
+        1.  on machine k-801, ubuntu 13, Room 801 Civil Engineering
+            /media/k/KINGSTON/ARMOR/python
+        2.  otherwise, adjust the parameters in the "settings" section
+        
+"""
+######################
+#   imports
+import os, sys
+import time
+from armor import pattern
+import numpy as np
+from pickle import load, dump
+
+######################
+#   settings
+
+obs_folder      = '/home/k/ARMOR/data/KONG-REY/OBS/'
+obs_lowerLeft   = (18., 115.)
+obs_upperRight  = (29., 126.5)
+obs_gridSize    = 
+wrf_folder      = '/home/k/ARMOR/data/KONG-REY/WRFEPS/'
+# pydump_folder = '/home/k/ARMOR/data/KONG-REY/pydumps/'  # for python intermediate files
+summary_folder  = '/home/k/ARMOR/data/KONG-REY/summary/'
+
+timeString = str(int(time.time()))
+
+########################
+#   building blocks
+
+def getList(folder, key1="", key2="", key3=""):
+    """get the list of files in the folder containing key1 and key2"""
+    L   = os.listdir(folder)
+    L   = [v for v in L if (key1 in v) and (key2 in v) and (key3 in v)]
+    return L
+
+def constructOBSstream():
+    """
+    class DBZstream:
+        def __init__(self, dataFolder='../data_temp/', 
+                     #name="COMPREF.DBZ", 
+                     name="",
+                     lowerLeftCornerLatitudeLongitude=defaultLowerLeftCornerLatitudeLongitude, 
+                     upperRightCornerLatitudeLongitude=defaultUpperRightCornerLatitudeLongitude,
+                     outputFolder="",
+                     imageFolder="",
+                     preload=False):
+
+    """    
+    pass
+
+def constructWRFstream():
+    pass
+#######################
+#   carryout
+def massageData():
+    pass
+
+def createDBZimages():
+    pass
+def constructTransformedDBZstreams():
+    pass
+def patternMatchingTest():
+    pass
+def test1():
+    pass
+def test2():
+    pass
+def test3():
+    pass
+def test4():
+    pass
+def test5():
+    pass
+def test6():
+    pass
+def test7():
+    pass
+def test8():
+    pass
+
+def main0(*args):
+    print args
+
+def main(*args):
+    massageData()
+    createDBZimages()
+    constructTransformedDBZstreams()
+    patternMatchingTest()
+    test1()
+    test2()
+    test3()
+    test4()
+    test5()
+    test6()
+    test7()
+    test8()
+
+"""
+if __name__ == '__main__':
+    import sys
+    args = sys.argv
+    main(*args)
+"""

@@ -1,0 +1,75 @@
+ #   doubleLinearMorletTest.py
+#   morlet filter in x- and y-directions
+import pickle
+import numpy as np
+from scipy import signal
+import matplotlib.pyplot as plt
+from armor import pattern
+from armor import objects4 as ob
+from armor import misc as ms
+dbz = pattern.DBZ
+outputFolder = '/media/TOSHIBA EXT/ARMOR/labLogs/2014-04-16-doubleLinearMorletTest/'
+
+kongreywrf  = ob.kongreywrf
+kongreywrf.fix()
+kongrey     = ob.kongrey
+
+w           = kongreywrf[10]    #just pick one
+k           = kongrey[10]       #just pick one
+
+#a   = pattern.a
+#a   = pattern.b
+
+#for a in [w] + [k] + kongrey[0:9] + kongreywrf[0:9]:
+for a in kongrey[11:20] + kongreywrf[11:20]:
+
+    print "-------------------------------------------------"
+    print a.name
+    a.load()
+    a.setThreshold(0)
+
+    L   = []
+    #for N in [17, 25, 33, 49, 65, 73, 97, 129, 145, 193]:  # too slow!!
+    for N in [17, 25, 33, 49, 65, 73, 97]: 
+    #N   = 25
+        print "N:", N
+        a.load()
+        a.setThreshold(0)
+        WL  = ms.morlet(N)
+        I   = np.ones(len(WL))
+        mask_i  = np.outer(WL,I )
+        mask_j  = np.outer(I ,WL)
+        arr0 = a.matrix
+        arr1 = signal.convolve2d(arr0, mask_i, mode='same', boundary='fill')
+        arr2 = signal.convolve2d(arr0, mask_j, mode='same', boundary='fill')
+        a1 = dbz(matrix=arr1.real, name=a.name + "_morlet_N" + str(N) + "i-direction")
+        a2 = dbz(matrix=arr2.real, name=a.name + "_morlet_N" + str(N) + "j-direction")
+        L.append({  'N'     : N,
+                    'a1'   :  a1,
+                    'a2'    : a2,
+                    'abssum1': abs(a1.matrix).sum(),
+                    'abssum2': abs(a2.matrix).sum(),
+                    'sum1'  : a1.matrix.sum(),
+                    'sum2'  : a2.matrix.sum(),
+                  }) 
+        print "abs sum for i, j: ", abs(a1.matrix.sum()),  abs(a2.matrix).sum()
+        #a1.show()
+        #a2.show()
+        plt.close()
+        a1.histogram(display=False, outputPath=outputFolder+a1.name+"_histogram.png")
+        plt.close()    
+        a2.histogram(display=False, outputPath=outputFolder+a2.name+"_histogram.png")
+    pickle.dump(L, open(outputFolder+ a.name +'_test_results.pydump','w'))
+    x = [v['N'] for v in L]
+    y1 = [v['abssum1'] for v in L]
+    y2 = [v['abssum2'] for v in L]
+    plt.close()
+    plt.plot(x,y1)
+    plt.title(a.name+ '1d-morlet filter, i-direction,\n absolute values against N')
+    plt.savefig(outputFolder+a.name+"-1d-morlet-i-direction-histogram.png")
+    plt.close()
+    plt.plot(x,y2)
+    plt.title(a.name+ '1d-morlet filter, j-direction,\n absolute values against N')
+    plt.savefig(outputFolder+a.name+"-1d-morlet-j-direction-histogram.png")
+    plt.close()    
+

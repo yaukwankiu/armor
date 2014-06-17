@@ -1,0 +1,149 @@
+# -*- coding: utf-8 -*-
+"""
+Module to convert videos from jpgs or pdfs
+
+USE:  
+
+cd /media/KINGSTON/ARMOR/python
+python
+from armor.video import makeVideo as mv
+reload(mv); mv.main()
+
+    and check /media/Seagate\ Expansion\ Drive/ARMOR/sandbox 
+    or something like that
+
+References 
+1. http://stackoverflow.com/questions/5772831/python-library-to-create-a-video-file-from-images
+2. http://stackoverflow.com/questions/5772831/python-library-to-create-a-video-file-from-images
+3. http://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
+4. http://opencv.willowgarage.com/documentation/reading_and_writing_images_and_video.html
+5. http://stackoverflow.com/questions/12290023/opencv-2-4-in-python-video-processing/12333066#12333066
+        "
+        #THE FOLLOWING CODES ARE FROM REFERENCE 3 ABOVE
+        To create a video, you could use opencv,
+        #load your frames
+        frames = ...
+        #create a video writer
+        writer = cvCreateVideoWriter(filename, -1, fps, frame_size, is_color=1)
+        #and write your frames in a loop if you want
+        cvWriteFrame(writer, frames[i])
+        "
+"""
+
+#################
+# imports
+import time
+
+time0 = time.time()
+
+import os
+from PIL import Image
+from scipy.misc import imread
+import cv, cv2
+from armor import pattern
+dbz = pattern.DBZ
+
+##################
+# setup
+from .. defaultParameters import *
+dataRoot    = externalHardDriveRoot + '../Work/CWB/'
+defaultDate = '2013-07-12'
+defaultType = 'charts'
+defaultInputFolder  = dataRoot + defaultType + '/' + defaultDate +'/'
+defaultOutputFolder = externalHardDriveRoot + 'sandbox/'
+
+def getList(folder, extensions=['.txt','.dat']):
+    L = os.listdir(folder)
+    L = [v for v in L if v[-4:].lower() in extensions]
+    #print L
+    L.sort()
+    return L   
+
+def makeDBZimages(inputFolder=defaultInputFolder, 
+                 outputFolder=defaultOutputFolder, extensions=['.txt', '.dat']):
+    L = getList(folder=inputFolder, extensions=extensions)
+    for fileName in L:
+        a = dbz(name=fileName, dataPath=inputFolder+fileName, 
+                imagePath=defaultOutputFolder+fileName)
+        a.load()
+        a.saveImage()
+
+def loadImages(inputFolder=defaultOutputFolder, extensions=['.png', '.jpg']):
+    """yes that's right
+         inputFolder=defaultOutputFolder
+       because we expect the pics to be in the sandbox (i.e. default output folder)
+    """
+    L = getList(folder=inputFolder, extensions=extensions)
+    #print inputFolder
+    #print L
+    #print extensions
+    imageList=[""]*len(L)
+    #print L
+    for n, fileName in enumerate(L):
+        #img = Image.open(inputFolder+fileName)  # doesn't work
+        #imageList[n] = cv.LoadImage(inputFolder+fileName)  #old
+        imageList[n] = imread(inputFolder+fileName)     # new, converted to cv2
+        print n,fileName
+        #print imageList[n]
+    return imageList
+
+def makeVideo(imageList):
+    pass
+
+def main(inputDate=defaultDate, inputType=defaultType, inputFolder="", 
+         outputFolder=defaultOutputFolder, extensions=['.png','.jpg'], frameSize=(600,600)):
+    """
+    USE: 
+        main(inputDate=defaultDate, inputType=DefaultType, inputFolder="", outputFolder="")
+    WHERE:
+        defaultDate = '2013-07-12'
+        defaultType = 'charts'
+    OUTPUT:
+        out
+
+    """
+    if inputFolder == "":
+        inputFolder = "%s%s/%s/" % (dataRoot, inputType, inputDate)
+    #print inputFolder
+    imageList = loadImages(inputFolder=inputFolder, extensions=extensions)
+    #print imageList
+    # create a video writer
+    # c.f. http://opencv.willowgarage.com/documentation/python/reading_and_writing_images_and_video.html
+    #fourcc=cv.FOURCC('P','I','M','1'), doesn't work?
+    #writer = cv.CreateVideoWriter(filename=outputFolder+inputDate+'_'+inputType+'.avi', 
+    #                                fourcc=cv.FOURCC('F', 'L', 'V', '1'),
+    #                                fps=1, frame_size=(600,600), is_color=1)
+        #and write your frames in a loop if you want
+    # the above don't work.  replace by the following.
+    # http://stackoverflow.com/questions/12290023/opencv-2-4-in-python-video-processing/12333066#12333066    
+    writer = cv2.VideoWriter(filename=outputFolder+inputDate+'_'+inputType+'.avi', 
+                            fourcc=cv.CV_FOURCC('D', 'I', 'V', 'X'),
+                            fps=5,
+                            frameSize=frameSize)
+    for frame in imageList:
+        #print frame
+        #cv.ShowImage(str(frame), frame)
+        #cv.WaitKey()
+        #cv.WriteFrame(writer, frame) #old writer replaced
+        writer.write(frame)
+    print outputFolder+inputDate+'_'+inputType
+    print time.time()-time0
+    
+"""
+CV_FOURCC('P','I','M','1')    = MPEG-1 codec
+
+CV_FOURCC('M','J','P','G')    = motion-jpeg codec (does not work well)
+
+CV_FOURCC('M', 'P', '4', '2') = MPEG-4.2 codec
+
+CV_FOURCC('D', 'I', 'V', '3') = MPEG-4.3 codec
+
+CV_FOURCC('D', 'I', 'V', 'X') = MPEG-4 codec
+
+CV_FOURCC('U', '2', '6', '3') = H263 codec
+
+CV_FOURCC('I', '2', '6', '3') = H263I codec
+
+CV_FOURCC('F', 'L', 'V', '1') = FLV1 codec
+
+"""

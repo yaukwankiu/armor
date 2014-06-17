@@ -1,0 +1,65 @@
+# armor.geometry.edges
+# module for edge detecting and stuff
+
+import numpy as np
+import numpy.ma as ma
+from scipy.signal import fftconvolve
+#from armor import pattern
+
+def find(a):
+    """
+    use straightforward summing of mask criteria
+    """
+    m1 = ma.zeros(a.matrix.shape)
+    m2 = ma.zeros(a.matrix.shape)
+    # look around it's neighbourhood
+    for i in [-1,0,1]:
+        for j in [-1,0,1]:
+            m1 += (a.shiftMatrix(i,j).matrix.mask==False)   # finding a point not masked
+            m2 += (a.shiftMatrix(i,j).matrix.mask==True )   # finding a point masked
+    return m1*m2
+
+
+def complexity(a, windowSize=20):
+    """
+    local complexity map of a based on the proportion of edge elements in the region
+    """
+    height, width = a.matrix.shape
+    complexityMap = ma.zeros(a.matrix.shape)
+    try:
+        a.edges+1
+        aEdges = a.edges
+    except AttributeError:
+        aEdges = find(a)
+    nonEdge = (aEdges==0)
+    for i in range(0, height, windowSize):
+        for j in range(0, width, windowSize):
+            complexityMap[i:i+windowSize, j:j+windowSize]              \
+           =    ((aEdges[i:i+windowSize, j:j+windowSize]>0).sum()+1.0) / windowSize**2
+             
+    a.complexityMap = complexityMap
+    return complexityMap            
+            
+def sobel(a):
+    """
+    sobel operator for edge detection
+    (ref:  <<image processing, analysis and machine vision>>,
+                          the big black book, p.95)
+
+    """
+    h1 = np.array( [[ 1, 2, 1],
+                    [ 0, 0, 0],
+                    [-1,-2,-1]])
+
+    h2 = np.array( [[ 0, 1, 2],
+                    [-1, 0, 1],
+                    [-2,-1, 0]])
+
+    h3 = np.array( [[-1, 0, 1],
+                    [-2, 0, 2],
+                    [-1, 0, 1]])
+
+    ah1 = fftconvolve(a.matrix, h1)
+    ah2 = fftconvolve(a.matrix, h2)
+    ah3 = fftconvolve(a.matrix, h3)
+    return ah1, ah2, ah3

@@ -1,0 +1,26 @@
+"""
+cd /media/TOSHIBA\ EXT/ARMOR/python/
+ipython -pylab
+
+"""
+import time, datetime
+import numpy as np
+import matplotlib.pyplot as plt
+from armor import defaultParameters as dp
+from armor import pattern
+
+##################
+#   regridding
+from armor.dataStreamTools import kongrey as kr
+WRFstreams  = kr.constructAllWRFstreamsRegridded()
+#   end regridding
+##################
+
+from armor import pattern2 as p2
+dss = p2.kongreyDSS
+
+print dss.name
+print dss.obs.name
+print dss.wrfs[0].name
+
+

@@ -1,0 +1,167 @@
+# script to convert logitude/latitude data into grid data
+# 1.  read the file
+# 2.  convert the data
+# 3.  save the file
+import os
+import numpy as np
+import itertools
+
+"""
+kwargs =    {'files'  :['100','1000','2000','3000', 'Coast'],
+             'width'  : 920,
+             'height' : 880,
+             'lowerLeft' : (115, 18),
+             'upperRight' : (126.5, 29),
+             'folder' : '/media/TOSHIBA EXT/ARMOR/python/armor/taiwanReliefData/',
+             'outputFolder' : '/media/TOSHIBA EXT/ARMOR/python/armor/taiwanReliefData/temp/',    
+             'suffix' : ".DAT",
+             }
+
+cg.main(**kwargs)
+
+"""
+####################################
+#  functions from morphology.py
+def squareNeighbourhood(size=3):
+    """ to be used in function erode, dilate, etc.
+    min size = 2 (including the centre)
+    """
+    return list(itertools.product(range(-size//2+1,size//2+1), range(-size//2+1,size//2+1)))
+
+def disc(radius=5):
+    square = squareNeighbourhood(size=int(radius)*2+1)
+    d = []
+    for i, j in square:
+        if i**2+j**2 <= radius**2 :
+            d.append((i,j))
+    return d
+
+#
+#####################################
+kwargs =    {'files'  :['100','1000','2000','3000', 'Coast'],
+             'width'  : 920,
+             'height' : 880,
+             'lowerLeft' : (115, 18),       #COMPREF
+             'upperRight' : (126.5, 29),    #COMPREF
+             #'lowerLeft'  : (117.5, 20.),    #WRF
+             #'upperRight' : (124.5, 28.),    #WRF        
+             'folder' : '/media/TOSHIBA EXT/ARMOR/python/armor/taiwanReliefData/',
+             'outputFolder' : '/media/TOSHIBA EXT/ARMOR/python/armor/taiwanReliefData/temp/',    
+             'suffix' : ".DAT",
+             }
+
+def read(path):
+    # 1.  read the file
+    x = open(path, 'r').read()
+    return x
+
+def convert(x, lowerLeft, upperRight, width, height, verbose=True):
+    """
+    docstring added: 20 jan 2014
+    convention:
+        x = (long, lat, long, lat, long, lat...)
+        lowerLeft = (width, height)
+        upperRight - same
+    """
+    # 2.  convert the data
+    nx = width  / (upperRight[0] - lowerLeft[0])
+    ny = height / (upperRight[1] - lowerLeft[1])
+    if isinstance(x, str):
+        y = x.split()
+        y = np.array([float(v) for v in y])
+    else:
+        y = np.array(x)
+    #lon = y[0::2]
+    #lat = y[1::2]
+    #debug
+    print y
+    y[0::2] = (np.round((y[0::2] - lowerLeft[0]) * nx)).astype(int)
+    y[1::2] = (np.round((y[1::2] - lowerLeft[1]) * ny)).astype(int)
+    if verbose:
+        print x, '-->', y
+    return y
+
+def dilate(y, radius=72):
+    """ to dilate the coast
+    """
+    d = disc(radius=radius)
+    z = []
+    for i in range(0, len(y),2):
+        v0 = y[i]
+        v1 = y[i+1]
+        neigh = [(v0+w[0], v1+w[1]) for w in d]
+        z.extend(neigh)
+    z = sorted(list(set(z)))
+    z = [[w[0],w[1]] for w in z]
+    z = sum(z,[])
+    return z
+
+def save(z,path):
+    # 3.  save the file
+    # x, y -> i,j switch takes place here
+    
+    outputString = "# Latitude(North), Longitude(East)\n"
+    for i in range(0,len(z),2):
+        outputString += str(int(z[i+1])) + " " + str(int(z[i])) + "\n"
+    open(path,'w').write(outputString)
+    """
+    X = np.array(z)
+    fname = path    
+    np.savetxt(fname, X, fmt='%.0e', delimiter=' ', newline='\n', 
+                 header='# Latitude(North), Longitude(East)', footer='', comments='# ')
+    """
+# run it
+def main(files, width, height, lowerLeft, upperRight, folder, suffix, outputFolder="", 
+         dilation=0):
+    print 'converting from', folder
+    if outputFolder =="":
+        outputFolder = folder
+    for fileName in files:
+        print fileName
+        x = read(folder+fileName+suffix)
+        y = convert(x, lowerLeft, upperRight, width, height)
+        """
+        y = np.array(y).reshape(y.size//2, 2).tolist()
+        y1 = []
+        for yy in y:
+            if not (yy in y1):
+                y1.append(yy)
+        y   = y1
+        y   = np.array(y)
+        y   = y.reshape(y.size).tolist()
+        """
+        if dilation > 0:
+            y = dilate(y, 36)
+        print 'saving to', outputFolder 
+        print y[:10]
+        try:
+            save(y, outputFolder+'relief'+fileName+'.dat')
+        except:
+            pass
+    try:
+        print "renaming coastal data file in " ,  outputFolder , 'from reliefCoast to taiwanCoast ...'
+        os.rename(outputFolder+'reliefCoast.dat', outputFolder+ 'taiwanCoast.dat')
+    except:
+        print "can't rename"
+    return y
+
+def main1(files, width, height, lowerLeft, upperRight, folder, suffix, outputFolder=""):
+    """
+    for data extening 36 grid squares (= 50 km(?!) in the 881x921 grid)
+    """
+    print 'converting from', folder
+    if outputFolder =="":
+        outputFolder = folder
+    for fileName in files:
+        print fileName
+        x = read(folder+fileName+suffix)
+        y = convert(x, lowerLeft, upperRight, width, height)
+        z = dilate(y, 36)
+        print 'saving to', outputFolder 
+        save(z, outputFolder+'relief'+fileName+'Extended.dat')
+        print z[:10]
+
+
+if __name__ == "__main__":
+    main(**kwargs)
+        
