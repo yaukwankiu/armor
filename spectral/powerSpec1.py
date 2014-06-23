@@ -121,7 +121,10 @@ def oversampling():
 
     pass
     
-def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True):
+def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder,
+                                     spectrumType="numerical",      #2014-06-23
+                                     useLogScale= False,        #2014-06-23
+                                     toReload=True,):
     L=[]
     a.responseImages=[]
     if toReload:
@@ -153,19 +156,28 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
 
     pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
 
-    a_LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
-                        imagePath=outputFolder+a1.name+"_LOGspec.png",
-                        outputPath = outputFolder+a1.name+"_LOGspec.dat",
+    a_LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_" +  spectrumType  + "_spectrum",
+                        imagePath=outputFolder+a1.name+"_LOG_" +  spectrumType  + "_spec.png",
+                        outputPath = outputFolder+a1.name+"_LOG_" +  spectrumType  + "_spec.dat",
                         cmap = 'jet',
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
     #print 'shape:', a.responseImages.shape    #debug
-    a.responseMax       = a.responseImages.max(axis=2)  # the deepest dimension
-    a_LOGspec.matrix = np.zeros(a.matrix.shape)
-    for count, sigma in enumerate(sigmas):
-        a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages[:,:,count])
-    a_LOGspec.vmin  = a_LOGspec.matrix.min()
-    a_LOGspec.vmax  = a_LOGspec.matrix.max()
+    ###
+    #   numerical spec / total spec fork
+    if spectrumType == "numerical":
+        a.responseMax       = a.responseImages.max(axis=2)  # the deepest dimension
+        a_LOGspec.matrix = np.zeros(a.matrix.shape)
+        for count, sigma in enumerate(sigmas):
+            a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages[:,:,count])
+    else:
+        a_LOGspec.matrix    = a.responseImages.sum(axis=2)  # the deepest dimension
+
+    #   end numerical spec / total spec fork
+    ###
+    if useLogScale:
+        a_LOGspec.matrix = np.log(a_LOGspec.matrix)
+    a_LOGspec.setMaxMin()
     print "saving to:", a_LOGspec.imagePath
     a_LOGspec.saveImage()
     print a_LOGspec.outputPath

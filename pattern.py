@@ -698,6 +698,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
  upperRightCornerLatitudeLongitude =self.upperRightCornerLatitudeLongitude,
                    verbose  =self.verbose)
 
+    def setMaxMin(self, vmax="", vmin=""):
+        if vmax=="":
+            self.vmax = self.matrix.max()
+        if vmin=="":
+            self.vmin = self.matrix.min()
+
     def drawCross(self, i="", j="", radius=5, intensity=9999):
         """to draw a cross (+) at the marked point
         """
@@ -1404,6 +1410,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         print "Results stored in attribute:  a.LOGspec"
         a.LOGspec = a_LOGspec
         return a_LOGspec
+
+
+        
     #   end new objects from old
     #############################################################
 
