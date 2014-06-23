@@ -53,7 +53,7 @@ march2014wrf.fix()
 ###########################################################################
 #   parameters
 thisScript   = 'powerSpec3.py'
-scriptFolder = root+'python/armor/tests/' 
+scriptFolder = root+'python/armor/spectral/' 
 
 i1  = (20.-18.)/0.0125  #160
 i2  = (29.-28.)/0.0125  #80
@@ -130,9 +130,16 @@ dataTime    = "20140312.1200"
 monsoon     = ob.march2014
 wrf         = ob.march2014wrf
 
-a   = monsoon(dataTime)[0]
-ws  = wrf(dataTime)[0]
+a   = monsoon("20140312.1140")[0]
+b   = monsoon("20140312.1150")[0]
+wrf.load('0312.1200')
+wrf.cutUnloaded()
+a.load()
+b.load()
 
+a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "numerical")
+a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "total")
 
+print "outputFolder:", outputFolder
 
 

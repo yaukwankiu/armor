@@ -162,6 +162,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         cmap = 'jet',
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
+
+    a.responseImages   *= (a.responseImages>0)      # 2014-06-23
+
     #print 'shape:', a.responseImages.shape    #debug
     ###
     #   numerical spec / total spec fork
