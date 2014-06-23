@@ -137,6 +137,8 @@ wrf.cutUnloaded()
 a.load()
 b.load()
 
+print "outputFolder:", outputFolder
+
 a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "numerical")
 a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "total")
 

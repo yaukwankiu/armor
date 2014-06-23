@@ -124,6 +124,7 @@ def oversampling():
 def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder,
                                      spectrumType="numerical",      #2014-06-23
                                      useLogScale= False,        #2014-06-23
+                                     responseThreshold=1.       #2014-06-23
                                      toReload=True,):
     L=[]
     a.responseImages=[]
@@ -163,7 +164,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
 
-    a.responseImages   *= (a.responseImages>0)      # 2014-06-23
+    a.responseImages   *= (a.responseImages> responseThreshold)      # 2014-06-23
 
     #print 'shape:', a.responseImages.shape    #debug
     ###
@@ -185,7 +186,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a_LOGspec.saveImage()
     print a_LOGspec.outputPath
     a_LOGspec.saveMatrix()
-    a_LOGspec.histogram(display=False, outputPath=outputFolder+a1.name+"_LOGspec_histogram.png")
+    a_LOGspec.histogram(display=False, outputPath=outputFolder+a1.name+"_LOGspec_" +  \
+                        spectrumType + ("_logScale" * useLogScale) + "_histogram.png")
     pickle.dump(a_LOGspec, open(outputFolder+ a_LOGspec.name + ".pydump","w"))    
     return a_LOGspec
 
