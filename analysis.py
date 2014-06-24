@@ -71,7 +71,7 @@ from . import pattern
 dbz = pattern.DBZ
 import time
 import copy
-from armor import objects3 as ob
+from armor import objects as ob
 #reload(ob)
 #reload(pattern)
 #from armor.tests.roughwork20131106 import construct3by3

@@ -17,7 +17,8 @@ elif platform.node() == 'k-acer':
     computer = 'k-acer'  # ubuntu 12.04/Win7 acer laptop
 elif platform.node() == 'zxc-Aspire-E1-571G':
     computer = 'k-acer'  # ubuntu 12.04/Win7 acer laptop
-
+elif platform.node()== 'Qoo-PC':
+    computer = 'Qoo-PC'
 
 
 #computer = 'i5-desktop'
@@ -88,7 +89,12 @@ elif computer == 'k-acer':
     usbDriveLetter ='I'     #don't know yet
     externalHardDriveLetter = 'G'  #don't know yet
     hardDriveLetter = 'D'    #don't know yet
-
+elif computer =='Qoo-PC':
+    usbDriveLetter ='D'     
+    externalHardDriveLetter = 'D'  
+    hardDriveLetter = 'D'    
+    hardDriveLetter2 = 'D'    
+    
 
 ################################
 # need to check the following
@@ -116,6 +122,9 @@ rootFolder          = defaultRootFolder     #alias
 
 defaultLabReportsFolder = defaultRootFolder + 'labReports/'
 defaultLabReportFolder  = defaultLabReportsFolder   #alias
+
+defaultLabLogsFolder    = 'labLogs/'
+defaultLabLogFolder    = defaultLabLogsFolder   #alias
 
 ################################################################
 # geography

@@ -35,14 +35,14 @@ kongreywrf  =  DS(name='kongreywrf',
 
 kongreywrf2 = DS(name='kongrewrf[regridded]',
                  dataFolder=dp.defaultRootFolder + 'data/KONG-REY/summary/WRF[regridded]/')
-
+"""
 soulik  = DS(name='soulik',
              dataFolder=dp.defaultRootFolder + 'data/SOULIK/wrf_shue/',
              lowerLeftCornerLatitudeLongitude=(17.7094,113.3272),
              upperRightCornerLatitudeLongitude=(28.62909, 127.6353), 
              )
 
-
+"""
 monsoon = DS(name='monsoon',
              dataFolder= dp.defaultRootFolder+'/data_temp/'
              )
@@ -120,7 +120,7 @@ def kongreywrf2fix(key1='', key2='', threshold=0, cutUnloaded=False):
 
 
 monsoon.fix= monsoonfix
-soulik.fix = soulikfix
+#soulik.fix = soulikfix
 kongrey.fix = kongreyfix
 kongreywrf.fix = kongreywrffix
 kongreywrf2.fix = kongreywrf2fix
