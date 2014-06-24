@@ -42,7 +42,10 @@ import colourbarQPESUMSwhiteBackground   # the same as above, with white backgro
 
 #==== importing pattern.py====================================================================
 from . import pattern
-from dataStreamTools import makeVideo as mv
+try:
+    from dataStreamTools import makeVideo as mv
+except ImportError:
+    print "import error!  opencv not installed(?!)"
 from dataStreamTools import kongrey as kr
 dbz = pattern.DBZ
 ds  = pattern.DBZstream

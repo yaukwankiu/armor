@@ -84,7 +84,8 @@ def pipeline(dss=dss,
     if toBackupMatrices:
         dss.backupMatrices()
     #   filtering
-    dss.filtering(filteringAlgorithm, verbose=False, **filteringAlgorithmArgs)
+    if filteringAlgorithm != "":
+        dss.filtering(filteringAlgorithm, verbose=False, **filteringAlgorithmArgs)
     #   matching
     #try:        # try clause added 18-03-2014 to create nested outputFolders
     #    results = dss.matching(matchingAlgorithm, verbose=False, outputFolder=outputFolder, **matchingAlgorithmArgs)

@@ -65,6 +65,7 @@ def plainCorr(obs, wrf, obsTime, maxHourDiff=7, verbose=False):
     
     return {'score':topScore, 'timeShift':timeShift}    #score - depending on the algorithm; timeShift - in hours
 
+
 def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
                       shiibaArgs={},  obsTime="", maxHourDiff=7, 
                       k=24,     # number of 10-minute steps to semi-lagrange advect
@@ -286,6 +287,181 @@ def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
             'miscRemarks': miscRemarks,
             }    #score - depending on the algorithm; timeShift - in hours
 
+
+
+def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, maxLongDiff=6,
+                      verbose=False,
+                      outputFolder= dp.defaultLabLogsFolder ,
+                      volumevolumeProportionWeight  =0.,
+                      **kwargs      #just in case
+                      ):
+
+
+    """
+    adapted from nonStandardKernel() above
+    2014-06-24
+    first applied to 20140312.1100 etc
+    maxLatDiff / maxLongDiff:   maximal latitudinal / longitudinal difference between obs frame and wrf frame
+
+    """
+    timeString      = str(int(time.time()))
+    miscRemarks     = ""
+    outputFolder   += timeString + wrf.name + '/'
+    print "\n\n\n................................................................."
+    print "outputFolder:", outputFolder
+    print "volumevolumeProportionWeight:",volumevolumeProportionWeight
+    os.makedirs(outputFolder)
+    print "sleeping .5 second", time.sleep(.5)
+    if obsTime == "":
+        obsTime = obs[0].dataTime
+    a   = obs(obsTime)[0]   # getting the DBZ object from the observation stream to be compared
+    #a.show()                #debug
+
+    if regions == "":
+        regions = [(0, 0, a.matrix.shape[0], a.matrix.shape[1])]    # a list of one region consisting of the full array, if none given
+
+    T   = a.datetime()      # getting the time range
+    T_string    = a.getDataTime(T)
+    T2  = sorted([v.dataTime for v in obs if v.dataTime>T_string])[0]  # the next time, assumed 10 mins apart - or else
+                                                                #     or else need to adjust the k for vect.semiLagrange below
+    b   = obs(T2)[0]
+    if b.datetime() - a.datetime() > datetime.timedelta(600./86400):    # 600 seconds
+        td          = b.datetime() - a.datetime()
+        miscRemarks += "\nTime difference between %s and %s is " % (b.name, a.name)
+        miscRemarks += str(td.days) + " days " + str(td.seconds) + "seconds.\n"
+    #b.debug()               #show
+    if a.matrix.var()==0:    # test if it is empty
+        a.load()
+    if b.matrix.var()==0:
+        b.load()
+    #a.saveImage()
+    #b.saveImage()
+    maxTime = T + timedelta(maxHourDiff * 1./24)
+    minTime = T - timedelta(maxHourDiff * 1./24)
+    maxTime = a.getDataTime(maxTime)    # converting it into string format for pattern.DBZ
+    minTime = a.getDataTime(minTime)    # converting it into string format for pattern.DBZ
+    if verbose:
+        print "minTime, obsTime, maxTime:", minTime, obsTime, maxTime
+
+    #   check if there's no corresponing wrf for the time
+    if [v.dataTime for v in wrf if v.dataTime>=minTime and v.dataTime<=maxTime] == []:
+        return {}
+
+    scores = []
+
+    a.backupMatrix('good_copy')
+    a.drawCoast()
+    for R in regions:
+        a.drawRectangularHull(R['points'])
+
+    a.saveImage(imagePath=outputFolder+ a.name +dp.defaultImageSuffix)
+    a.restoreMatrix('good_copy')
+    b.backupMatrix('good_copy')
+    b.drawCoast()
+    for R in regions:
+        b.drawRectangularHull(R['points'])
+
+    b.saveImage(imagePath=outputFolder+ b.name +dp.defaultImageSuffix)
+    b.restoreMatrix('good_copy')
+
+    print "a saved to", outputFolder+ a.name +dp.defaultImageSuffix # debug
+    print "b saved to", outputFolder+ b.name +dp.defaultImageSuffix # debug 
+    
+    #   looping
+    a_with_windows  = a.copy()
+    a_with_windows.drawCoast()
+    for w in wrf:
+        if w.dataTime > maxTime or w.dataTime < minTime:
+            continue
+        else:
+            if w.matrix.var()==0:   # test if it is empty
+                w.load()
+            #w.backupMatrix('good_copy')
+            ####################################################################
+            #   matching core
+            #   1. shiiba regression    -> find the vector field
+            #   2. semi-lagrangian      -> find the extended region
+            #   3. cut out the region in obs
+            #   4. match the appropriate region in wrf
+            regionalScores = []
+            for R0 in regions:
+                name            = R0['name']
+                points          = R0['points']
+                weight          = R0['weight']
+                #   extract the "nonstandard kernel" as a1
+                iMax            = int(max(v[0] for v in points))
+                iMin            = int(min(v[0] for v in points))
+                jMax            = int(max(v[1] for v in points))
+                jMin            = int(min(v[1] for v in points))
+                height  = iMax-iMin
+                width   = jMax-jMin
+                a1              = a.getWindow(iMin, jMin, height, width)
+                a1.name         = a.name + '_' + name
+                a1.imagePath    = outputFolder + a1.name + dp.defaultImageSuffix    # suffix = ".png"
+                a1.saveImage(imagePath=a1.imagePath)
+                a_with_windows.drawRectangle(iMin, jMin, height, width, newObject=False)
+                #   match a1 with a similar rectangle on the wrf, scoring by correlation
+                #   we shift the kernel by 1/10 of it's width/height
+                #   4 times left, right, up and down respectively
+                iStep   = 1
+                jStep   = 1
+                print "points (corners for the region):", points     #debug
+                #print "iStep, jStep", iStep, jStep  #debug
+                
+                score   = 0
+                shift   = (-999,-999)   #initialise
+                for i in range(-maxLatDiff, maxLatDiff+1, iStep):
+                    for j in range(-maxLongDiff, maxLongDiff+1, jStep):
+                        #w.restoreMatrix('good_copy')
+                        w1 = w.getWindow(iMin+i, jMin+j, height, width)
+                        tempScore   = a1.corr(w1)     # <<<<<<<< key comparison step >>>>>>>>>>>>>>
+                        # adding a step to compare the relative volume,  2014-03-28
+                        proportion  = abs(np.log(a1.matrix.sum() / w1.matrix.sum()))
+
+                        #diffLog     = abs(np.log(a1.matrix.sum()) - np.log(w1.matrix.sum()))
+                        #tempScore   = a1.cov(w1)[0,1]
+                                                    #   use straight corr for now, will convert to shiiba or normalised corr later
+                                                    #   or can use covariance rather than correlation
+                        tempScore   = tempScore*(1-volumevolumeProportionWeight  ) + proportion*volumevolumeProportionWeight  
+                        if score < tempScore:
+                            score       = tempScore     # get the highest
+                            #scoreTime   = w.dataTime
+                            shift     = (i,j)        # this info is probably not needed
+                regionalScores.append({'name'    : name,  # name of the region
+                                      'score'   : score,
+                                      'shift'   : shift,
+                                      'weight'  : weight,
+                                      })
+
+                
+            #   compute weighed average over regions
+            averageScore    = np.sum([v['score']*v['weight'] for v in regionalScores])
+
+            #
+            #
+            #####################################################################
+
+            scores.append( {'time':w.dataTime, 'score': averageScore, 'regionalScores': regionalScores} )
+    scores.sort(key=lambda v:v['score'], reverse=True)
+    topScore            = scores[0]['score']
+    topScoreTime        = scores[0]['time']
+    topScoresRegional   = scores[0]['regionalScores']     # actually regional scores for the top score
+    timeShift = (a.datetime(topScoreTime) - a.datetime()).total_seconds()   # the time difference is a datetime.timedelta object
+    timeShift = 1. * timeShift/3600                             # convert it into hours
+
+    #   saving images
+    w   = wrf(topScoreTime)[0].copy()   # temp image object
+    w.coastDataPath=obs[0].coastDataPath
+    w.drawCoast()
+    a_frames = (a_with_windows.matrix > 999)        # hack, getting the window frames for w
+    w.matrix += a_frames * 9999                     # hack, getting the window frames for w
+    w.saveImage(imagePath=outputFolder+w.name+dp.defaultImageSuffix)
+    a_with_windows.saveImage(imagePath=outputFolder+ a.name + "_with_windows" + dp.defaultImageSuffix)
+    
+    return {'score':topScore, 'timeShift':timeShift, 'topScoresRegional': topScoresRegional,
+            'Remarks': "'topScoresRegional' stands for regional scores for the top score",
+            'miscRemarks': miscRemarks,
+            }    #score - depending on the algorithm; timeShift - in hours
 
 
 
