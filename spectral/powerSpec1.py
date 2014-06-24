@@ -124,7 +124,7 @@ def oversampling():
 def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder,
                                      spectrumType="numerical",      #2014-06-23
                                      useLogScale= False,        #2014-06-23
-                                     responseThreshold=1.       #2014-06-23
+                                     responseThreshold=1. ,      #2014-06-23
                                      toReload=True,):
     L=[]
     a.responseImages=[]
@@ -182,6 +182,12 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     if useLogScale:
         a_LOGspec.matrix = np.log(a_LOGspec.matrix)
     a_LOGspec.setMaxMin()
+    ##########################################
+    #   2014-06-24
+    mask    = (a_LOGspec.matrix <=0)
+    a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask, fill_value=-999.)
+    #
+    ##########################################
     print "saving to:", a_LOGspec.imagePath
     a_LOGspec.saveImage()
     print a_LOGspec.outputPath

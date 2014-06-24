@@ -1,5 +1,24 @@
 # -*- coding: utf-8  -*-
 
+"""
+tests:
+    
+1.  原始資料，雷達(881x921)與模式(150x140)的網格不同
+        a. 2014年3月12日雨帶
+        b. 2014年5月20日雨帶
+        c. 2013年8月28-29日 Kong-Rey 颱風
+2.  經過陳新淦先生以 Grace 重畫的資料 (201x183)，網格相同
+        2014年5月20日雨帶
+分析原始資料前，因為雷達COMPREF的網格比模式WRF的網格細，（雷達4x4 格等於模式 1x1格），故我們在計算之前先將網格歸一。具體方法有三：
+1.  每4x4格點抽樣取1格點 (sampling)
+2.  每4x4格點平均成1格點 (averaging)
+3.  每4x4格點，由 4x4=16 個起點平均成1格點 ，再對比其差異 (over-sampling)。
+以下我們先選幾個時間點上，同一時間之雷達回波圖與WRF模式輸出對比。之後再算時間序列 (times series) 的平均
+因為結果的數值範圍大，所以我們以 log-log scale 來顯示。
+[normalisation problems/ or not]
+"""
+
+#################################################################################
 #   powerSpec3.py
 #   adapted from powerSpec2.py
 #   2014-06-22
@@ -20,6 +39,8 @@ list: datasource, time, etc.
        show relevant RADAR/WRF images versus spectra
        cut into the same area/box
 """
+
+
 ###########################################################################
 ###########################################################################
 ###########################################################################
@@ -94,6 +115,21 @@ def sampling(a, starting=(0,0)):
 #   4. perform the analysis
 #   5. output the analysis results
 
+#   end all setups
+################################################################################
+
+################################################################################
+################################################################################
+#   #   #   #   TESTS   #   #   #   #
+#
+#   1a.
+##################################
+#   restart test
+if "ps1" in locals():
+    reload(ps1)
+if "pattern" in locals():
+    reload(pattern)
+
 timeString   = getTimeString()
 outputFolder = '/media/TOSHIBA EXT/ARMOR/labLogs2/powerSpec3/' + timeString + '/'
 
@@ -101,30 +137,7 @@ if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 shutil.copyfile(scriptFolder+thisScript, outputFolder+thisScript)
 
-
-#   end all setups
-################################################################################
-
-################################################################################
-"""
-tests:
-    
-1.  原始資料，雷達(881x921)與模式(150x140)的網格不同
-        a. 2014年3月12日雨帶
-        b. 2014年5月20日雨帶
-        c. 2013年8月28-29日 Kong-Rey 颱風
-2.  經過陳新淦先生以 Grace 重畫的資料 (201x183)，網格相同
-        2014年5月20日雨帶
-分析原始資料前，因為雷達COMPREF的網格比模式WRF的網格細，（雷達4x4 格等於模式 1x1格），故我們在計算之前先將網格歸一。具體方法有三：
-1.  每4x4格點抽樣取1格點 (sampling)
-2.  每4x4格點平均成1格點 (averaging)
-3.  每4x4格點，由 4x4=16 個起點平均成1格點 ，再對比其差異 (over-sampling)。
-以下我們先選幾個時間點上，同一時間之雷達回波圖與WRF模式輸出對比。之後再算時間序列 (times series) 的平均
-因為結果的數值範圍大，所以我們以 log-log scale 來顯示。
-[normalisation problems/ or not]
-"""
-
-#   1a.
+#############################
 
 dataTime    = "20140312.1200" 
 monsoon     = ob.march2014
@@ -139,9 +152,15 @@ b.load()
 
 print "outputFolder:", outputFolder
 
-a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "numerical")
-a.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "total")
+for k in [a,b]:
+    k.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "numerical", responseThreshold=1,)
+    k.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "total",responseThreshold=1,)
+
 
 print "outputFolder:", outputFolder
+
+#########################################################
+
+
 
 
