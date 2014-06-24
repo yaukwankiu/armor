@@ -121,9 +121,9 @@ def oversampling():
 def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True):
     L=[]
     a.responseImages=[]
-    a.backupMatrix(0)
     if toReload:
         a.load()
+    a.backupMatrix(0)
     for sigma in sigmas:
         print "sigma:", sigma
         a.restoreMatrix(0)
@@ -157,12 +157,19 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
     #print 'shape:', a.responseImages.shape    #debug
+
+    ###
+    #   numerical spec
     a.responseMax       = a.responseImages.max(axis=2)  # the deepest dimension
     a_LOGspec.matrix = np.zeros(a.matrix.shape)
     for count, sigma in enumerate(sigmas):
         a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages[:,:,count])
+
     a_LOGspec.vmin  = a_LOGspec.matrix.min()
     a_LOGspec.vmax  = a_LOGspec.matrix.max()
+    #
+    ######
+
     print "saving to:", a_LOGspec.imagePath
     a_LOGspec.saveImage()
     print a_LOGspec.outputPath

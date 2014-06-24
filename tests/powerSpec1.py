@@ -149,7 +149,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                  })
 
     pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
-
+    ###
+    #   numerical spec
     a_LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
                         imagePath=outputFolder+a1.name+"_LOGspec.png",
                         outputPath = outputFolder+a1.name+"_LOGspec.dat",
@@ -157,12 +158,17 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
     #print 'shape:', a.responseImages.shape    #debug
+
     a.responseMax       = a.responseImages.max(axis=2)  # the deepest dimension
     a_LOGspec.matrix = np.zeros(a.matrix.shape)
     for count, sigma in enumerate(sigmas):
         a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages[:,:,count])
+
     a_LOGspec.vmin  = a_LOGspec.matrix.min()
     a_LOGspec.vmax  = a_LOGspec.matrix.max()
+    #
+    ######
+
     print "saving to:", a_LOGspec.imagePath
     a_LOGspec.saveImage()
     print a_LOGspec.outputPath

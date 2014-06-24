@@ -698,6 +698,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
  upperRightCornerLatitudeLongitude =self.upperRightCornerLatitudeLongitude,
                    verbose  =self.verbose)
 
+    def setMaxMin(self, vmax="", vmin=""):
+        if vmax=="":
+            self.vmax = self.matrix.max()
+        if vmin=="":
+            self.vmin = self.matrix.min()
+
     def drawCross(self, i="", j="", radius=5, intensity=9999):
         """to draw a cross (+) at the marked point
         """
@@ -1394,16 +1400,19 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.vmax = 1.
         self.vmin = 0.
 
-    def powerSpec(self, thres=0, outputFolder="", toReload=False, **kwargs):
+    def powerSpec(self, thres=0, outputFolder="", toReload=False, spectrumType = "numerical", **kwargs):
         if outputFolder=="":
             outputFolder= self.outputFolder
         from armor.spectral import powerSpec1 as ps1
         #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
-        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder, toReload=toReload, **kwargs)
+        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder, toReload=toReload, spectrumType=spectrumType, **kwargs)
         print "Results stored in file:", outputFolder
         print "Results stored in attribute:  a.LOGspec"
         a.LOGspec = a_LOGspec
         return a_LOGspec
+
+
+        
     #   end new objects from old
     #############################################################
 
