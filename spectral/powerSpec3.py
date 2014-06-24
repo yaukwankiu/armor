@@ -129,8 +129,12 @@ if "ps1" in locals():
     reload(ps1)
 if "pattern" in locals():
     reload(pattern)
+################################################################################
+#
 
 timeString   = getTimeString()
+reload(ps1)
+outputFolder0 = '/media/TOSHIBA EXT/ARMOR/labLogs2/powerSpec3/'
 outputFolder = '/media/TOSHIBA EXT/ARMOR/labLogs2/powerSpec3/' + timeString + '/'
 
 if not os.path.exists(outputFolder):
@@ -140,15 +144,17 @@ shutil.copyfile(scriptFolder+thisScript, outputFolder+thisScript)
 #############################
 
 dataTime    = "20140312.1200" 
-monsoon     = ob.march2014
 wrf         = ob.march2014wrf
-
-a   = monsoon("20140312.1140")[0]
-b   = monsoon("20140312.1150")[0]
-wrf.load('0312.1200')
+wrf.load(dataTime)
 wrf.cutUnloaded()
+
+
+monsoon     = ob.march2014
 a.load()
 b.load()
+a   = monsoon("20140312.1140")[0]
+b   = monsoon("20140312.1150")[0]
+
 
 print "outputFolder:", outputFolder
 
@@ -156,6 +162,15 @@ for k in [a,b]:
     k.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "numerical", responseThreshold=1,)
     k.powerSpec(thres=0, outputFolder=outputFolder, spectrumType = "total",responseThreshold=1,)
 
+try:
+    a.drawCoast()
+    b.drawCoast()
+except: 
+    pass
+
+a.saveImage(outputFolder0+a.name+'.jpg')
+b.saveImage(outputFolder0+b.name+'.jpg')
+    
 
 print "outputFolder:", outputFolder
 

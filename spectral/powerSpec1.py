@@ -166,6 +166,12 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
 
     a.responseImages   *= (a.responseImages> responseThreshold)      # 2014-06-23
 
+    ##########################################
+    #   2014-06-24
+    mask    = (a.responseImages <=0.01)
+    a.responseImages = np.ma.array(a.responseImages, mask=mask, fill_value=-999.)
+    #
+    ##########################################
     #print 'shape:', a.responseImages.shape    #debug
     ###
     #   numerical spec / total spec fork
@@ -184,8 +190,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a_LOGspec.setMaxMin()
     ##########################################
     #   2014-06-24
-    mask    = (a_LOGspec.matrix <=0)
-    a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask, fill_value=-999.)
+    #mask    = (a_LOGspec.matrix <=0.001)
+    #a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask, fill_value=-999.)
     #
     ##########################################
     print "saving to:", a_LOGspec.imagePath
