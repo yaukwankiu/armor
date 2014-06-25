@@ -183,6 +183,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #   numerical spec / total spec fork
     #if spectrumType == "numerical":
     a.responseMax       = a.responseImages.max(axis=2)  # find max along the deepest dimension
+    a.saveImage(imagePath=outputFolder+a.name+"LOG_max_response.png", 
+                matrix=a.responseMax, title=a.name+" Max Responses of L-O-G filter",
+                vmax = a.responseMax.max(), vmin=a.responseMax.min())
     a_LOGspec.matrix = np.zeros(a.matrix.shape)
     for count, sigma in enumerate(sigmas):
         a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages.filled()[:,:,count])

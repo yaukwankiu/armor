@@ -138,8 +138,11 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         a.restoreMatrix(0)
         a.setThreshold(thres)
         arr0 = a.matrix
-        #arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-05-14
-        arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
+        ###################################
+        #   key line
+        arr1    = (-1) ** tipSideUp * ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
+        #
+        ###################################
 
         a1 = dbz(matrix=arr1.real, name=a.name + "_" + testName + "_sigma" + str(sigma))
         L.append({  'sigma'     : sigma,
@@ -180,6 +183,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #   numerical spec / total spec fork
     #if spectrumType == "numerical":
     a.responseMax       = a.responseImages.max(axis=2)  # find max along the deepest dimension
+    a.saveImage(imagePath=outputFolder+a.name+"LOG_max_response.png", 
+                matrix=a.responseMax, title=a.name+" Response Max of L-O-G filter",
+                vmax = a.responseMax.max(), vmin=a.responseMax.min())
     a_LOGspec.matrix = np.zeros(a.matrix.shape)
     for count, sigma in enumerate(sigmas):
         a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages.filled()[:,:,count])

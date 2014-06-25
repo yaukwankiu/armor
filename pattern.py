@@ -531,10 +531,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             fig.colorbar(im,cax=cax)
         #plt.show()                                          # wait, don't show!
 
-    def saveImage(self, dpi=200, imagePath=""):
+    def saveImage(self, imagePath="", matrix="",  dpi=200, **kwargs):
+        if matrix=="":
+            matrix = self.matrix
         if imagePath == "":
             imagePath = self.imagePath
-        self.makeImage()
+        self.makeImage(matrix, **kwargs)
         plt.savefig(imagePath, dpi=dpi)  
 
     #def printToScreen(self, matrix="", cmap=""):
