@@ -137,9 +137,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         a.restoreMatrix(0)
         a.setThreshold(thres)
         arr0 = a.matrix
-        #arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-05-14
-        arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
-
+        arr1    = ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-05-14
         a1 = dbz(matrix=arr1.real, name=a.name + "_" + testName + "_sigma" + str(sigma))
         L.append({  'sigma'     : sigma,
                     'a1'   :  a1,
@@ -164,7 +162,6 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         imagePath=outputFolder+a1.name+"_LOG_numerical_spec.png",
                         outputPath = outputFolder+a1.name+"_LOG_numerical_spec.dat",
                         cmap = 'jet',
-                        coastDataPath = a.coastDataPath
                         )
     a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
     #a.responseImages   *= (a.responseImages> responseThreshold)      # 2014-06-23
@@ -198,25 +195,23 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask, fill_value=-999.)
     #
     ##########################################
-    pickle.dump(a_LOGspec, open(outputFolder+ a_LOGspec.name + ".pydump","w"))    
-    print a_LOGspec.outputPath
     print "saving to:", a_LOGspec.imagePath
-    a_LOGspec.backupMatrix('goodCopy')
-    a_LOGspec.drawCoast()
+    try:
+        a_LOGspec.drawCoast()
+    except:
+        pass
     a_LOGspec.saveImage()
-    a_LOGspec.restoreMatrix('goodCopy')
+    print a_LOGspec.outputPath
     a_LOGspec.saveMatrix()
     a_LOGspec.histogram(display=False, outputPath=outputFolder+a1.name+"_LOGspec_numerical" +  \
                         ("_logScale" * useLogScale) + "_histogram.png")
+    pickle.dump(a_LOGspec, open(outputFolder+ a_LOGspec.name + ".pydump","w"))    
     plt.close()
     plt.plot(sigmas, a.LOGtotalSpec)      # plot(xs, ys)
     plt.title(a.name+" Total Spectrum for the L-O-G Kernel")
     plt.savefig(outputFolder + a.name + "_LOGspec_total"+  \
                         ("_logScale" * useLogScale) + "_histogram.png")
     pickle.dump(a.LOGtotalSpec, open(outputFolder+ a.name + "LOGtotalSpec.pydump","w"))        
-
-
-
     return a_LOGspec
 
 

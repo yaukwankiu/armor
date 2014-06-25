@@ -1400,12 +1400,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.vmax = 1.
         self.vmin = 0.
 
-    def powerSpec(self, thres=0, outputFolder="", toReload=False, spectrumType = "numerical", **kwargs):
+    def powerSpec(self, thres=0, outputFolder="", toReload=False, 
+                #spectrumType = "numerical", 
+                **kwargs):
         if outputFolder=="":
             outputFolder= self.outputFolder
         from armor.spectral import powerSpec1 as ps1
         #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
-        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder, toReload=toReload, spectrumType=spectrumType, **kwargs)
+        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder,
+                                                         toReload=toReload, 
+                                                         #spectrumType=spectrumType, 
+                                                         **kwargs)
         print "Results stored in file:", outputFolder
         print "Results stored in attribute:  a.LOGspec"
         a.LOGspec = a_LOGspec
@@ -2273,6 +2278,7 @@ class DBZstream:
                  dataExtension  = '.txt',
                  vmin           = -40.,          #added 2013-10-28
                  vmax           = 100.,
+                 coastDataPath  = "",           #2014-06-25
                  ):
         """
         construct the objects without loading them
@@ -2292,6 +2298,8 @@ class DBZstream:
             imageFolder = defaultImageFolder
         if taiwanReliefFolder =="":
             taiwanReliefFolder = dataFolder
+        if coastDataPath =="":
+            coastDataPath = taiwanReliefFolder + "taiwanCoast.dat"
         self.dataFolder = dataFolder            
         self.taiwanReliefFolder = taiwanReliefFolder
         self.lowerLeftCornerLatitudeLongitude   = lowerLeftCornerLatitudeLongitude
@@ -2302,6 +2310,7 @@ class DBZstream:
         self.dataExtension  = dataExtension
         self.vmin           = vmin
         self.vmax           = vmax
+        self.coastDataPath  = coastDataPath
         dbzList     = []
         dataFolder      = re.sub(r'\\', '/' , dataFolder)  # standardise:  g:\\ARMOR .. --> g:/ARMOR
         dataSource  = '-'.join(dataFolder.split('/')[-2:]) + '-'
@@ -2332,7 +2341,7 @@ class DBZstream:
                     upperRightCornerLatitudeLongitude=upperRightCornerLatitudeLongitude,
                     vmin    = self.vmin,
                     vmax    = self.vmax,
-                    coastDataPath = taiwanReliefFolder + "taiwanCoast.dat",
+                    coastDataPath = coastDataPath  , #2014-06-25
                     relief100DataPath = taiwanReliefFolder + "relief100.dat",
                     relief1000DataPath = taiwanReliefFolder + "relief1000.dat",
                     relief2000DataPath = taiwanReliefFolder + "relief2000.dat",

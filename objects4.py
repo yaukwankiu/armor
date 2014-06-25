@@ -51,18 +51,25 @@ monsoon = DS(name='monsoon',
 
 march2014       = DS(name='COMPREF_Rainband_March_2014',
                       dataFolder=dp.defaultRootFolder + 'data/march2014/QPESUMS/')
-
 march2014wrf11  = DS(name='WRF_Rainband_11_March_2014',
-                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140311/')
+                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140311/',
+                      coastDataPath = dp.defaultTaiwanReliefDataFolder150+ 'taiwanCoast.dat',      #2014-06-25
+                      )
 
 march2014wrf12  = DS(name='WRF_Rainband_12_March_2014',
-                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140312/')
+                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140312/' ,
+                      coastDataPath = dp.defaultTaiwanReliefDataFolder150+ 'taiwanCoast.dat',      #2014-06-25
+                      )
 
 march2014wrf13  = DS(name='WRF_Rainband_13_March_2014',
-                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140313/')
+                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/20140313/',
+                      coastDataPath = dp.defaultTaiwanReliefDataFolder150+ 'taiwanCoast.dat',      #2014-06-25
+                      )
 
 march2014wrf    = DS(name='WRF_Rainband_March_2014',
-                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/all/')
+                      dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/all/',
+                      coastDataPath = dp.defaultTaiwanReliefDataFolder150+ 'taiwanCoast.dat',      #2014-06-25
+                      )
 
 ###################################################################
 

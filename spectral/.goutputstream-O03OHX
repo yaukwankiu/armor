@@ -18,13 +18,6 @@ tests:
 [normalisation problems/ or not]
 """
 
-
-
-
-
-
-
-
 #################################################################################
 #   powerSpec3.py
 #   adapted from powerSpec2.py
@@ -150,11 +143,9 @@ shutil.copyfile(scriptFolder+thisScript, outputFolder+thisScript)
 
 #############################
 
-dataTimes    = ["20140312.0900", "20140312.1200", "20140312.1500"]
+dataTime    = "20140312.1200" 
 wrf         = ob.march2014wrf
-for dataTime in dataTimes:
-    wrf.load(dataTime)
-
+wrf.load(dataTime)
 wrf.cutUnloaded()
 
 
@@ -163,30 +154,25 @@ monsoon     = ob.march2014
 a   = monsoon("20140312.1140")[0]
 b   = monsoon("20140312.1150")[0]
 
-#ms  = monsoon("20140312.11") + monsoon("20140312.1200")
-
-ms = wrf
-
+ms  = monsoon("20140312.11") + monsoon("20140312.1200")
 print '\n'.join([v.name for v in ms])
-print "sleeping 3 seconds"
-time.sleep(3)
 
 print "outputFolder:", outputFolder
 
 for k in ms:
     k.load()
-    res = k.powerSpec(thres=0, outputFolder=outputFolder, 
+    k.powerSpec(thres=0, outputFolder=outputFolder, 
                 #spectrumType = "numerical",
                 responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
-    #k.powerSpec(thres=0, outputFolder=outputFolder, 
-    #            #spectrumType = "total",
-    #            responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
+    k.powerSpec(thres=0, outputFolder=outputFolder, 
+                #spectrumType = "total",
+                responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
 
-    try:
-        k.drawCoast()
-    except: 
-        pass
-    k.saveImage(imagePath=outputFolder0+k.name+'.png')
+    #try:
+    #    k.drawCoast()
+    #except: 
+    #    pass
+    #k.saveImage(imagePath=outputFolder0+k.name+'.png')
     
 
 print "outputFolder:", outputFolder
