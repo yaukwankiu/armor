@@ -126,6 +126,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      useLogScale= False,        #2014-06-23
                                      responseThreshold=0.01 ,      #2014-06-23
                                      scaleSpacePower=scaleSpacePower, # 2014-06-24
+                                     tipSideUp = True,               #2014-06-24
                                      toReload=True,):
     L=[]
     a.responseImages=[]
@@ -137,8 +138,11 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         a.restoreMatrix(0)
         a.setThreshold(thres)
         arr0 = a.matrix
-        #arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-05-14
-        arr1    = - ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
+        ###################################
+        #   key line
+        arr1    = (-1) ** tipSideUp * ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
+        #
+        ###################################
 
         a1 = dbz(matrix=arr1.real, name=a.name + "_" + testName + "_sigma" + str(sigma))
         L.append({  'sigma'     : sigma,

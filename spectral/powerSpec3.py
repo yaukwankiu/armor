@@ -177,7 +177,7 @@ for k in ms:
     k.load()
     res = k.powerSpec(thres=0, outputFolder=outputFolder, 
                 #spectrumType = "numerical",
-                responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
+                responseThreshold=3.0, scaleSpacePower=0, useLogScale=True)
     #k.powerSpec(thres=0, outputFolder=outputFolder, 
     #            #spectrumType = "total",
     #            responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
