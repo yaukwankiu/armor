@@ -163,9 +163,9 @@ monsoon     = ob.march2014
 a   = monsoon("20140312.1140")[0]
 b   = monsoon("20140312.1150")[0]
 
-#ms  = monsoon("20140312.11") + monsoon("20140312.1200")
+ms  = monsoon("20140312.11") + monsoon("20140312.12") + monsoon("20140312.13")
 
-ms = wrf
+#ms = wrf
 
 print '\n'.join([v.name for v in ms])
 print "sleeping 3 seconds"

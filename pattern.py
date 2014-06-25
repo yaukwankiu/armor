@@ -767,7 +767,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return a 
        
 
-    def drawCoast(self, intensity=9999, newCopy=False):
+    def drawCoast(self, intensity=9999, matrix="", newCopy=False):
         """
         adapted from DBZ.show2()
         """
@@ -775,14 +775,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             a = self.copy()  # no need for this i guess!!!
         else:
             a = self
+        if matrix =="":
+            matrix = a.matrix
         try:
             if a.coastData == "" : print "haha"      #test for existence
         except AttributeError:
             a.loadCoast()
             print "\n... coast data loaded from ", a.coastDataPath, "for ", a.name
         for v in a.coastData:
-            a.matrix[v[0], v[1]] = intensity
-            a.matrix.mask[v[0], v[1]] = 0
+            matrix[v[0], v[1]] = intensity
+            matrix.mask[v[0], v[1]] = 0
+
         return a 
 
     def recentreTaichungPark(self):
