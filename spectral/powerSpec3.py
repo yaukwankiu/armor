@@ -177,16 +177,18 @@ for k in ms:
     k.load()
     res = k.powerSpec(thres=0, outputFolder=outputFolder, 
                 #spectrumType = "numerical",
-                responseThreshold=0.1, scaleSpacePower=0, useLogScale=True)
+                responseThreshold=0.1, scaleSpacePower=2, 
+                #useLogScale=True,
+                useLogScale=False,)
     #k.powerSpec(thres=0, outputFolder=outputFolder, 
     #            #spectrumType = "total",
     #            responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
 
-    try:
-        k.drawCoast()
-    except: 
-        pass
-    k.saveImage(imagePath=outputFolder0+k.name+'.png')
+    #try:
+    #    k.drawCoast()
+    #except: 
+    #    pass
+    #k.saveImage(imagePath=outputFolder0+k.name+'.png')
     
 
 print "outputFolder:", outputFolder

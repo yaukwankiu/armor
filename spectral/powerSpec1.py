@@ -87,8 +87,8 @@ dbzList = ob.kongrey
 #   setting up the output folder
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
-
-shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)
+if __name__ == "__main__":
+    shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)
 
 #   defining the functions:
 #       filtering, averaging, oversampling
@@ -128,6 +128,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      scaleSpacePower=scaleSpacePower, # 2014-06-24
                                      tipSideUp = True,               #2014-06-24
                                      toReload=True,):
+
+    shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)  #2014-06-25
     L=[]
     a.responseImages=[]
     if toReload:
@@ -140,7 +142,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         arr0 = a.matrix
         ###################################
         #   key line
-        arr1    = (-1) ** tipSideUp * ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) * sigma**scaleSpacePower #2014-06-25
+        arr1    = (-1) ** tipSideUp * \
+                  ndimage.filters.gaussian_laplace(arr0, sigma=sigma, mode="constant", cval=0.0) *\
+                   sigma**scaleSpacePower       # #2014-06-25       
         #
         ###################################
 
@@ -155,13 +159,26 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         #a2.show()
         plt.close()
         #a1.histogram(display=False, outputPath=outputFolder+a1.name+"_histogram.png")
+
+        ##########################################
+        #   key - to set up an appropriate mask to cut out unwanted response signals
+        #   2014-06-24
+        mask    = (arr1 < responseThreshold)    #2014-06-24
+        #mask    += (ndimage.filters.median_filter(a.matrix,4)>0) #2014-06-25
+        mask    += (a.matrix <=0) + (arr1>10000)
+        arr1    = np.ma.array(arr1, mask=mask, fill_value=0)
+        #
+        ############################################
+
+
         ###############################################################################
         #   computing the spectrum, i.e. sigma for which the LOG has max response
         #   2014-05-02
         a.responseImages.append({'sigma'    : sigma,        
-                                 'matrix'   : arr1 * sigma**2,
+                                 'matrix'   : arr1 * sigma**scaleSpacePower,
                                  })
 
+    a.restoreMatrix(0)
     pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
 
     a_LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
@@ -170,28 +187,17 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                         cmap = 'jet',
                         coastDataPath = a.coastDataPath
                         )
-    a.responseImages    = np.dstack([v['matrix'] for v in a.responseImages])
-    #a.responseImages   *= (a.responseImages> responseThreshold)      # 2014-06-23
-    ##########################################
-    #   2014-06-24
-    mask    = (a.responseImages < responseThreshold)
-    a.responseImages = np.ma.array(a.responseImages, mask=mask, fill_value=0.)
-    #
-    ##########################################
-    #print 'shape:', a.responseImages.shape    #debug
-    ###
-    #   numerical spec / total spec fork
-    #if spectrumType == "numerical":
+    a.responseImages    = np.ma.dstack([v['matrix'] for v in a.responseImages])
     a.responseMax       = a.responseImages.max(axis=2)  # find max along the deepest dimension
+    a.responseMax       = np.ma.array(a.responseMax, mask = 0)
+    a.responseMax.mask += (a.responseMax <responseThreshold) + (a.matrix <=0)
 
-    #a.backupMatrix('goodcopy')
-    #a.matrix = a.responseMax
     if useLogScale:
         aResponseMax = np.log(a.responseMax)
     else:
-        aResponseMaxf = a.responseMax
+        aResponseMax = a.responseMax
     aResponseMax = np.ma.array(aResponseMax)
-    aResponseMax.mask = 0
+    #aResponseMax.mask = 0
     vmax = aResponseMax.max()
     vmin = aResponseMax.min()
     print "vmax, vmin for ", a.name, ":", vmax, vmin
