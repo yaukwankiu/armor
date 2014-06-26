@@ -290,6 +290,7 @@ def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
 
 
 def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, maxLongDiff=6,
+                     shiftStep = 2,     #2014-06-25
                       verbose=False,
                       outputFolder= dp.defaultLabLogsFolder ,
                       volumevolumeProportionWeight  =0.,
@@ -403,8 +404,8 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
                 #   match a1 with a similar rectangle on the wrf, scoring by correlation
                 #   we shift the kernel by 1/10 of it's width/height
                 #   4 times left, right, up and down respectively
-                iStep   = 1
-                jStep   = 1
+                iStep   = shiftStep
+                jStep   = shiftStep
                 print "points (corners for the region):", points     #debug
                 #print "iStep, jStep", iStep, jStep  #debug
                 
@@ -475,9 +476,9 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
 
         w1              = w.getWindow(iMin, jMin, height, width)
         w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
-        w1.imagePath    = outputFolder + w1.name + "_" + name + dp.defaultImageSuffix    # suffix = ".png"
-        print w1.imagePath  #debug
-        w1.show()           #debug
+        w1.imagePath    = outputFolder + w.name + "_window_" + name + "_with_shift"+ dp.defaultImageSuffix    # suffix = ".png"
+        #print w1.imagePath  #debug
+        #w1.show()           #debug
         w1.saveImage(imagePath=w1.imagePath)
     #
     #########

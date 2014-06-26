@@ -78,9 +78,9 @@ for a in obs.shortlist:
                                        'regions':regions,
                                         'outputFolder':outputFolder,
                                         'volumeProportionWeight':volumeProportionWeight,
-                                        'maxLatDiff': 4,
-                                        'maxLongDiff': 6,
-                                        
+                                        'maxLatDiff': 16,
+                                        'maxLongDiff': 24,
+                                        'shiftStep':  4,
                                        } ,
             outputFolder=outputFolder,
             toLoad=False,
