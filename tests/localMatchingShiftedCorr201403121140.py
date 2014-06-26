@@ -46,22 +46,18 @@ dss = p2.march12            #   edit here
 obs = dss.obs               #   edit here
 #obs.list = [v for v in obs.list if dss.wrfs[0][0].dataTime[:8] in v.dataTime]            #   (e.g. "20140312")
 #print "obs.list trimmed to length", len(obs.list)       #debug
-
 scriptFileName = thisScript
 volumeProportionWeight    = 0.1
 testName       = "shiftedCorr" + str(1-volumeProportionWeight)+"_and_volume" + str(volumeProportionWeight)
 outputFolder    = dp.defaultRootFolder + "labLogs/" + testName + "/" + dss.name + "/" +regionsString +'/'
-
-
 #obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
-
-obs.shortlist = [v for v in obs if v.dataTime>="20140312.1100" and v.dataTime<="20140312.1200"]   # trim it down
+obs.shortlist = [v for v in obs if v.dataTime>="20140312.1100" and v.dataTime<="20140312.1500"]   # trim it down
 
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
-shutil.copyfile(dp.defaultRootFolder+"python/armor/tests/"+ scriptFileName, outputFolder+ scriptFileName)
-shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/algorithms.py", outputFolder+ "algorithms.py")
-shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/pipeline.py", outputFolder+ "pipeline.py")
+shutil.copyfile(dp.defaultRootFolder+"python/armor/tests/"+ scriptFileName, outputFolder+ str(time.time()) + scriptFileName)
+shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/algorithms.py", outputFolder+ str(time.time()) + "algorithms.py")
+shutil.copyfile(dp.defaultRootFolder+"python/armor/patternMatching/pipeline.py", outputFolder+ str(time.time()) + "pipeline.py")
 
 ################################################################################
 #   looping the code
@@ -82,8 +78,8 @@ for a in obs.shortlist:
                                        'regions':regions,
                                         'outputFolder':outputFolder,
                                         'volumeProportionWeight':volumeProportionWeight,
-                                        'maxLatDiff': 4,
-                                        'maxLongDiff': 6,
+                                        'maxLatDiff': 16,
+                                        'maxLongDiff': 24,
                                         
                                        } ,
             outputFolder=outputFolder,

@@ -451,6 +451,32 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
 
     #   saving images
     w   = wrf(topScoreTime)[0].copy()   # temp image object
+
+    #########
+    #   2014-06-26
+    for R0 in regions:
+        name            = R0['name']
+        points          = R0['points']
+        weight          = R0['weight']
+        #   extract the "nonstandard kernel" as a1
+        iMax            = int(max(v[0] for v in points))
+        iMin            = int(min(v[0] for v in points))
+        jMax            = int(max(v[1] for v in points))
+        jMin            = int(min(v[1] for v in points))
+        height  = iMax-iMin
+        width   = jMax-jMin
+
+        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name
+        iMin           += iShift
+        jMin           += jShift
+
+        w1              = w.getWindow(iMin, jMin, height, width)
+        w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
+        w1.imagePath    = outputFolder + w1.name + "_" + name + dp.defaultImageSuffix    # suffix = ".png"
+        w1.saveImage(imagePath=w1.imagePath)
+    #
+    #########
+
     w.coastDataPath=obs[0].coastDataPath
     w.drawCoast()
     a_frames = (a_with_windows.matrix > 999)        # hack, getting the window frames for w
