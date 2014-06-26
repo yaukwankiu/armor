@@ -466,13 +466,15 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
         height  = iMax-iMin
         width   = jMax-jMin
 
-        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name
+        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name]
         iMin           += iShift
         jMin           += jShift
 
         w1              = w.getWindow(iMin, jMin, height, width)
         w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
         w1.imagePath    = outputFolder + w1.name + "_" + name + dp.defaultImageSuffix    # suffix = ".png"
+        print w1.imagePath  #debug
+        w1.show()           #debug
         w1.saveImage(imagePath=w1.imagePath)
     #
     #########
