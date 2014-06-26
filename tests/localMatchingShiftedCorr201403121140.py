@@ -78,8 +78,8 @@ for a in obs.shortlist:
                                        'regions':regions,
                                         'outputFolder':outputFolder,
                                         'volumeProportionWeight':volumeProportionWeight,
-                                        'maxLatDiff': 16,
-                                        'maxLongDiff': 24,
+                                        'maxLatDiff': 4,
+                                        'maxLongDiff': 6,
                                         
                                        } ,
             outputFolder=outputFolder,

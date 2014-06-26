@@ -455,9 +455,10 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
     #########
     #   2014-06-26
     for R0 in regions:
+        print "extracting window for", R0['name']
         name            = R0['name']
         points          = R0['points']
-        weight          = R0['weight']
+        #weight          = R0['weight']
         #   extract the "nonstandard kernel" as a1
         iMax            = int(max(v[0] for v in points))
         iMin            = int(min(v[0] for v in points))
@@ -465,10 +466,12 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
         jMin            = int(min(v[1] for v in points))
         height  = iMax-iMin
         width   = jMax-jMin
-
-        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name]
+        print "iMin, jMin=", iMin, jMin
+        print "topScoresRegional:",topScoresRegional     #debug
+        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name][0]
         iMin           += iShift
         jMin           += jShift
+        print "iShift, jShift=", iShift, jShift
 
         w1              = w.getWindow(iMin, jMin, height, width)
         w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
@@ -478,9 +481,11 @@ def shiftedCorr(obs, wrf, regions="", obsTime="", maxHourDiff=7,  maxLatDiff=4, 
         w1.saveImage(imagePath=w1.imagePath)
     #
     #########
-
-    w.coastDataPath=obs[0].coastDataPath
-    w.drawCoast()
+    try:
+        w.coastDataPath=obs[0].coastDataPath
+        w.drawCoast()
+    except:
+        print "can't draw coast for ", w.name
     a_frames = (a_with_windows.matrix > 999)        # hack, getting the window frames for w
     w.matrix += a_frames * 9999                     # hack, getting the window frames for w
     w.saveImage(imagePath=outputFolder+w.name+dp.defaultImageSuffix)
