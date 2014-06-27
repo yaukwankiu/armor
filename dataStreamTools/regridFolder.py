@@ -63,13 +63,17 @@ def regridFolder(sourceFolder, targetFolder, key1="", key2="", nokey1="asdfasdfx
     
     for fileName in L:
         print fileName,
-        b   = DBZ(name="", dataPath=sourceFolder+fileName, outputPath=targetFolder+fileName)
-        b.load()
-        b1  = regrid.regrid(b,a)
-        b1.outputPath   = b.outputPath
-        b1.save()
-        #print b.outputPath  #debug
-        #print b1.outputPath #debug
-        print ".. done"
+        if os.path.exists(targetFolder+fileName):
+            print "<--- exists!!"
+            continue
+        else:
+            b   = DBZ(name="", dataPath=sourceFolder+fileName, outputPath=targetFolder+fileName)
+            b.load()
+            b1  = regrid.regrid(b,a)
+            b1.outputPath   = b.outputPath
+            b1.save()
+            #print b.outputPath  #debug
+            #print b1.outputPath #debug
+            print ".. done"
 
     return {'timeSpent': int(time.time())-time0 }
