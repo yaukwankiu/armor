@@ -127,6 +127,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      responseThreshold=0.01 ,      #2014-06-23
                                      scaleSpacePower=scaleSpacePower, # 2014-06-24
                                      tipSideUp = True,               #2014-06-24
+                                     useOnlyPointsWithSignals=True,    #2014-06-26
                                      toReload=True,):
 
     shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)  #2014-06-25
@@ -165,8 +166,14 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         #   2014-06-24
         mask    = (arr1 < responseThreshold)    #2014-06-24
         #mask    += (ndimage.filters.median_filter(a.matrix,4)>0) #2014-06-25
-        mask    += (a.matrix <=0)
+        #mask    += (arr1>10000)
+        if useOnlyPointsWithSignals:
+            mask    += (a.matrix <=0)
+       
         arr1    = np.ma.array(arr1, mask=mask, fill_value=0)
+        print "useOnlyPointsWithSignals", useOnlyPointsWithSignals
+        plt.imshow(arr1) ; plt.show()  #debug
+        
         #
         ############################################
 
@@ -190,7 +197,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a.responseImages    = np.ma.dstack([v['matrix'] for v in a.responseImages])
     a.responseMax       = a.responseImages.max(axis=2)  # find max along the deepest dimension
     a.responseMax       = np.ma.array(a.responseMax, mask = 0)
-    a.responseMax.mask += (a.responseMax <responseThreshold) + (a.matrix <=0)
+    a.responseMax.mask += (a.responseMax <responseThreshold)
 
     if useLogScale:
         aResponseMax = np.log(a.responseMax)
@@ -198,7 +205,6 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         aResponseMax = a.responseMax
     aResponseMax = np.ma.array(aResponseMax)
     #aResponseMax.mask = 0
-    aResponseMax.mask = (aResponseMax > 10000)
     vmax = aResponseMax.max()
     vmin = aResponseMax.min()
     print "vmax, vmin for ", a.name, ":", vmax, vmin
@@ -235,8 +241,10 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a_LOGspec.saveImage()
     a_LOGspec.restoreMatrix('goodCopy')
     a_LOGspec.saveMatrix()
-    a_LOGspec.histogram(display=False, outputPath=outputFolder+a1.name+"_LOGspec_numerical" +  \
-                        ("_logScale" * useLogScale) + "_histogram.png")
+
+
+    a_LOGspec.histogram(display=False, matrix=a_LOGspec.matrix, outputPath=outputFolder+a1.name+\
+                        "_LOGspec_numerical" +  ("_logScale" * useLogScale) + "_histogram.png")
     plt.close()
     plt.plot(sigmas, a.LOGtotalSpec)      # plot(xs, ys)
     plt.title(a.name+" Total Spectrum for the L-O-G Kernel")

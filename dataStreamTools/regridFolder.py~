@@ -8,6 +8,24 @@ cd /media/TOSH~/ARMOR/python/
 from armor import defaultParameters as dp
 from armor.dataStreamTools import regridFolder as rf
 reload(rf)
+
+rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140519/",
+                dp.defaultRootFolder+"data/may2014/WRFEPS[regridded]/")
+
+rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140520/",
+                dp.defaultRootFolder+"data/may2014/WRFEPS[regridded]/")
+
+rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140521/",
+                dp.defaultRootFolder+"data/may2014/WRFEPS[regridded]/")
+
+rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140522/",
+                dp.defaultRootFolder+"data/may2014/WRFEPS[regridded]/")
+
+rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140523/",
+                dp.defaultRootFolder+"data/may2014/WRFEPS[regridded]/")
+
+###
+
 rf.regridFolder(dp.defaultRoot+"data/march2014/WRFEPS/20140311/",
                 dp.defaultRoot+"data/march2014/WRFEPS[regridded]/20140311/",
                 key1="WRF20")
@@ -29,10 +47,11 @@ a=pattern.a
 
 #   defining the functions
 
-def regridFolder(sourceFolder, targetFolder, key1="", key2="", nokey1="asdfasdfxxzzzfuck", referenceDBZ=pattern.a):
+def regridFolder(sourceFolder, targetFolder, key1="", key2="", nokey1="asdfasdfxxzzzfxxk", referenceDBZ=pattern.a):
     time0 = int(time.time())
     print "..............................................................."
     print "sourceFolder:", sourceFolder
+    print "targetFolder:", targetFolder
     print "starting time:", time.asctime()
     L   = os.listdir(sourceFolder)
     L   = [v for v in L if v.endswith(".txt") and key1 in v and key2 in v and (not nokey1 in v)]

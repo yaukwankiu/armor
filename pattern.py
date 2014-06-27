@@ -1785,13 +1785,15 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return analysis.gaussianSmooothNormalisedCorrelation(self, wrf, sigma, thres, 
                                                                showImage,saveImage, outputFolder)
 
-    def histogram(self, bins=20, outputPath="", display=True, **kwargs):
+    def histogram(self, bins=20, matrix="", outputPath="", display=True, **kwargs):
         """
         wrapping numpy.histogram
         http://docs.scipy.org/doc/numpy/reference/generated/numpy.histogram.html
         """
+        if matrix == "":
+            matrix = self.matrix
         plt.close()
-        hist, edges = np.histogram(a=self.matrix, bins=bins, **kwargs)
+        hist, edges = np.histogram(matrix, bins=bins, **kwargs)
         plt.plot(edges[:-1], hist)        
         if outputPath != "":
             plt.savefig(outputPath)

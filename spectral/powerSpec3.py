@@ -163,8 +163,8 @@ monsoon     = ob.march2014
 a   = monsoon("20140312.1140")[0]
 b   = monsoon("20140312.1150")[0]
 
-ms  = monsoon("20140312.11") + monsoon("20140312.12") + monsoon("20140312.13")
-
+#ms  = monsoon("20140312.11") + monsoon("20140312.12") + monsoon("20140312.13")
+ms  = monsoon("20140312.12")
 #ms = wrf
 
 print '\n'.join([v.name for v in ms])
@@ -177,9 +177,11 @@ for k in ms:
     k.load()
     res = k.powerSpec(thres=0, outputFolder=outputFolder, 
                 #spectrumType = "numerical",
-                responseThreshold=0.1, scaleSpacePower=2, 
+                responseThreshold=0.1, scaleSpacePower=0, 
                 #useLogScale=True,
-                useLogScale=False,)
+                useLogScale=True,
+                useOnlyPointsWithSignals=False,
+                )
     #k.powerSpec(thres=0, outputFolder=outputFolder, 
     #            #spectrumType = "total",
     #            responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)

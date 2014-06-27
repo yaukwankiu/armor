@@ -312,4 +312,6 @@ march13 = constructDSS(dp.defaultRootFolder+"data/march2014/QPESUMS/",
 march13.name    = "Rainband_13_March_2014"
 march13.obs.list= [v for v in march13.obs.list if '20140313' in v.dataTime]
 
-
+print "constructing may2014 DSS object":
+may2014 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
+                        dp.defaultRootFolder+"data/march2014/WRFEPS[regridded]/")
