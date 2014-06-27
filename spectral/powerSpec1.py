@@ -200,7 +200,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a.responseMax.mask += (a.responseMax <responseThreshold)
 
     if useLogScale:
-        aResponseMax = np.log(a.responseMax)
+        aResponseMax = np.log10(a.responseMax)
     else:
         aResponseMax = a.responseMax
     aResponseMax = np.ma.array(aResponseMax)
@@ -224,8 +224,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #   end numerical spec / total spec fork
     ###
     if useLogScale:
-        a_LOGspec.matrix = np.log(a_LOGspec.matrix)
-        a.LOGtotalSpec   = np.log(a.LOGtotalSpec)
+        a_LOGspec.matrix = np.log10(a_LOGspec.matrix)
+        a.LOGtotalSpec   = np.log10(a.LOGtotalSpec)
     a_LOGspec.setMaxMin()
     ##########################################
     #   2014-06-24
@@ -251,6 +251,44 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     plt.savefig(outputFolder + a.name + "_LOGspec_total"+  \
                         ("_logScale" * useLogScale) + "_histogram.png")
     pickle.dump(a.LOGtotalSpec, open(outputFolder+ a.name + "LOGtotalSpec.pydump","w"))        
+
+
+    ########################################################
+    #   3d plots
+    #   1. total/full spec
+    #   2. max spec
+    #   2014-06-27
+    dataSource = a.name
+    responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
+    X, Y    = np.meshgrid(range(20), sigmas)
+    I, J    = Y, X
+    Z       = np.zeros(X.shape)
+    z       = np.zeros(X.shape)
+    for j in range(len(responseImages)):
+        M       = responseImages[j]['matrix']
+        #M       = M*(M>0)
+        sigma   = responseImages[j]['sigma']
+        print j, sigma, '\t', M.min(), '\t', M.max()
+        h   = np.histogram(M, bins=20, range=(0,20))
+        z[j,:] = h[0]
+    Z   +=z 
+    plt.close()
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(X, np.log2(Y), np.log2(Z), rstride=1, cstride=1)  #key line
+    plt.title(dataSource+ " DBZ images\n"+\
+              "x-axis:  response intensity(from 0 to 20)\n"+\
+              "y-axis:  log_2(sigma)\n"+\
+              "z-axis:  log_2(count)\n")
+    plt.xlabel('response intensity')
+    plt.ylabel('log2(sigma)')
+    #   saving
+    fig.savefig(outputFolder+ "3d_numspec_plot_log2scale.png", dpi=200)
+    pickle.dump({"X": X, "Y":Y, "Z":Z}, open(outputFolder+'XYZ.pydump','w'))
+    #pickle.dump(fig,open(outputFolder+"fig.pydump","w"))   #doesn't work
+
+    #   end 3d plots
+    #########################################################
 
 
 
