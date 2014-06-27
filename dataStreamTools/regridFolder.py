@@ -10,19 +10,19 @@ from armor.dataStreamTools import regridFolder as rf
 reload(rf)
 
 rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140519/",
-                dp.defaultRootFolder+"data/may14/WRFEPS[regridded]/")
+                dp.defaultRootFolder+"data/may14/WRFEPS19[regridded]/")
 
 rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140520/",
-                dp.defaultRootFolder+"data/may14/WRFEPS[regridded]/")
+                dp.defaultRootFolder+"data/may14/WRFEPS20[regridded]/")
 
 rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140521/",
-                dp.defaultRootFolder+"data/may14/WRFEPS[regridded]/")
+                dp.defaultRootFolder+"data/may14/WRFEPS21[regridded]/")
 
 rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140522/",
-                dp.defaultRootFolder+"data/may14/WRFEPS[regridded]/")
+                dp.defaultRootFolder+"data/may14/WRFEPS22[regridded]/")
 
 rf.regridFolder(dp.defaultRootFolder+"data/may14/WRF/20140523/",
-                dp.defaultRootFolder+"data/may14/WRFEPS[regridded]/")
+                dp.defaultRootFolder+"data/may14/WRFEPS23[regridded]/")
 
 ###
 

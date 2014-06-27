@@ -13,13 +13,20 @@ wrfsFolder1 = root + "data/march2014/WEPS/20140311/"
 wrfsFolder2 = root + "data/march2014/WEPS/20140312/"
 wrfsFolder3 = root + "data/march2014/WEPS/20140313/"
 kongreywrf  = root + "data/KONG-REY/WRFEPS/"
-count = 0
+may19       = root + "data/may14/WRFEPS19[regridded]/"
+may20       = root + "data/may14/WRFEPS20[regridded]/"
+may21       = root + "data/may14/WRFEPS21[regridded]/"
+may22       = root + "data/may14/WRFEPS22[regridded]/"
+may23       = root + "data/may14/WRFEPS23[regridded]/"
 
-folderList = [kongreywrf]   #<-- change here
+folderList = [may19, may20, may21, may22, may23]   #<-- change here
+folderList=[may19]
+
+count = 0
 
 #for folder in [wrfsFolder1, wrfsFolder2, wrfsFolder3]:
 for folder in folderList:
-    print folder
+    print "Folder", folder
     #time.sleep(2)
     L   = os.listdir(folder)
     L   = [v for v in L if v.endswith(".txt") and not v.startswith("WRF")]  
