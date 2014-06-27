@@ -1021,7 +1021,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         phi_mean= phi_mean.reshape(vertical, horizontal)
 
         #  cutting it down to size (881,921)
-        return DBZ(name=self.name+'coarser', matrix =phi_mean,
+        return DBZ(name=self.name+'_coarser', matrix =phi_mean,
                     dt=self.dt, dx=self.dx, dy=self.dy,
                     dataPath  =self.dataPath[:-4]  +'_coarser' + self.dataPath[-4:],
                     outputPath=self.outputPath[:-4]+'_coarser' + self.outputPath[-4:],
