@@ -255,6 +255,7 @@ def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
                                       'score'   : score,
                                       'shift'   : shift,
                                       'weight'  : weight,
+                                      'upWindRegion': (iMin, jMin, height, width),
                                       })
 
                 
@@ -291,14 +292,12 @@ def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
         width   = jMax-jMin
         print "iMin, jMin=", iMin, jMin
         print "topScoresRegional:",topScoresRegional     #debug
-        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name][0]
-        iMin           += iShift
-        jMin           += jShift
-        print "iShift, jShift=", iShift, jShift
+        upWindRegion = [v['upWindRegion'] for v in topScoresRegional if v['name']==name][0]
+        print "upWindRegion:", upWindRegion
 
-        w1              = w.getWindow(iMin, jMin, height, width)
-        w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
-        w1.imagePath    = outputFolder + w.name + "_window_" + name + "_with_shift"+ dp.defaultImageSuffix    # suffix = ".png"
+        w1              = w.getWindow(*upWindRegion)
+        w1.name         = w.name + '_' + name + " Upwind Region"
+        w1.imagePath    = outputFolder + w.name + "_window_" + name + "_upWindRegion"+ dp.defaultImageSuffix    # suffix = ".png"
         #print w1.imagePath  #debug
         #w1.show()           #debug
         w1.saveImage(imagePath=w1.imagePath)

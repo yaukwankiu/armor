@@ -51,7 +51,7 @@ volumeProportionWeight    = 0.2
 testName       = "nonstanKer" + str(1-volumeProportionWeight)+"_and_volume" + str(volumeProportionWeight)
 outputFolder    = dp.defaultRootFolder + "labLogs/" + testName + "/" + dss.name + "/" +regionsString +'/'
 #obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
-obs.shortlist = [v for v in obs if "0000" in v.dataTime or "0300" in v.dataTime or "0600" in v.dataTime or "1200" in v.dataTime
+obs.shortlist = [v for v in obs if "0300" in v.dataTime or "0600" in v.dataTime or "1200" in v.dataTime
                             or "1500" in v.dataTime or "1800" in v.dataTime or "2100" in v.dataTime]   # trim it down
 
 print  "shortlist:"
@@ -82,7 +82,7 @@ for a in obs.shortlist:
             matchingAlgorithmArgs   = {'obsTime': obsTime, 'maxHourDiff':7, 
                                        'regions':regions,
                                        'k'      : 24,   # steps of semi-lagrangian advections performed
-                                        'shiibaArgs':{'searchWindowWidth':15, 'searchWindowHeight':11, },
+                                        'shiibaArgs':{'searchWindowWidth':11, 'searchWindowHeight':7, },
                                         'outputFolder':outputFolder,
                                         'volumeProportionWeight':volumeProportionWeight,
                                        } ,
