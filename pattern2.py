@@ -323,3 +323,28 @@ may20 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
 may20.name    = "Rainband_20_May_2014"
 may20.obs.list= [v for v in may20.obs.list if '20140520' in v.dataTime]
 
+
+may21 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
+                        dp.defaultRootFolder+"data/may14/WRFEPS21[regridded]/")
+may21.name    = "Rainband_21_May_2014"
+may21.obs.list= [v for v in may21.obs.list if '20140521' in v.dataTime]
+
+may22 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
+                        dp.defaultRootFolder+"data/may14/WRFEPS22[regridded]/")
+may22.name    = "Rainband_22_May_2014"
+may22.obs.list= [v for v in may22.obs.list if '20140522' in v.dataTime]
+
+may23 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
+                        dp.defaultRootFolder+"data/may14/WRFEPS23[regridded]/")
+may23.name    = "Rainband_23_May_2014"
+may23.obs.list= [v for v in may23.obs.list if '20140523' in v.dataTime]
+
+
+
+
+
+
+
+
+
+

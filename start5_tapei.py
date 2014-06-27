@@ -39,7 +39,7 @@ regionsString   = "_".join([v['name']+str(round(v['weight'],2)) for v in regions
 ##############################################
 ##
 #
-dss = p2.may20           #   <--- edit here
+dss = p2.may21           #   <--- edit here
 #
 ##
 #############################################
@@ -52,8 +52,9 @@ testName       = "nonstanKer" + str(1-volumeProportionWeight)+"_and_volume" + st
 outputFolder    = dp.defaultRootFolder + "labLogs/" + testName + "/" + dss.name + "/" +regionsString +'/'
 #obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
 obs.shortlist = [v for v in obs if "0300" in v.dataTime or "0600" in v.dataTime or "1200" in v.dataTime
-                            or "1500" in v.dataTime or "1800" in v.dataTime or "2100" in v.dataTime]   # trim it down
-
+                            or "1500" in v.dataTime or "1800" in v.dataTime or "2100" in v.dataTime \or
+                             "0000" in v.dataTime  or "0900" in v.dataTime ]
+obs.shortlist.sort(key=lambda v:v.dataTime]
 print  "shortlist:"
 print [v.name for v in obs.shortlist]
 print "sleeping 5 seconds"
@@ -75,22 +76,22 @@ for a in obs.shortlist:
     dss.unload()
     obsTime = a.dataTime
     pp.pipeline(dss=dss,
-            filteringAlgorithm      = filters.gaussianFilter,
-            filteringAlgorithmArgs  = {'sigma':5,
-                                       'stream_key': "obs" },
-            matchingAlgorithm       = algorithms.nonstandardKernel,
-            matchingAlgorithmArgs   = {'obsTime': obsTime, 'maxHourDiff':7, 
-                                       'regions':regions,
-                                       'k'      : 24,   # steps of semi-lagrangian advections performed
-                                        'shiibaArgs':{'searchWindowWidth':11, 'searchWindowHeight':7, },
-                                        'outputFolder':outputFolder,
-                                        'volumeProportionWeight':volumeProportionWeight,
-                                       } ,
-            outputFolder=outputFolder,
-            toLoad=False,
-            #remarks= "Covariance used, rather than correlation:  algorithms.py line 221:   tempScore   = a1.cov(w1)[0,1]",
-            remarks = "Correlation used"
-            )
+                filteringAlgorithm      = filters.gaussianFilter,
+                filteringAlgorithmArgs  = {'sigma':5,
+                                           'stream_key': "obs" },
+                matchingAlgorithm       = algorithms.nonstandardKernel,
+                matchingAlgorithmArgs   = {'obsTime': obsTime, 'maxHourDiff':7, 
+                                           'regions':regions,
+                                           'k'      : 24,   # steps of semi-lagrangian advections performed
+                                            'shiibaArgs':{'searchWindowWidth':11, 'searchWindowHeight':7, },
+                                            'outputFolder':outputFolder,
+                                            'volumeProportionWeight':volumeProportionWeight,
+                                           } ,
+                outputFolder=outputFolder,
+                toLoad=False,
+                #remarks= "Covariance used, rather than correlation:  algorithms.py line 221:   tempScore   = a1.cov(w1)[0,1]",
+                remarks = "Correlation used"
+                )
 
 
 print 'start time:', startTime

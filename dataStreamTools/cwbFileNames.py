@@ -19,9 +19,9 @@ may21       = root + "data/may14/WRFEPS21[regridded]/"
 may22       = root + "data/may14/WRFEPS22[regridded]/"
 may23       = root + "data/may14/WRFEPS23[regridded]/"
 
-folderList = [may19, may20, may21, may22, may23]   #<-- change here
+folderList = [ may21, may22, may23]   #<-- change here
 
-folderList=[may20]
+#folderList=[may20]
 
 count = 0
 
