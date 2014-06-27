@@ -16,7 +16,7 @@ from armor.patternMatching import pipeline as pp, algorithms
 from armor.filter import filters
 ##################################################################################
 #   set up
-scriptFileName = "start4_taipei_taichung_tainan.py"
+scriptFileName = "start5_taipei.py"
 
 hualien4        = misc.getFourCorners(dp.hualienCounty)
 yilan4          = misc.getFourCorners(dp.yilanCounty)
@@ -27,9 +27,9 @@ taipei4         = misc.getFourCorners(dp.taipeiCounty)
 taitung4        = misc.getFourCorners(dp.taitungCounty)
 regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
             #{'name': "kaohsiung",   'points':kaohsiung4,    'weight':0.5},  
-            {'name': "taipei",      'points':taipei4,       'weight':0.4}, 
-            {'name': "taichung",    'points':taichung4,     'weight':0.2},
-            {'name': "tainan",      'points':tainan4,       'weight':0.4},
+            {'name': "taipei",      'points':taipei4,       'weight':1.0}, 
+            #{'name': "taichung",    'points':taichung4,     'weight':0.2},
+            #{'name': "tainan",      'points':tainan4,       'weight':0.4},
             #{'name':"taitung",      'points':taitung4, 'weight':0.25},
             #{'name':"yilan",        'points':yilan4, 'weight':0.25},        # no need to add to 1
             ]

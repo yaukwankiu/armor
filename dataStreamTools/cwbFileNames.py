@@ -20,13 +20,15 @@ may22       = root + "data/may14/WRFEPS22[regridded]/"
 may23       = root + "data/may14/WRFEPS23[regridded]/"
 
 folderList = [may19, may20, may21, may22, may23]   #<-- change here
-folderList=[may19]
+
+folderList=[may20]
 
 count = 0
 
 #for folder in [wrfsFolder1, wrfsFolder2, wrfsFolder3]:
 for folder in folderList:
     print "Folder", folder
+    os.makedirs(folder+"a/")
     #time.sleep(2)
     L   = os.listdir(folder)
     L   = [v for v in L if v.endswith(".txt") and not v.startswith("WRF")]  
@@ -52,6 +54,6 @@ for folder in folderList:
         f2      = "WRF" + modelNo + "." + year2 + month2 + day2 + "." + hour2 + minute2 + suffix
         print "->", f2
         try:
-            os.rename(folder+f1, folder+f2)
+            os.rename(folder+f1, folder+"a/"+f2)
         except:
             print f1, "not found!!"

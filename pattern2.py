@@ -312,8 +312,14 @@ march13 = constructDSS(dp.defaultRootFolder+"data/march2014/QPESUMS/",
 march13.name    = "Rainband_13_March_2014"
 march13.obs.list= [v for v in march13.obs.list if '20140313' in v.dataTime]
 
-print "constructing may2014 DSS object"
+print "constructing may2014 DSS objects"
 may19 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
                         dp.defaultRootFolder+"data/may14/WRFEPS19[regridded]/")
 may19.name    = "Rainband_19_May_2014"
 may19.obs.list= [v for v in may19.obs.list if '20140519' in v.dataTime]
+
+may20 = constructDSS(dp.defaultRootFolder+"data/may14/QPESUMS/",
+                        dp.defaultRootFolder+"data/may14/WRFEPS20[regridded]/")
+may20.name    = "Rainband_20_May_2014"
+may20.obs.list= [v for v in may20.obs.list if '20140520' in v.dataTime]
+

@@ -275,6 +275,36 @@ def nonstandardKernel(obs, wrf, regions, shiibaAlg="",
 
     #   saving images
     w   = wrf(topScoreTime)[0].copy()   # temp image object
+    #########
+    #   2014-06-26
+    for R0 in regions:
+        print "extracting window for", R0['name']
+        name            = R0['name']
+        points          = R0['points']
+        #weight          = R0['weight']
+        #   extract the "nonstandard kernel" as a1
+        iMax            = int(max(v[0] for v in points))
+        iMin            = int(min(v[0] for v in points))
+        jMax            = int(max(v[1] for v in points))
+        jMin            = int(min(v[1] for v in points))
+        height  = iMax-iMin
+        width   = jMax-jMin
+        print "iMin, jMin=", iMin, jMin
+        print "topScoresRegional:",topScoresRegional     #debug
+        iShift, jShift = [v['shift'] for v in topScoresRegional if v['name']==name][0]
+        iMin           += iShift
+        jMin           += jShift
+        print "iShift, jShift=", iShift, jShift
+
+        w1              = w.getWindow(iMin, jMin, height, width)
+        w1.name         = w.name + '_' + name + " with shift: (x, y) = " + str((jShift, iShift))
+        w1.imagePath    = outputFolder + w.name + "_window_" + name + "_with_shift"+ dp.defaultImageSuffix    # suffix = ".png"
+        #print w1.imagePath  #debug
+        #w1.show()           #debug
+        w1.saveImage(imagePath=w1.imagePath)
+    #
+    #########    
+    
     w.coastDataPath=obs[0].coastDataPath
     w.drawCoast()
     a_frames = (a_with_windows.matrix > 999)        # hack, getting the window frames for w
