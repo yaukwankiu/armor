@@ -8,3 +8,4 @@
 *.log
 *.log.txt
 *log.txt
+defaultParameters.py
