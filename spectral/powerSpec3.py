@@ -169,11 +169,15 @@ b   = monsoon("20140312.1150")[0]
 
 
 window = ""
-window   = (i1, j1, i2-i1, j2-j1)
+#window   = (i1, j1, i2-i1, j2-j1)
+window   = (0,0,880 ,920)
 ms = monsoon
 
-#ms  = monsoon("20140312.12")
+ms  = monsoon("20140312.12")
 #ms = wrf
+ms = monsoon("20140311.1140")
+
+ms = monsoon("20140312.0900")
 
 print '\n'.join([v.name for v in ms])
 print "sleeping 3 seconds"
@@ -190,6 +194,8 @@ for k in ms:
         #    count+=1
         #    k1.show      #debug
         print "k1:", k1.name, k1.matrix.shape, k1.matrix.sum()
+    else:
+        k1=k
     if np.abs(k1.matrix.sum()) < 100 or k1.matrix.shape==(0,0):
         continue
     res =   k1.powerSpec(thres=0, outputFolder=outputFolder, 

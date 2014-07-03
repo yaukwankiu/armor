@@ -1026,7 +1026,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                     dataPath  =self.dataPath[:-4]  +'_coarser' + self.dataPath[-4:],
                     outputPath=self.outputPath[:-4]+'_coarser' + self.outputPath[-4:],
                     imagePath =self.imagePath[:-4] +'_coarser' + self.imagePath[-4:],
-                    coastDataPath=self.coastDataPath,
+                    #coastDataPath=self.coastDataPath,
                     database=self.database,
                     cmap=self.cmap, vmin=self.vmin, vmax=self.vmax,
                     coordinateOrigin = (self.coordinateOrigin[0] //scale,\
@@ -1408,6 +1408,20 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
     def powerSpec(self, thres=0, outputFolder="", toReload=False, 
                 #spectrumType = "numerical", 
                 **kwargs):
+        """
+        updated 2014-07-03 
+        new pipeline:
+            WRF/RADAR  ->   response layers for various sigmas -> 1. max spec map
+                                                          2. max internsity map
+                                                          3. sigma ranges
+
+                                                       -> 1.    3D max spec chart
+                                                          2.    3D total spec chart
+                                                      
+        
+        """
+
+
         if outputFolder=="":
             outputFolder= self.outputFolder
         from armor.spectral import powerSpec1 as ps1

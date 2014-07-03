@@ -292,6 +292,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     open(outputFolder+str(time.time())+ a.name+ \
                        'powerSpec1_output_log_sigma_and_min-max_responses.log.txt','w').write(logString)
     print logString
+    print ".... saved to ", outputFolder
+
     Z   +=z 
     plt.close()
     fig = plt.figure()
