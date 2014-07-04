@@ -1405,11 +1405,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.vmax = 1.
         self.vmin = 0.
 
-    def powerSpec(self, thres=0, outputFolder="", toReload=False, 
-                #spectrumType = "numerical", 
-                **kwargs):
+    def powerSpec(self, *args, **kwargs):
         """
+        moved to armor/analysis.py 2014-07-04
         updated 2014-07-03 
+            including the new 3dplotting function from lin yen ting
+            armor.graphics.spectrum3d
         new pipeline:
             WRF/RADAR  ->   response layers for various sigmas -> 1. max spec map
                                                           2. max internsity map
@@ -1420,23 +1421,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                                                       
         
         """
+        from armor import analysis
+        return analysis.powerSpec(self, *args, **kwargs)
 
-
-        if outputFolder=="":
-            outputFolder= self.outputFolder
-        from armor.spectral import powerSpec1 as ps1
-        #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
-        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder,
-                                                         toReload=toReload, 
-                                                         #spectrumType=spectrumType, 
-                                                         **kwargs)
-        print "Results stored in file:", outputFolder
-        print "Results stored in attribute:  a.LOGspec"
-        a.LOGspec = a_LOGspec
-        return a_LOGspec
-
-
-        
     #   end new objects from old
     #############################################################
 

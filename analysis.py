@@ -81,6 +81,7 @@ except:
 #from armor.geomtery import frames as fr
 
 ##########################################################################
+#   Shiiba-ABLER
 def shiiba(a,b, gridSize=20, searchWindowHeight=9, searchWindowWidth=9,\
                  display=False, useRecursion=True, toFile="", 
                  centre=(0,0),
@@ -166,6 +167,9 @@ def shiibaLocal(a, b, windowSize=100, iRange=range(000, 881, 100),\
     results['prediction']   = a1
     results['vect']         = vect
     return results
+
+###############################################################################
+#   pattern matching
 
 def gaussianSmooothNormalisedCorrelation(obs, wrf, sigma=20, sigmaWRF=5, thres=15, showImage=True,
                                          saveImage=True,  outputFolder=""):
@@ -288,6 +292,46 @@ def clustering():
     
 def HMM():
     pass
+
+###############################################################################
+#   power spectrum
+
+
+
+def powerSpec(a, thres=0, outputFolder="", toReload=False, 
+            #spectrumType = "numerical", 
+            **kwargs):
+    """
+    updated 2014-07-03 
+        including the new 3dplotting function from lin yen ting
+        armor.graphics.spectrum3d
+    new pipeline:
+        WRF/RADAR  ->   response layers for various sigmas -> 1. max spec map
+                                                      2. max internsity map
+                                                      3. sigma ranges
+
+                                                   -> 1.    3D max spec chart
+                                                      2.    3D total spec chart
+                                                  
+    
+    """
+
+    if outputFolder=="":
+        outputFolder= self.outputFolder
+    from armor.spectral import powerSpec1 as ps1
+    #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
+    a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(a, thres=0, outputFolder=outputFolder,
+                                                     toReload=toReload, 
+                                                     #spectrumType=spectrumType, 
+                                                     **kwargs)
+    print "Results stored in file:", outputFolder
+    print "Results stored in attribute:  a.LOGspec"
+    a.LOGspec = a_LOGspec
+    return a_LOGspec
+
+
+##############################################################################s
+
 
 def main():
     pass
