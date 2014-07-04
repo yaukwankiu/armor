@@ -331,16 +331,11 @@ def powerSpec(a, thres=0, outputFolder="", toReload=False,
     # all convolution results stored in a.responseImages
     #   max spectrum:  a.LOGspec
     #   convolution intensity corresponding to a.LOGspec: a.responseMax
-    
+    spectrum3d.
     print "Results stored in file:", outputFolder
     print "Results stored in attribute:  a.maxSpec"
-    maxSpec = psResults['maxSpec']
-    XYZmax  = psResults['XYZmax']
-    XYZtotal= psResults['XYZtotal']
-
-    spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
-    spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
-    return psResults
+    a.maxSpec = psResults['maxSpec']
+    return a.maxSpec
 
 
 ##############################################################################s

@@ -106,11 +106,6 @@ elif computer =='Qoo-PC':
 #    hardDriveLetter = 'D'    
 
 import os
-if os.sep == "/":
-    usbRoot = '/media/%s/ARMOR/' % usbDriveName
-    externalHardDriveRoot = '/media/%s/ARMOR/' % externalHardDriveName
-    externalHardDriveRoot2 = '/media/%s/ARMOR/' % externalHardDriveName2
-    hardDriveRoot = '/%s/ARMOR/' % hardDriveName
 
 if computer == 'acer-laptop' and os.getcwd() == '/home/k/ARMOR/python':
     usbRoot   = '/home/k/ARMOR/python'
@@ -118,6 +113,11 @@ if computer == 'acer-laptop' and os.getcwd() == '/home/k/ARMOR/python':
     externalHardDriveRoot2 = '/home/k/ARMOR/python'
     hardDriveRoot = '/home/k/ARMOR/python'
     
+elif os.sep == "/":
+    usbRoot = '/media/%s/ARMOR/' % usbDriveName
+    externalHardDriveRoot = '/media/%s/ARMOR/' % externalHardDriveName
+    externalHardDriveRoot2 = '/media/%s/ARMOR/' % externalHardDriveName2
+    hardDriveRoot = '/%s/ARMOR/' % hardDriveName
 
 else:
     usbRoot = '%s:/ARMOR/' % usbDriveLetter

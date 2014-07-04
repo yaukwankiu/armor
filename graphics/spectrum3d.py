@@ -65,14 +65,14 @@ def spectrum3d(XYZ, **kwargs):
     ax.set_zlabel(' 10^N')
 
     try:
-        folder = kwargs['folder']
+        outputFolder = kwargs['outputFolder']
     except(KeyError):
-        folder = os.getcwd()
+        outputFolder = os.getcwd()
 
     try:
-        filename = kwargs['savename']
-        figure.savefig(folder + '/' + filename)
-        print "Save figure with name and path %s" % folder + '/' + filename
+        fileName = kwargs['fileName']
+        figure.savefig( outputFolder +fileName)
+        print "Save figure with name and path %s" % outputFolder +fileName
     except(KeyError):
         print "figure not saved."
 

@@ -36,9 +36,9 @@ from armor import defaultParameters as dp
 import numpy as np
 import matplotlib.pyplot as plt
 
-reload(ps); a_LOGspec = ps.testA(dbzList=ob.kongrey)
+reload(ps); a.LOGspec = ps.testA(dbzList=ob.kongrey)
 
-reload(ps); a_LOGspec = ps.testAwrf(dbzList=ob.kongreywrf)
+reload(ps); a.LOGspec = ps.testAwrf(dbzList=ob.kongreywrf)
 
 
 """
@@ -200,7 +200,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     
     #
     ######################################
-    a_LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
+    a.LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
                         imagePath=outputFolder+a1.name+"_LOG_numerical_spec.png",
                         outputPath = outputFolder+a1.name+"_LOG_numerical_spec.dat",
                         cmap = 'jet',
@@ -210,6 +210,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a.responseMax       = a.responseImages.max(axis=2)  # find max along the deepest dimension
     a.responseMax       = np.ma.array(a.responseMax, mask = 0)
     a.responseMax.mask += (a.responseMax <responseThreshold)
+    a.maxSpec = a.LOGspec
 
     if useLogScale:
         aResponseMax = np.log10(a.responseMax)
@@ -230,36 +231,39 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                 vmax = vmax, vmin=vmin,
                 cmap='jet')
     #a.restoreMatrix('goodcopy')
-    a_LOGspec.matrix = np.zeros(a.matrix.shape)
+    a.LOGspec.matrix = np.zeros(a.matrix.shape)
     for count, sigma in enumerate(sigmas):
-        a_LOGspec.matrix += sigma * (a.responseMax == a.responseImages.filled()[:,:,count])
-    mask = (a_LOGspec.matrix ==0)
-    a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask)
+        a.LOGspec.matrix += sigma * (a.responseMax == a.responseImages.filled()[:,:,count])
+    mask = (a.LOGspec.matrix ==0)
+    a.LOGspec.matrix = np.ma.array(a.LOGspec.matrix, mask=mask)
     #else:
     a.LOGtotalSpec    = a.responseImages.sum(axis=0).sum(axis=0)  # leaving the deepest dimension -the sigmas
     #   end numerical spec / total spec fork
     ###
     if useLogScale:
-        a_LOGspec.matrix = np.log10(a_LOGspec.matrix)
+        a.LOGspec.matrix = np.log10(a.LOGspec.matrix)
         a.LOGtotalSpec   = np.log10(a.LOGtotalSpec)
-    a_LOGspec.setMaxMin()
+    a.LOGspec.setMaxMin()
     ##########################################
     #   2014-06-24
-    #mask    = (a_LOGspec.matrix <=0.001)
-    #a_LOGspec.matrix = np.ma.array(a_LOGspec.matrix, mask=mask, fill_value=-999.)
+    #mask    = (a.LOGspec.matrix <=0.001)
+    #a.LOGspec.matrix = np.ma.array(a.LOGspec.matrix, mask=mask, fill_value=-999.)
     #
     ##########################################
-    pickle.dump(a_LOGspec, open(outputFolder+ a_LOGspec.name + ".pydump","w"))    
-    print a_LOGspec.outputPath
-    print "saving to:", a_LOGspec.imagePath
-    a_LOGspec.backupMatrix('goodCopy')
-    a_LOGspec.drawCoast()
-    a_LOGspec.saveImage()
-    a_LOGspec.restoreMatrix('goodCopy')
-    a_LOGspec.saveMatrix()
+    pickle.dump(a.LOGspec, open(outputFolder+ a.LOGspec.name + ".pydump","w"))    
+    print a.LOGspec.outputPath
+    print "saving to:", a.LOGspec.imagePath
+    a.LOGspec.backupMatrix('goodCopy')
+    try:
+        a.LOGspec.drawCoast()
+    except:
+        pass
+    a.LOGspec.saveImage()
+    a.LOGspec.restoreMatrix('goodCopy')
+    a.LOGspec.saveMatrix()
 
 
-    a_LOGspec.histogram(display=False, matrix=a_LOGspec.matrix, outputPath=outputFolder+a1.name+\
+    a.LOGspec.histogram(display=False, matrix=a.LOGspec.matrix, outputPath=outputFolder+a1.name+\
                         "_LOGspec_numerical" +  ("_logScale" * useLogScale) + "_histogram.png")
     plt.close()
     plt.plot(sigmas, a.LOGtotalSpec)      # plot(xs, ys)
@@ -267,7 +271,14 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     plt.savefig(outputFolder + a.name + "_LOGspec_total"+  \
                         ("_logScale" * useLogScale) + "_histogram.png")
     pickle.dump(a.LOGtotalSpec, open(outputFolder+ a.name + "LOGtotalSpec.pydump","w"))        
-
+    
+    #a.LOGtotalSpec     = dbz(matrix = a.LOGtotalSpec,
+    #                           name= a.name + "Laplacian-of-Gaussian_total_spectrum",
+    #                            imagePath=outputFolder+a1.name+"_LOG_total_spec.png",
+    #                            outputPath = outputFolder+a1.name+"_LOG_total_spec.dat",
+    #                            cmap = 'jet',
+    #                            coastDataPath = a.coastDataPath
+    #                            )    #2014-07-04
 
     ########################################################
     #   3d plots
@@ -289,12 +300,16 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         logString +=str(j) + " " + str(sigma)+ '\t'+str( M.min())+ '\t'+str( M.max()) +'\n'
         h   = np.histogram(M, bins=bins )
         z[j,:] = h[0]
-    open(outputFolder+str(time.time())+ a.name+ \
-                       'powerSpec1_output_log_sigma_and_min-max_responses.log.txt','w').write(logString)
+    open(outputFolder+str(time.time())+ \
+                       'totalSpec' + a.name+ \
+                       '.log.txt','w').write(logString)
     print logString
     print ".... saved to ", outputFolder
 
     Z   +=z 
+    XYZ = {"X": X, "Y":Y, "Z":Z}
+    pickle.dump(XYZ, open(outputFolder+str(time.time())+a.name+'XYZ.pydump','w'))
+
     plt.close()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -307,16 +322,49 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     plt.ylabel('log2(sigma)')
     #   saving
     fig.savefig(outputFolder+ str(time.time())+a.name+"3d_numspec_plot_log2scale.png", dpi=200)
-    pickle.dump({"X": X, "Y":Y, "Z":Z}, open(outputFolder+str(time.time())+a.name+'XYZ.pydump','w'))
-    #pickle.dump(fig,open(outputFolder+"fig.pydump","w"))   #doesn't work
+
+    ###############################################################
+    #   max spec
+    
+    #bins=[0.00000000001, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    #dataSource = a.name
+    #responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
+    X, Y    = np.meshgrid(range(len(bins)-1), sigmas)
+    I, J    = Y, X
+    Z       = np.zeros(X.shape)
+    z       = np.zeros(X.shape)
+    logString = "j sigma \t M.min() \t M.max()\n"
+    for j in range(len(responseImages)):
+        M       = responseImages[j]['matrix']
+        sigma   = responseImages[j]['sigma']
+        M       = M*(M>0)*(a.maxSpec.matrix==sigma)
+        
+        logString +=str(j) + " " + str(sigma)+ '\t'+str( M.min())+ '\t'+str( M.max()) +'\n'
+        h   = np.histogram(M, bins=bins )
+        z[j,:] = h[0]
+    open(outputFolder+str(time.time())+ \
+                       'maxSpec' + a.name+ \
+                       '.log.txt','w').write(logString)
+    print logString
+    print ".... saved to ", outputFolder
+
+    Z   +=z 
+    XYZ2 = {"X": X, "Y":Y, "Z":Z}
+    pickle.dump(XYZ2, open(outputFolder+str(time.time())+a.name+'XYZmax.pydump','w'))
+
 
     #   end 3d plots
     #########################################################
 
 
-
-    return a_LOGspec
-
+   
+    return {'maxSpec'   : a.maxSpec,
+            'responseMax'   : a.responseMax,
+            'XYZtotal'       : XYZ,
+            'XYZmax'        :XYZ2
+            'responseImages'    : a.responseImages,
+            
+            }
 
 def plotting(folder):
     pass
@@ -331,8 +379,8 @@ def testA(dbzList=ob.march2014,sigmas=sigmas):
         a.matrix = a.threshold(thresPreprocessing).matrix
         a1 = averaging(a)
         filtering(a1)
-        a_LOGspec = getLaplacianOfGaussianSpectrum(a1, sigmas=sigmas)
-    #return a_LOGspec
+        a.LOGspec = getLaplacianOfGaussianSpectrum(a1, sigmas=sigmas)
+    #return a.LOGspec
 
     
 #def testAwrf(dbzList=ob.kongreywrf, sigmas=sigmas):
@@ -343,8 +391,8 @@ def testAwrf(dbzList=ob.march2014wrf, sigmas=sigmas):
         #a1 = averaging(a)
         a1=a
         filtering(a1)
-        a_LOGspec = getLaplacianOfGaussianSpectrum(a1, sigmas=sigmas)
-    #return a_LOGspec
+        a.LOGspec = getLaplacianOfGaussianSpectrum(a1, sigmas=sigmas)
+    #return a.LOGspec
    
 
 def testB():

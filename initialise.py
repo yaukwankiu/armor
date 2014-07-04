@@ -1,5 +1,3 @@
-#   lablog-
-#   version:  2014-01-24
 from armor import pattern
 from armor import defaultParameters as dp
 from armor.defaultParameters import *
