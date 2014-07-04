@@ -88,7 +88,7 @@ dbzList = ob.kongrey
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 if __name__ == "__main__":
-    shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)
+    shutil.copyfile(scriptFolder+thisScript, outputFolder+ str(int(time.time()))+thisScript)
 
 #   defining the functions:
 #       filtering, averaging, oversampling
@@ -130,7 +130,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      useOnlyPointsWithSignals=True,    #2014-06-26
                                      toReload=True,):
 
-    shutil.copyfile(scriptFolder+thisScript, outputFolder+ thisScript)  #2014-06-25
+    shutil.copyfile(scriptFolder+thisScript, outputFolder+ str(int(time.time())) +thisScript)  #2014-06-25
     L=[]
     a.responseImages=[]
     if toReload:
@@ -285,7 +285,10 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #   1. total/full spec
     #   2. max spec
     #   2014-06-27
-    bins=[0., 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    #bins=[0., 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    #bins=[0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    #bins=[0.008, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     dataSource = a.name
     responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
     X, Y    = np.meshgrid(range(len(bins)-1), sigmas)
