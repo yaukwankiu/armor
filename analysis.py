@@ -69,7 +69,7 @@ import numpy as np
 import numpy.ma as ma
 from . import pattern
 from graphics import spectrum3d #2014-07-04
-from graphics import plotContours #2014-07-04
+from graphics import plotContour #2014-07-04
 
 dbz = pattern.DBZ
 import time
