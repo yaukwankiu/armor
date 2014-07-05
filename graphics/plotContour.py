@@ -1,108 +1,141 @@
 
-import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import time
+import random
+import os
 
-def writeTxt(file_path, data):
+
+def plotContour(XYZ, XYZ2=None, **kwargs):
+    x = XYZ['X'][0]
+    y = np.zeros([len(XYZ['Y'])])
+
+    for i in range(0, len(y)):
+        y[i] = XYZ['Y'][i][0]
+
+    X, Y = np.meshgrid(y, x)
+
+    Z = np.transpose(XYZ['Z'])
+    for i in range(0, len(Z)):
+        for j in range(0, len(Z[i])):
+            if Z[i][j] > 0:
+                Z[i][j] = np.log10(Z[i][j])
+
+    if XYZ2 is not None:
+        Z2 = np.transpose(XYZ2['Z'])
+        for i in range(0, len(Z2)):
+            for j in range(0, len(Z2[i])):
+                if Z2[i][j] > 0:
+                    Z2[i][j] = np.log10(Z2[i][j])
     try:
-        f = open(file_path, 'w')
-        for i in range(0, len(data)):
-            line = ""
-            if type(data[i]) != list and type(data[i]) != np.ndarray:
-                line = str(data[i])
-            else:
-                for j in range(0, len(data[i])):
-                    line = line + str(data[i][j]) + " "
-            line = line + '\n'
-            f.write(line)
-    except(IOError):
-        print "Can't read file %s, please check file and folder existence or\
- file status." % file_path
+        rand_cmap = kwargs['random_cmap']
+    except(KeyError):
+        rand_cmap = False
+
+    try:
+        title = kwargs['title']
+    except(KeyError):
+        title = ""
+
+    try:
+        name1 = kwargs['name1']
+    except(KeyError):
+        name1 = ""
+    try:
+        name2 = kwargs['name2']
+    except(KeyError):
+        name2 = ""
 
 
-def main(file_name):
-    xyz = pickle.load(open(file_name, 'r'))
-    data = list()
-    row_length = len(xyz['X'])
-    col_length = len(xyz['X'][0])
-
-    X_chart = xyz['X']
-    Y_chart = xyz['Y']
-    Z_chart = xyz['Z']
-
-    for i in range(0, row_length):
-        for j in range(0, col_length):
-            data.append([X_chart[i][j], Y_chart[i][j], Z_chart[i][j]])
-
-    data.insert(0, "x y z")
-
-    writeTxt('WRF.txt', data)
-
-    data.pop(0)
-
-    return data
-
-
-def dataMapping(data, row_num):
-
-    mapped_dat = list()
-    counter = 0
-    row = list()
-    y = list()
-    for i in range(0, len(data)):
-        if not data[i][2] == 0:
-            row.append(np.log(data[i][2]))
+    if XYZ2 is None:
+        if rand_cmap:
+            maps = [m for m in plt.cm.datad if not m.endswith("_r")]
+            r = random.randint(0, len(maps)-1)
+            cmap = plt.get_cmap(maps[r])
         else:
-            row.append(0.0)
-        counter += 1
-        if counter == row_num:
-            y.append(data[i][1])
-            mapped_dat.append(row)
-            row = list()
-            counter = 0
+            cmap = plt.cm.BuPu
 
-    return [mapped_dat, y]
+        plt.xlabel('sigma, log scale base=2')
+        plt.ylabel('Intensity')
 
+        if name1:
+            title = title + '\n' + name1
+        plt.title(title)
 
-def plotContour(data, data_2, outputFolder="", display=False):
+        CS0 = plt.contourf(X, Y, Z, 20, cmap=cmap, origin='lower')
+        CS1 = plt.contour(CS0, levels=CS0.levels[::2], colors='k',
+                          origin='lower', hold='on', alpha=0.8, inline=1,
+                          fontsize=10, linestyles='solid')
 
-    [data, y] = dataMapping(data, 20)
-    [data_2, y] = dataMapping(data_2, 20)
+        plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
+        plt.semilogx(Y, basex=2, visible=False)
+        
+        diver = make_axes_locatable(plt.gca())
+        cax = diver.append_axes("bottom", "5%", pad="8%")
+        cbar = plt.colorbar(CS0, orientation='horizontal', cax=cax)
+        cax.set_title('10^N', fontsize=12, y=-1.4)
+        cbar.add_lines(CS1)
+        plt.tight_layout(h_pad=0.5)
+            
+    else:
+        Z3 = np.zeros([len(Z), len(Z[0])])
+        for i in range(0, len(Z)):
+            for j in range(0, len(Z[i])):
+                Z3[i][j] = Z2[i][j] - Z[i][j]
 
-    x = np.linspace(0, 19, 20)
+        plt.xlabel('sigma, log scale base=2')
+        plt.ylabel('Intensity')
 
-    X, Y = np.meshgrid(x, y)
+        if name1:
+            title = title + '\n' + name1
+        if name2:
+            title = title + '\n' + 'and ' + name2
 
-    CS0 = plt.contourf(X, Y, data_2, 20, cmap=plt.cm.bone, origin='lower')
-    CS3 = plt.contour(CS0, levels=CS0.levels[::2], colors='b', origin='lower',
-                      hold='on', alpha=0.2, inline=1, fontsize=10)
-    CS = plt.contourf(X, Y, data, 20, cmap=plt.cm.BuPu, origin='lower', alpha=0.7)
-    CS2 = plt.contour(CS, levels=CS.levels[::2], colors='r', origin='lower',
-                      hold='on')
-    plt.clabel(CS3, inline=1, fontsize=10)
-    plt.clabel(CS2, inline=1, fontsize=10)
-    plt.semilogy(Y, basey=2)
+        plt.title(title)
 
-    diver = make_axes_locatable(plt.gca())
+        CS1 = plt.contour(X, Y, Z, 20, colors='k', origin='lower', hold='on',
+                          alpha=0.6, linestyles='solid', inline=1, fontsize=10)
+        CS2 = plt.contour(X, Y, Z2, 20, colors='r', origin='lower', hold='on',
+                          alpha=1, linestyles='solid', inline=1, fontsize=11)
+        plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
+        plt.clabel(CS2, inline=1, fontsize=11, fmt='%1.1f')
 
-    cax = diver.append_axes("bottom", "5%", pad="8%")
-    cax2 = diver.append_axes("bottom", "5%", pad="8%")
-    cbar2 = plt.colorbar(CS0, orientation='horizontal', cax=cax)
-    cax.set_title('COMPREF Power Spectrum, Log Scale', fontsize=9)
-    cbar2.add_lines(CS3)
-    cbar = plt.colorbar(CS, orientation='horizontal', cax=cax2)
-    cax2.set_title('WRF Power Spectrum, Log Scale', fontsize=9)
-    cbar.add_lines(CS2)
-    plt.tight_layout(h_pad=0.5)
-    plt.savefig(str(time.time())+"powerSpecContourPlot.png")
+        maps = ['BrBG', 'PiYG', 'PRGn', 'PuOr', 'RdBu', 'RdGy', 'RdYlBu',
+                'RdYlGn', 'coolwarm']
+        if rand_cmap:
+            r = random.randint(0, len(maps)-1)
+            cmap = plt.get_cmap(maps[r])
+        else:
+            cmap = plt.cm.coolwarm
+
+        CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower')
+        CS4 = plt.contour(CS3, levels=CS3.levels[::2], colors='w',
+                    origin='lower', hold='on', alpha=0.6, inline=1,
+                    fontsize=10)
+        plt.semilogx(Y, basex=2, visible=False)
+
+        diver = make_axes_locatable(plt.gca())
+        cax = diver.append_axes("bottom", "5%", pad="8%")
+        cbar = plt.colorbar(CS3, orientation='horizontal', cax=cax)
+        cax.set_title('10^N', fontsize=12, y=-1.4)
+        cbar.add_lines(CS4)
+        plt.tight_layout(h_pad=0.5)
+
+    try:
+        display = kwargs['display']
+    except(KeyError):
+        display = True
+
+    try:
+        outputFolder = kwargs['outputFolder']
+    except(KeyError):
+        outputFolder = os.getcwd()
+
+    try:
+        fileName = kwargs['fileName']
+        plt.savepic(outputFolder + fileName)
+    except(KeyError):
+        None
+
     if display:
         plt.show()
-
-
-if __name__ == '__main__':
-
-    dat_in = main('XYZ(1).pydump')
-    dat_in_2 = main('XYZ.pydump')
-    plotContour(dat_in, dat_in_2)
