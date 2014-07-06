@@ -342,15 +342,22 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
     spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
 
-    #if b != "":
-    #    psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
-    #        #spectrumType = "numerical", 
-    #        **kwargs)
-    #    XYZmax2     = psResults_b['XYZmax']
-    #    XYZtotal2   = psResults_b['XYZtotal']
-    #    plotContour.plotContour(XYZmax['Z'], XYZmax2['Z'], outputFolder=outputFolder)
-    #    plotContour.plotContour(XYZtotal['Z'], XYZtotal2['Z'], outputFolder=outputFolder)
+    if b != "":
+        psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
+            #spectrumType = "numerical", 
+            **kwargs)
+        XYZmax2     = psResults_b['XYZmax']
+        XYZtotal2   = psResults_b['XYZtotal']
+        fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
+        fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
+        
+        plotContour.plotContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+        plotContour.plotContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
 
+    fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
+    fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
+    plotContour.plotContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    plotContour.plotContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
     return psResults
 
 
