@@ -69,7 +69,7 @@ import numpy as np
 import numpy.ma as ma
 from . import pattern
 from graphics import spectrum3d #2014-07-04
-from graphics import plotContour #2014-07-04
+from graphics import specContour #2014-07-04
 
 dbz = pattern.DBZ
 import time
@@ -351,13 +351,13 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
         
-        plotContour.plotContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
-        plotContour.plotContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+        specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+        specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
 
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
-    plotContour.plotContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
-    plotContour.plotContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
+    specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    specContour.specContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
     return psResults
 
 
