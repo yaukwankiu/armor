@@ -83,10 +83,12 @@ march2014wrf.fix()
 thisScript   = 'powerSpec3.py'
 scriptFolder = root+'python/armor/spectral/' 
 
-i1  = (20.-18.)/0.0125  #160
-i2  = (29.-28.)/0.0125  #80
-j1  = (117.5-115.)/0.0125   #200
-j2  = (126.5-124.5)/0.0125  #160
+i1  = int((20.-18.)/0.0125 ) #160
+i2   = int((29.-20.)/0.0125 )
+j1  = int((117.5-115.)/0.0125)   #200
+j2  = int((126.5-115.)/0.0125)   #200
+#i2  = int((29.-28.)/0.0125 ) #80
+#j2  = int((126.5-124.5)/0.0125)  #160
 
 ###########################################################################
 ###########################################################################
@@ -159,39 +161,60 @@ wrf.cutUnloaded()
 
 
 monsoon     = ob.march2014
-
 a   = monsoon("20140312.1140")[0]
 b   = monsoon("20140312.1150")[0]
-
 #ms  = monsoon("20140312.11") + monsoon("20140312.12") + monsoon("20140312.13")
+#monsoon.load()
+#monsoon.list = [v.getWindow(i1, j1, i2-i1, j2-j1).coarser().coarser() for v in ms.list]
+
+
+window = ""
+#window   = (i1, j1, i2-i1, j2-j1)
+window   = (0,0,880 ,920)
+ms = monsoon
+
 ms  = monsoon("20140312.12")
 #ms = wrf
+ms = monsoon("20140311.1140")
+
+ms = monsoon("20140312.0900")
 
 print '\n'.join([v.name for v in ms])
 print "sleeping 3 seconds"
 time.sleep(3)
 
 print "outputFolder:", outputFolder
-
+count = 0
 for k in ms:
     k.load()
-    res = k.powerSpec(thres=0, outputFolder=outputFolder, 
+    if window!="":
+        k1=k.getWindow(*window).coarser().coarser()
+        k1.coastDataPath = dp.defaultTaiwanReliefDataFolder150+'taiwanCoast.dat'
+        #if count <3:
+        #    count+=1
+        #    k1.show      #debug
+        print "k1:", k1.name, k1.matrix.shape, k1.matrix.sum()
+    else:
+        k1=k
+    if np.abs(k1.matrix.sum()) < 100 or k1.matrix.shape==(0,0):
+        continue
+    res =   k1.powerSpec(thres=0, outputFolder=outputFolder, 
                 #spectrumType = "numerical",
-                responseThreshold=0.1, scaleSpacePower=0, 
+                responseThreshold=0.0, scaleSpacePower=0, 
                 #useLogScale=True,
-                useLogScale=True,
-                useOnlyPointsWithSignals=False,
+                useLogScale=False,
+                useOnlyPointsWithSignals=True,
                 )
-    #k.powerSpec(thres=0, outputFolder=outputFolder, 
+    #k1.powerSpec(thres=0, outputFolder=outputFolder, 
     #            #spectrumType = "total",
     #            responseThreshold=0.01,scaleSpacePower=0, useLogScale=True)
 
     #try:
-    #    k.drawCoast()
+    #    k1.drawCoast()
     #except: 
     #    pass
-    #k.saveImage(imagePath=outputFolder0+k.name+'.png')
-    
+    k1.saveImage(imagePath=outputFolder0+k1.name+'.png')
+    k.drawRectangle(*window).saveImage(imagePath=outputFolder0+k.name+'_rectangle.png')
 
 print "outputFolder:", outputFolder
 

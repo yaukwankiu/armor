@@ -1021,12 +1021,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         phi_mean= phi_mean.reshape(vertical, horizontal)
 
         #  cutting it down to size (881,921)
-        return DBZ(name=self.name+'coarser', matrix =phi_mean,
+        return DBZ(name=self.name+'_coarser', matrix =phi_mean,
                     dt=self.dt, dx=self.dx, dy=self.dy,
                     dataPath  =self.dataPath[:-4]  +'_coarser' + self.dataPath[-4:],
                     outputPath=self.outputPath[:-4]+'_coarser' + self.outputPath[-4:],
                     imagePath =self.imagePath[:-4] +'_coarser' + self.imagePath[-4:],
-                    coastDataPath=self.coastDataPath,
+                    #coastDataPath=self.coastDataPath,
                     database=self.database,
                     cmap=self.cmap, vmin=self.vmin, vmax=self.vmax,
                     coordinateOrigin = (self.coordinateOrigin[0] //scale,\
@@ -1405,24 +1405,25 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.vmax = 1.
         self.vmin = 0.
 
-    def powerSpec(self, thres=0, outputFolder="", toReload=False, 
-                #spectrumType = "numerical", 
-                **kwargs):
-        if outputFolder=="":
-            outputFolder= self.outputFolder
-        from armor.spectral import powerSpec1 as ps1
-        #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
-        a_LOGspec = ps1.getLaplacianOfGaussianSpectrum(self, thres=0, outputFolder=outputFolder,
-                                                         toReload=toReload, 
-                                                         #spectrumType=spectrumType, 
-                                                         **kwargs)
-        print "Results stored in file:", outputFolder
-        print "Results stored in attribute:  a.LOGspec"
-        a.LOGspec = a_LOGspec
-        return a_LOGspec
+    def powerSpec(self, *args, **kwargs):
+        """
+        moved to armor/analysis.py 2014-07-04
+        updated 2014-07-03 
+            including the new 3dplotting function from lin yen ting
+            armor.graphics.spectrum3d
+        new pipeline:
+            WRF/RADAR  ->   response layers for various sigmas -> 1. max spec map
+                                                          2. max internsity map
+                                                          3. sigma ranges
 
-
+                                                       -> 1.    3D max spec chart
+                                                          2.    3D total spec chart
+                                                      
         
+        """
+        from armor import analysis
+        return analysis.powerSpec(self, *args, **kwargs)
+
     #   end new objects from old
     #############################################################
 

@@ -43,6 +43,8 @@ if computer == 'acer-laptop':
     externalHardDriveName = 'TOSHIBA EXT'
     externalHardDriveName2= 'TOSHIBA EXT'
     hardDriveName   = 'DATA'
+
+
 elif computer == 'k-801':
     usbDriveName    = 'k/KINGSTON'
     externalHardDriveName = 'k/FreeAgent Drive' #?!
@@ -104,11 +106,19 @@ elif computer =='Qoo-PC':
 #    hardDriveLetter = 'D'    
 
 import os
-if os.sep == "/":
+
+if computer == 'acer-laptop' and os.getcwd() == '/home/k/ARMOR/python':
+    usbRoot   = '/home/k/ARMOR/python'
+    externalHardDriveRoot = '/home/k/ARMOR/python'
+    externalHardDriveRoot2 = '/home/k/ARMOR/python'
+    hardDriveRoot = '/home/k/ARMOR/python'
+    
+elif os.sep == "/":
     usbRoot = '/media/%s/ARMOR/' % usbDriveName
     externalHardDriveRoot = '/media/%s/ARMOR/' % externalHardDriveName
     externalHardDriveRoot2 = '/media/%s/ARMOR/' % externalHardDriveName2
     hardDriveRoot = '/%s/ARMOR/' % hardDriveName
+
 else:
     usbRoot = '%s:/ARMOR/' % usbDriveLetter
     externalHardDriveRoot = '%s:/ARMOR/' % externalHardDriveLetter
