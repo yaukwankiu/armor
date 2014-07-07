@@ -66,6 +66,11 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         CS1 = plt.contour(CS0, levels=CS0.levels[::2], colors='k',
                           origin='lower', hold='on', alpha=0.8, inline=1,
                           linestyles='solid')
+        #CS1 = plt.contour(X,Y,Z, 10, colors='k',
+        #                  origin='lower', hold='on', alpha=0.8, inline=1,
+        #                  linestyles='solid')
+
+
 
         plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
         plt.semilogx(Y, basex=2, visible=False)
@@ -133,7 +138,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
 
     try:
         fileName = kwargs['fileName']
-        plt.savepic(outputFolder +  fileName)
+        plt.savefig(outputFolder +  fileName)
     except(KeyError):
         None
 

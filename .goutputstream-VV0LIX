@@ -6,12 +6,9 @@ from armor.misc import *
 from armor import objects4 as ob
 
 kongrey = ob.kongrey
-kongreywrf = ob.kongreywrf
 monsoon = ob.monsoon
-may     = ob.may2014
 march   = ob.march2014
-maywrf20  = ob.may2014wrf20
-marchwrf = ob.march2014wrf
+may     = ob.may2014
 
 ob.kongreywrf.fix()
 ob.march2014wrf.fix()

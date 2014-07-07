@@ -339,8 +339,8 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     XYZmax  = psResults['XYZmax']
     XYZtotal= psResults['XYZtotal']
 
-    spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
-    spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
+    #spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
+    #spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
 
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
@@ -351,13 +351,15 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
         
-        specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
-        specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+        #specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+        #specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
 
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
-    specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
-    specContour.specContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
+    ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    ##specContour.specContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
+    #specContour.specContour(XYZ=XYZmax,  display=True)
+    #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
 
 

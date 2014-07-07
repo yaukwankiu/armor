@@ -128,7 +128,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      scaleSpacePower=scaleSpacePower, # 2014-06-24
                                      tipSideUp = True,               #2014-06-24
                                      useOnlyPointsWithSignals=True,    #2014-06-26
-                                     toReload=True,):
+                                     toReload=True,
+                                     toDumpResponseImages=True,
+                                     ):
 
     shutil.copyfile(scriptFolder+thisScript, outputFolder+ str(int(time.time())) +thisScript)  #2014-06-25
     L=[]
@@ -186,7 +188,9 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                  })
 
     a.restoreMatrix(0)
-    pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
+    if toDumpResponseImages:
+        pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
+    reponseImages0 = a.responseImages
     #####################################
     #debug
     #print "a.responseImages", a.responseImages
@@ -290,7 +294,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #bins=[0.008, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     dataSource = a.name
-    responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
+    #responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
+    responseImages = responseImages0
     X, Y    = np.meshgrid(range(len(bins)-1), sigmas)
     I, J    = Y, X
     Z       = np.zeros(X.shape)
