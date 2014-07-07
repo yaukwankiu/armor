@@ -25,9 +25,15 @@ taichung4        = misc.getFourCorners(dp.taichungCounty)
 tainan4         = misc.getFourCorners(dp.tainanCounty)
 taipei4         = misc.getFourCorners(dp.taipeiCounty)
 taitung4        = misc.getFourCorners(dp.taitungCounty)
+sector7         = misc.getFourCorners(dp.sector7)
+sector2         = misc.getFourCorners(dp.sector2)
+sector1         = misc.getFourCorners(dp.sector1)
 regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
             #{'name': "kaohsiung",   'points':kaohsiung4,    'weight':0.5},  
-            {'name': "taipei",      'points':taipei4,       'weight':1.0}, 
+            #{'name': "taipei",      'points':taipei4,       'weight':1.0}, 
+            {'name': "sector7",      'points':sector7,      'weight':1.0},
+            #{'name': "sector2",      'points':sector2,      'weight':1.0},
+            #{'name': "sector1",      'points':sector1,      'weight':1.0}
             #{'name': "taichung",    'points':taichung4,     'weight':0.4},
             #{'name': "tainan",      'points':tainan4,       'weight':0.6},
             #{'name':"taitung",      'points':taitung4, 'weight':0.25},
@@ -39,7 +45,7 @@ regionsString   = "_".join([v['name']+str(round(v['weight'],2)) for v in regions
 ##############################################
 ##
 #
-dss = p2.may21           #   <--- edit here
+dss = p2.march12           #   <--- edit here
 #
 ##
 #############################################
@@ -52,9 +58,9 @@ testName       = "nonstanKer" + str(1-volumeProportionWeight)+"_and_volume" + st
 outputFolder    = dp.defaultRootFolder + "labLogs/" + testName + "/" + dss.name + "/" +regionsString +'/'
 #obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
 obs.shortlist = [v for v in obs if "0300" in v.dataTime or "0600" in v.dataTime or "1200" in v.dataTime
-                            or "1500" in v.dataTime or "1800" in v.dataTime or "2100" in v.dataTime \or
+                            or "1500" in v.dataTime or "1800" in v.dataTime or "2100" in v.dataTime or
                              "0000" in v.dataTime  or "0900" in v.dataTime ]
-obs.shortlist.sort(key=lambda v:v.dataTime]
+obs.shortlist.sort(key=lambda v:v.dataTime)
 print  "shortlist:"
 print [v.name for v in obs.shortlist]
 print "sleeping 5 seconds"

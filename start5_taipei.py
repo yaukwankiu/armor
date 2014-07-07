@@ -25,9 +25,17 @@ taichung4        = misc.getFourCorners(dp.taichungCounty)
 tainan4         = misc.getFourCorners(dp.tainanCounty)
 taipei4         = misc.getFourCorners(dp.taipeiCounty)
 taitung4        = misc.getFourCorners(dp.taitungCounty)
+sector7         = misc.getFourCorners(dp.sector7)
+sector2         = misc.getFourCorners(dp.sector2)
+sector1         = misc.getFourCorners(dp.sector1)
+AllReg          = misc.getFourCorners(dp.allReg)
 regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
             #{'name': "kaohsiung",   'points':kaohsiung4,    'weight':0.5},  
-            {'name': "taipei",      'points':taipei4,       'weight':1.0}, 
+            #{'name': "taipei",      'points':taipei4,       'weight':1.0}, 
+            #{'name': "sector7",      'points':sector7,      'weight':1.0},
+            #{'name': "sector2",      'points':sector2,      'weight':1.0},
+            {'name': "sector1",      'points':sector1,      'weight':1.0},
+            #{'name': "All",          'points':AllReg,      'weight':1.0},
             #{'name': "taichung",    'points':taichung4,     'weight':0.2},
             #{'name': "tainan",      'points':tainan4,       'weight':0.4},
             #{'name':"taitung",      'points':taitung4, 'weight':0.25},
@@ -35,7 +43,7 @@ regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
             ]
 
 regionsString   = "_".join([v['name']+str(round(v['weight'],2)) for v in regions])
-dss = p2.may19            #   <--- edit here
+dss = p2.march11            #   <--- edit here
 obs = dss.obs               #   edit here
 #obs.list = [v for v in obs.list if dss.wrfs[0][0].dataTime[:8] in v.dataTime]            #   (e.g. "20140312")
 #print "obs.list trimmed to length", len(obs.list)       #debug
@@ -43,7 +51,8 @@ obs = dss.obs               #   edit here
 volumeProportionWeight    = 0.2
 testName       = "nonstanKer" + str(1-volumeProportionWeight)+"_and_volume" + str(volumeProportionWeight)
 outputFolder    = dp.defaultRootFolder + "labLogs/" + testName + "/" + dss.name + "/" +regionsString +'/'
-obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
+#obs.shortlist = [v for v in obs if "00" in v.dataTime and (not ".00" in v.dataTime) and v.dataTime>="0"]   # trim it down
+obs.shortlist = [v for v in obs if "0100" in v.dataTime or "0000" in v.dataTime]
 
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)

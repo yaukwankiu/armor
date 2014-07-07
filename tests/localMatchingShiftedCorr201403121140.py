@@ -47,7 +47,7 @@ regions = [ #{'name': "hualien",      'points': hualien4, 'weight': 0.25},
             ]
 
 regionsString   = "_".join([v['name']+str(round(v['weight'],2)) for v in regions])
-dss = p2.may19            #   <---- edit here
+dss = p2.march12            #   <---- edit here
 obs = dss.obs               #   edit here
 #obs.list = [v for v in obs.list if dss.wrfs[0][0].dataTime[:8] in v.dataTime]            #   (e.g. "20140312")
 #print "obs.list trimmed to length", len(obs.list)       #debug

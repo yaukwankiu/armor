@@ -3,7 +3,7 @@
 from armor.initialise import *
 
 outputFolder = dp.root + "labLogs2/powerSpec3/"
-eventsList = [march, may, marchwrf, maywrf20, kongrey, kongreywrf]
+eventsList = [maywrf20, kongrey, kongreywrf, march, may, marchwrf, ]
 
 for event in eventsList:
     timeString = str(time.time())
