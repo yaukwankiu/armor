@@ -70,7 +70,7 @@ import numpy.ma as ma
 from . import pattern
 from graphics import spectrum3d #2014-07-04
 from graphics import specContour #2014-07-04
-
+from matplotlib import pyplot as plt
 dbz = pattern.DBZ
 import time
 import copy
@@ -318,7 +318,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
                                                           
     
     """
-
+    plt.close()
     if outputFolder=="":
         outputFolder= a.outputFolder
     from armor.spectral import powerSpec1 as ps1
@@ -339,8 +339,8 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     XYZmax  = psResults['XYZmax']
     XYZtotal= psResults['XYZtotal']
 
-    #spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
-    #spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
+    spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
+    spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
 
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 

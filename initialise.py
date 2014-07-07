@@ -16,6 +16,7 @@ marchwrf = ob.march2014wrf
 ob.kongreywrf.fix()
 ob.march2014wrf.fix()
 
+comprefCutRegion = (200, 200, 150*4, 140*4)
 """
 k12 =kongrey[12]
 k11 =kongrey[11]
