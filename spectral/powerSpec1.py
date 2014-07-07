@@ -190,7 +190,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a.restoreMatrix(0)
     if toDumpResponseImages:
         pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
-    reponseImages0 = a.responseImages
+    responseImages0 = a.responseImages
     #####################################
     #debug
     #print "a.responseImages", a.responseImages
