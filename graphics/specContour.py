@@ -142,6 +142,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
     try:
         fileName = kwargs['fileName']
         plt.savefig(outputFolder +  fileName)
+        plt.close()
     except(KeyError):
         None
 
