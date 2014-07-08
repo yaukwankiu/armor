@@ -302,6 +302,7 @@ def HMM():
 
 
 def powerSpec(a, b="", thres=0, outputFolder="", toReload=False, 
+             toPlotContours=False,
             #spectrumType = "numerical", 
             **kwargs):
     """
@@ -325,7 +326,6 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
     psResults = ps1.getLaplacianOfGaussianSpectrum(a, thres=0, outputFolder=outputFolder,
                                                      toReload=toReload, 
-                                                     toPlotContours=False,
                                                      #spectrumType=spectrumType, 
                                                      **kwargs)
 
@@ -346,6 +346,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
             #spectrumType = "numerical", 
+            toPlotContours=toPlotContours, #2014-07-08
             **kwargs)
         XYZmax2     = psResults_b['XYZmax']
         XYZtotal2   = psResults_b['XYZtotal']
