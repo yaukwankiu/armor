@@ -325,6 +325,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
     psResults = ps1.getLaplacianOfGaussianSpectrum(a, thres=0, outputFolder=outputFolder,
                                                      toReload=toReload, 
+                                                     toPlotContours=False,
                                                      #spectrumType=spectrumType, 
                                                      **kwargs)
 
@@ -357,7 +358,8 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
     ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
-    #specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
+    if toPlotContours:
+        specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
