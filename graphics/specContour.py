@@ -63,12 +63,12 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.title(title)
 
         CS0 = plt.contourf(X, Y, Z, 20, cmap=cmap, origin='lower')
-        CS1 = plt.contour(CS0, levels=CS0.levels[::2], colors='k',
-                          origin='lower', hold='on', alpha=0.8, inline=1,
-                          linestyles='solid')
-        #CS1 = plt.contour(X,Y,Z, 10, colors='k',
+        #CS1 = plt.contour(CS0, levels=CS0.levels, colors='k',
         #                  origin='lower', hold='on', alpha=0.8, inline=1,
         #                  linestyles='solid')
+        CS1 = plt.contour(X,Y,Z, 10, colors='k',
+                          origin='lower', hold='on', alpha=0.8, inline=1,
+                          linestyles='solid')
 
 
 
@@ -114,7 +114,10 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             cmap = plt.cm.coolwarm
 
         CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower')
-        CS4 = plt.contour(CS3, levels=CS3.levels[::2], colors='w',
+        #CS4 = plt.contour(CS3, levels=CS3.levels, colors='w',
+        #            origin='lower', hold='on', alpha=0.6, inline=1,
+        #            fontsize=10)
+        CS4 = plt.contour(X, Y, Z3 ,10, colors='w',
                     origin='lower', hold='on', alpha=0.6, inline=1,
                     fontsize=10)
         plt.semilogx(Y, basex=2, visible=False)

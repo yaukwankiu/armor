@@ -10,13 +10,21 @@ kongreywrf = ob.kongreywrf
 monsoon = ob.monsoon
 may     = ob.may2014
 march   = ob.march2014
+maywrf19  = ob.may2014wrf19
 maywrf20  = ob.may2014wrf20
+maywrf21  = ob.may2014wrf21
+maywrf22  = ob.may2014wrf22
+maywrf23  = ob.may2014wrf23
 marchwrf = ob.march2014wrf
 
 ob.kongreywrf.fix()
 ob.march2014wrf.fix()
 
 comprefCutRegion = (200, 200, 150*4, 140*4)
+
+w = ob.may2014wrf20[0]
+w.load()
+
 """
 k12 =kongrey[12]
 k11 =kongrey[11]

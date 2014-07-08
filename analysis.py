@@ -357,7 +357,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
     ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
-    ##specContour.specContour(XYZ=XYZtotal,outputFolder=outputFolder, fileName=fileName2)
+    #specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
