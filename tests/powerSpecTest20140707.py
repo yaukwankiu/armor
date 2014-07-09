@@ -42,6 +42,7 @@ for N in range(maxLen):
             elif preprocessType == "sampling":
                 a1.matrix = a1.matrix[::4, ::4] # <--  choice:  sampling
             a.matrix = a1.matrix
+            a.nameBackup = a.name
             a.name +="sampling"
             print "a.matrix.shape", a.matrix.shape
             a.saveImage(outputFolder+str(time.time())+a.name+".png")
@@ -53,3 +54,4 @@ for N in range(maxLen):
             COUNT +=1
             a.show()
         a.powerSpec(outputFolder=eventFolder[event], toDumpResponseImages=False, bins=bins)
+        a.name = a.nameBackup                                        

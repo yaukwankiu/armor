@@ -61,7 +61,7 @@ def spectrum3d(XYZ, **kwargs):
 
     plt.title(title)
     plt.ylabel('sigma(log scale base=2)')
-    plt.xlabel('Intensity')
+    plt.xlabel('Intensity class (2 for power-of-10)')
     ax.set_zlabel(' 10^N')
 
     try:
