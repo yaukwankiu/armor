@@ -10,11 +10,15 @@ testNamesList = ['sampling/1404810469.8monsoon/', 'sampling/1404810469.8COMPREF_
                  ]
 
 
+
+testNamesList = ['averaging/1404805399.89monsoon/']
+testNamesList = ['1404803356.97COMPREF_Rainband_March_2014/']
+
 for testName in testNamesList:
     #testName = "sampling/1404810469.82kongreywrf/"
     inputFolder = dp.root + "labLogs2/powerSpec3/" + testName 
-    #outputFolder= inputFolder +  "meanSpecs/"
-    outputFolder = dp.root + 'python/testing/'
+    outputFolder= inputFolder +  "meanSpecs/"
+    #outputFolder = dp.root + 'python/testing/'
     if not os.path.exists(outputFolder):
         os.makedirs(outputFolder)
     
