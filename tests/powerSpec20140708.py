@@ -10,6 +10,8 @@ testNamesList = ['sampling/1404810469.8monsoon/', 'sampling/1404810469.8COMPREF_
                  'averaging/1404805399.89COMPREF_Rainband_May_2014/',  'averaging/1404805399.89kongrey/', 'averaging/1404805399.89monsoon/',
                  ]
 
+#testNamesList = ['sampling/1404810469.8COMPREF_Rainband_May_2014/','averaging/1404805135.46COMPREF_Rainband_May_2014/','averaging/1404805399.89COMPREF_Rainband_May_2014/'
+#                ]
 
 testNamesList = ['averaging/1404805399.89monsoon/']
 testNamesList = ['1404803356.97COMPREF_Rainband_March_2014/']
@@ -69,7 +71,8 @@ for testName in testNamesList:
         
         print Ztotal
         XYZ['Z'] = Ztotal
-        spectrum3d.spectrum3d(XYZ, title = "Total Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, fileName = "Total_Spec_" + "_".join(testName.split('/')) + ".png")
+        spectrum3d.spectrum3d(XYZ, title = "Total Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, 
+                            fileName = str(time.time()) + "Total_Spec_" + "_".join(testName.split('/')) + ".png")
         
         print 'saved to' , outputFolder
     except:

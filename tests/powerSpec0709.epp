@@ -71,11 +71,11 @@ ForcedReadOnly=0
 [File2]
 DataLen=1850
 TopLine=18
-SelStart=296
-SelStop=296
+SelStart=809
+SelStop=809
 RectSel=0
-CaretPos=296
-CaretVisible=0
+CaretPos=809
+CaretVisible=1
 TopLineAlt=0
 SelStartAlt=0
 SelStopAlt=0
@@ -209,12 +209,12 @@ FTPFilename=
 ForcedReadOnly=0
 
 [File6]
-DataLen=3042
+DataLen=3235
 TopLine=0
-SelStart=737
-SelStop=737
+SelStart=798
+SelStop=798
 RectSel=0
-CaretPos=737
+CaretPos=798
 CaretVisible=1
 TopLineAlt=0
 SelStartAlt=0
@@ -246,12 +246,43 @@ ForcedReadOnly=0
 [EditPad Project]
 Managed=0
 BookmarksProjectWide=0
-TabIndex=2
+TabIndex=6
 FirstFileTab=0
 FileCount=7
-RemovedCount=2
+RemovedCount=3
 
 [Removed0]
+DataLen=3162
+TopLine=45
+SelStart=2089
+SelStop=2089
+RectSel=0
+CaretPos=2089
+CaretVisible=0
+TopLineAlt=0
+SelStartAlt=0
+SelStopAlt=0
+RectSelAlt=0
+CaretPosAlt=0
+CaretVisibleAlt=0
+BookmarkCount=1
+Folding=
+FileType=
+DataFormat=utf8
+AutoIndent=0
+NumberLines=0
+WordWrapIndent=0
+NumberColumns=0
+ShowSpaces=0
+ShowLineBreaks=0
+LiveSpell=0
+WrapPos=-2
+RecordSize=-2
+HexEditor=0
+HexSections=-2
+Filename=F:\ARMOR\python\armor\tests\powerSpec20140708.py
+
+[Removed1]
 DataLen=307
 TopLine=0
 SelStart=291
@@ -282,7 +313,7 @@ HexEditor=0
 HexSections=-2
 Filename=D:\ARMOR\labLogs2\powerSpec3\1404803356.97COMPREF_Rainband_March_2014\1404803409.92log.txt
 
-[Removed1]
+[Removed2]
 DataLen=349
 TopLine=0
 SelStart=0
