@@ -264,7 +264,10 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         a.LOGspec.drawCoast()
     except:
         pass
+    print "saving a.LOGspec image to", a.LOGspec.imagePath
+
     a.LOGspec.saveImage()
+    
     a.LOGspec.restoreMatrix('goodCopy')
     a.LOGspec.saveMatrix()
 

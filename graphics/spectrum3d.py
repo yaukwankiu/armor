@@ -81,5 +81,10 @@ def spectrum3d(XYZ, **kwargs):
         show = kwargs['show']
     except(KeyError):
         show = False
+    try:
+        show=kwargs['display']
+    except(KeyError):
+        pass
+
     if show:
         plt.show()

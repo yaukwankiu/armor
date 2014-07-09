@@ -6,7 +6,11 @@ from armor import objects4 as ob
 outputFolder = dp.root + "labLogs2/powerSpec3/"
 #eventsList = [maywrf20, kongrey, kongreywrf, march, may, marchwrf, ]
 #eventsList = [ kongrey, kongreywrf, march, may,marchwrf, kongreywrf, maywrf20 ]
-eventsList = [maywrf19, maywrf20, maywrf21, maywrf22, maywrf23, ]
+#eventsList = [maywrf19, maywrf20, maywrf21, maywrf22, maywrf23, ]
+eventsList = [kongrey, may, monsoon, kongreywrf]
+
+
+preprocessType = "sampling"  # <-- edit here
 
 COUNT = 0
 
@@ -14,7 +18,7 @@ eventFolder={}
 
 for event in eventsList:
     timeString = str(time.time())
-    eventFolder[event] = outputFolder + timeString+ event.name + "/"
+    eventFolder[event] = outputFolder +  preprocessType + "/" + timeString+ event.name + "/" 
     os.makedirs(eventFolder[event])
 
 
@@ -30,17 +34,22 @@ for N in range(maxLen):
         print "-----------"
         print event.name, a.name
         a.load()
+        a.saveImage(outputFolder+str(time.time())+a.name+".png")
         if a.matrix.shape == (881,921):
             a1 = a.getWindow(*comprefCutRegion)
-            a1=a1.coarser().coarser()
+            if preprocessType == "averaging":
+                a1=a1.coarser().coarser()      # <--  choice:  averaging 
+            elif preprocessType == "sampling":
+                a1.matrix = a1.matrix[::4, ::4] # <--  choice:  sampling
             a.matrix = a1.matrix
+            a.name +="sampling"
             print "a.matrix.shape", a.matrix.shape
-            bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]  
-            
+            a.saveImage(outputFolder+str(time.time())+a.name+".png")
+            bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]              
         else:
             bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
             #bins = [0.03, 0.1, 0.3, 1., 3., 10., 30,. 100.]
         if COUNT < 2:
             COUNT +=1
             a.show()
-        a.powerSpec(outputFolder=eventFolder[event], toDumpResponseImages=False)
+        a.powerSpec(outputFolder=eventFolder[event], toDumpResponseImages=False, bins=bins)

@@ -1,3 +1,4 @@
+import time, pickle, os, shutil
 from armor import pattern
 from armor import defaultParameters as dp
 from armor.defaultParameters import *
@@ -19,6 +20,7 @@ marchwrf = ob.march2014wrf
 
 ob.kongreywrf.fix()
 ob.march2014wrf.fix()
+monsoon.list = [v for v in monsoon.list if '0612' in v.dataTime]
 
 comprefCutRegion = (200, 200, 150*4, 140*4)
 
