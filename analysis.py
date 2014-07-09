@@ -352,15 +352,23 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         XYZtotal2   = psResults_b['XYZtotal']
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
-        
-        #specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
-        #specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
-
+        try:
+            specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+        except:
+            pass
+    # debug
+    a.XYZmax = XYZmax
+    a.XYZtotal = XYZtotal
+    # end debug
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
     ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
     if toPlotContours:
-        specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
+        try:
+            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
+        except:
+            print "function specContour.specContour() failed!!"
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults

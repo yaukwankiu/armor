@@ -384,6 +384,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         #    self.coastData = np.loadtxt(self.coastDataPath)
         #except:
         #    print "Cannot load coast data from the path:  ", self.coastDataPath
+        return self
 
     def loadBinary(self, height=201, width=183):
         """

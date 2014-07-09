@@ -1,4 +1,7 @@
-import time, pickle, os, shutil
+import time, os, shutil, pickle
+import numpy as np
+import matplotlib.pyplot as plt
+
 from armor import pattern
 from armor import defaultParameters as dp
 from armor.defaultParameters import *
