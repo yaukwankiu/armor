@@ -10,7 +10,7 @@ outputFolder = dp.root + "labLogs2/powerSpec3/"
 eventsList = [kongrey, may, monsoon, kongreywrf]
 
 
-preprocessType = "sampling"  # <-- edit here
+preprocessType = "averaging"  # <-- edit here
 
 COUNT = 0
 

@@ -371,14 +371,21 @@ from armor.initialise import *
 def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
     #a = march('0312.1200')[0]
     a.load()
+    try:
+        a.drawCoast()
+        a.saveImage()
+    except:
+        a.saveImage()
+    a.load()
     if display:
         a.show()
 
     if a.matrix.shape == (881,921):
+        a.drawCoast()
         a.drawRectangle(*WRFwindow).saveImage()
         a.load()
         a1= a.getWindow(*WRFwindow)
-        a1.saveImage()
+        #a1.saveImage(imagePath=a.imagepath[:-4] + "_cut_out" + ".png")
         a2 = a1.coarser().coarser()
         a2.name = a1.name
         a2.saveImage()
