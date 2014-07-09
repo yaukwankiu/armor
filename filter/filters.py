@@ -28,3 +28,4 @@ def gaussianFilter(a, sigma=20, newCopy=False):
         return a1
     else:
         a.matrix = a1.matrix
+        return a
