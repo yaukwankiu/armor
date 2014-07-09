@@ -70,7 +70,7 @@ import numpy.ma as ma
 from . import pattern
 from graphics import spectrum3d #2014-07-04
 from graphics import specContour #2014-07-04
-
+from matplotlib import pyplot as plt
 dbz = pattern.DBZ
 import time
 import copy
@@ -302,6 +302,7 @@ def HMM():
 
 
 def powerSpec(a, b="", thres=0, outputFolder="", toReload=False, 
+             toPlotContours=False,
             #spectrumType = "numerical", 
             **kwargs):
     """
@@ -318,7 +319,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
                                                           
     
     """
-
+    plt.close()
     if outputFolder=="":
         outputFolder= a.outputFolder
     from armor.spectral import powerSpec1 as ps1
@@ -345,6 +346,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
             #spectrumType = "numerical", 
+            toPlotContours=toPlotContours, #2014-07-08
             **kwargs)
         XYZmax2     = psResults_b['XYZmax']
         XYZtotal2   = psResults_b['XYZtotal']
@@ -361,14 +363,40 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     # end debug
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
-    #specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName1)
-    try:
-        specContour.specContour(XYZ=XYZtotal,XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
-    except:
-        pass
+    ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    if toPlotContours:
+        try:
+            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
+        except:
+            print "function specContour.specContour() failed!!"
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
+
+from armor.initialise import *
+#WRFwindow = (200,200,600,560)
+
+def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
+    #a = march('0312.1200')[0]
+    a.load()
+    if display:
+        a.show()
+
+    if a.matrix.shape == (881,921):
+        a.drawRectangle(*WRFwindow).saveImage()
+        a.load()
+        a1= a.getWindow(*WRFwindow)
+        a1.saveImage()
+        a2 = a1.coarser().coarser()
+        a2.name = a1.name
+        a2.saveImage()
+    else:
+        a2 = a
+    a2 = a2.threshold(0)
+    if display:
+        a2.show()
+    a2.saveImage()
+    a2.powerSpec()
 
 
 ##############################################################################s

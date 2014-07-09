@@ -61,7 +61,7 @@ def spectrum3d(XYZ, **kwargs):
 
     plt.title(title)
     plt.ylabel('sigma(log scale base=2)')
-    plt.xlabel('Intensity')
+    plt.xlabel('Intensity class (2 for power-of-10)')
     ax.set_zlabel(' 10^N')
 
     try:
@@ -81,5 +81,10 @@ def spectrum3d(XYZ, **kwargs):
         show = kwargs['show']
     except(KeyError):
         show = False
+    try:
+        show=kwargs['display']
+    except(KeyError):
+        pass
+
     if show:
         plt.show()

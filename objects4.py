@@ -81,30 +81,30 @@ may2014         = DS(name='COMPREF_Rainband_May_2014',
                       taiwanReliefFolder = tw881,
                       )
 
-may2014wrf19    = DS(name='WRF_Rainband_19_March_2014',
+may2014wrf19    = DS(name='WRF_Rainband_19_May_2014',
                       dataFolder=dp.defaultRootFolder + 'data/may14/WRF/20140519/',
                       taiwanReliefFolder = tw150,
                       )
 
-may2014wrf20    = DS(name='WRF_Rainband_20_March_2014',
+may2014wrf20    = DS(name='WRF_Rainband_20_May_2014',
                       dataFolder=dp.defaultRootFolder + 'data/may14/WRF/20140520/',
                       taiwanReliefFolder = tw150,
                       )
 
 
-may2014wrf21    = DS(name='WRF_Rainband_21_March_2014',
+may2014wrf21    = DS(name='WRF_Rainband_21_May_2014',
                       dataFolder=dp.defaultRootFolder + 'data/may14/WRF/20140521/',
                       taiwanReliefFolder = tw150,
                       )
 
 
-may2014wrf22    = DS(name='WRF_Rainband_22_March_2014',
+may2014wrf22    = DS(name='WRF_Rainband_22_May_2014',
                       dataFolder=dp.defaultRootFolder + 'data/may14/WRF/20140522/',
                       taiwanReliefFolder = tw150,
                       )
 
 
-may2014wrf23    = DS(name='WRF_Rainband_23_March_2014',
+may2014wrf23    = DS(name='WRF_Rainband_23_May_2014',
                       dataFolder=dp.defaultRootFolder + 'data/may14/WRF/20140523/',
                       taiwanReliefFolder = tw150,
                       )

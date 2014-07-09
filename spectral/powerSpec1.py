@@ -80,6 +80,7 @@ radarGridSize=0.0125
 radar_wrf_grid_ratio = wrfGridSize / radarGridSize
 #sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128, 160, 256,]
 sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128]
+bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
 scaleSpacePower = 0
 dbzList = ob.kongrey
 
@@ -130,6 +131,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
                                      useOnlyPointsWithSignals=True,    #2014-06-26
                                      toReload=True,
                                      toDumpResponseImages=True,
+                                     bins = bins,
                                      ):
 
     shutil.copyfile(scriptFolder+thisScript, outputFolder+ str(int(time.time())) +thisScript)  #2014-06-25
@@ -262,7 +264,10 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
         a.LOGspec.drawCoast()
     except:
         pass
+    print "saving a.LOGspec image to", a.LOGspec.imagePath
+
     a.LOGspec.saveImage()
+    
     a.LOGspec.restoreMatrix('goodCopy')
     a.LOGspec.saveMatrix()
 
@@ -292,7 +297,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #bins=[0., 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     #bins=[0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     #bins=[0.008, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
-    bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
+    #bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
     dataSource = a.name
     #responseImages = pickle.load(open(outputFolder+a.name+"responseImagesList.pydump")) #load it back up
     responseImages = responseImages0
