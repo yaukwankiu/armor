@@ -376,14 +376,21 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
 from armor.initialise import *
 #WRFwindow = (200,200,600,560)
 
-def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
+def powerSpecTest0709(a, 
+                      filter="",
+                      filterArgs={'sigma': 4, 'newCopy':True},
+                      display=False, WRFwindow = (200,200,600,560),
+                      outputFolder = "",
+                      ):
     #a = march('0312.1200')[0]
+    if outputFolder=="":
+        outputFolder = a.outputFolder
     a.load()
     try:
         a.drawCoast()
-        a.saveImage()
+        a.saveImage(imagePath=outputFolder+str(time.time())+a.name+'.png')
     except:
-        a.saveImage()
+        a.saveImage(imagePath=outputFolder+str(time.time())+a.name+'.png')
     a.load()
     if display:
         a.show()
@@ -393,17 +400,19 @@ def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
         a.drawRectangle(*WRFwindow).saveImage()
         a.load()
         a1= a.getWindow(*WRFwindow)
-        #a1.saveImage(imagePath=a.imagepath[:-4] + "_cut_out" + ".png")
+        if filter != "":
+            a1 = filter(a1, **filterArgs)
+        a1.saveImage(imagePath=outputFolder+str(time.time())+a1.name+'.png')
         a2 = a1.coarser().coarser()
         a2.name = a1.name
-        a2.saveImage()
+        a2.saveImage(imagePath=outputFolder+str(time.time())+a2.name+'.png')
     else:
         a2 = a
     a2 = a2.threshold(0)
     if display:
         a2.show()
-    a2.saveImage()
-    a2.powerSpec()
+    a2.saveImage(imagePath=outputFolder+str(time.time())+a2.name+'.png')
+    a2.powerSpec(outputFolder=outputFolder)
 
 
 ##############################################################################s
