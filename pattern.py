@@ -1424,9 +1424,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         from armor import analysis
         return analysis.powerSpec(self, *args, **kwargs)
 
-    def powerSpec09(self ,*args, **kwargs):
+    def powerSpecTest0709(self ,*args, **kwargs):
         from armor import analysis
-        return analysis.powerSpec09(self, *args, **kwargs)
+        return analysis.powerSpecTest0709(self, *args, **kwargs)
     
 
     #   end new objects from old

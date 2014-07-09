@@ -2,6 +2,7 @@ from armor.initialise import *
 #WRFwindow = (200,200,600,560)
 
 def powerSpecTest09(a):
+    # ported to armor.analysis.powerSpecTest0709()
     #a = march('0312.1200')[0]
     a.load()
     a.show()
@@ -21,4 +22,12 @@ def powerSpecTest09(a):
     
     a2.powerSpec()
 
-candidates = [may
+candidates = may('0520.05') + march('0312.11') + kongrey('0829.2150') + kongrey('0828.0200')
+candidates2 = maywrf20.list + marchwrf('0312') + kongreywrf('0829') + kongreywrf('0828')
+
+for a in candidates:
+    a.powerSpecTest0709()
+    
+
+
+
