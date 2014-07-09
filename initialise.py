@@ -27,6 +27,8 @@ comprefCutRegion = (200, 200, 150*4, 140*4)
 w = ob.may2014wrf20[0]
 w.load()
 
+WRFwindow = (200,200,600,560)
+
 """
 k12 =kongrey[12]
 k11 =kongrey[11]
