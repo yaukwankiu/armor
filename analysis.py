@@ -376,7 +376,11 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
 from armor.initialise import *
 #WRFwindow = (200,200,600,560)
 
-def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
+def powerSpecTest0709(a, 
+                      filter="",
+                      filterArgs={'sigma': 4, 'newCopy':True},
+                      display=False, WRFwindow = (200,200,600,560)
+                      ):
     #a = march('0312.1200')[0]
     a.load()
     try:
@@ -393,7 +397,9 @@ def powerSpecTest0709(a, display=False, WRFwindow = (200,200,600,560)):
         a.drawRectangle(*WRFwindow).saveImage()
         a.load()
         a1= a.getWindow(*WRFwindow)
-        #a1.saveImage(imagePath=a.imagepath[:-4] + "_cut_out" + ".png")
+        if filter != "":
+            a1 = filter(a1, **filterArgs)
+        a1.saveImage()
         a2 = a1.coarser().coarser()
         a2.name = a1.name
         a2.saveImage()

@@ -2371,7 +2371,7 @@ class DBZstream:
         #
         #######################
 
-    def __call__(self, N=-999):
+    def __call__(self, N=-999, key2=""):
         """
         if N is an integer then return the N-th DBZ pattern in the stream
         else if N is a string then return those whose names or dataTimes contains N
@@ -2381,7 +2381,7 @@ class DBZstream:
         elif isinstance(N, int):
             return self.list[N]
         elif isinstance(N, str):
-            return [v for v in self.list if N in v.name or N in v.dataTime]
+            return [v for v in self.list if (N in v.name or N in v.dataTime) and (key2 in v.name or key2 in v.dataTime) ]
 
     def __getitem__(self, N=-999):
         """alias for self.list[] """

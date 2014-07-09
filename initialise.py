@@ -6,8 +6,9 @@ from armor import pattern
 from armor import defaultParameters as dp
 from armor.defaultParameters import *
 from armor.misc import *
-
 from armor import objects4 as ob
+
+DBZ     = pattern.DBZ
 
 kongrey = ob.kongrey
 kongreywrf = ob.kongreywrf
