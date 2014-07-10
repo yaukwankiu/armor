@@ -79,6 +79,19 @@ m3.show()
 
 m3.saveImage(outputFolder+getTimeString() + m.name + "threshold_cluster_close_open.png")
 
+reg = []
+for N in range(10):
+    reg.append((N, m2.getRegionForValue(N, )))
 
+for N in range(10):
+    m2 = m2.drawRectangle(*reg[N][1])
+m2.show()
+m2.saveImage(outputFolder + m.name + 'threshold_cluster_regions.png')
 
+m3 = m.copy()
+for N in range(10):
+    m3 = m3.drawRectangle(*reg[N][1])
+m3.name = m.name + 'Rain Cell Regions'
+m3.show()
+m3.saveImage(outputFolder + m.name + 'rain_cell_regions.png')
 

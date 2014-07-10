@@ -876,13 +876,34 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         if N2 =="":
             N2=N
-        indexMatrix = (self.matrix>=N) * (self.matrix<N2)
+        indexMatrix = (self.matrix>=N) * (self.matrix<=N2)
         locations = np.argwhere(indexMatrix)
-        iMax = max([v[0] for v in locations])
-        iMin = min([v[0] for v in locations])
-        jMax = max([v[1] for v in locations])
-        jMin = min([v[1] for v in locations])
-        return self.drawRectangle(iMin, jMin, iMax-iMin, jMax-jMin)
+        if locations == []:
+            return self
+        else:
+            iMax = max([v[0] for v in locations])
+            iMin = min([v[0] for v in locations])
+            jMax = max([v[1] for v in locations])
+            jMin = min([v[1] for v in locations])
+            return self.drawRectangle(iMin, jMin, iMax-iMin, jMax-jMin)
+
+    def getRegionForValue(self, N=20, N2="", **kwargs):
+        """ to draw a rectanglular hull for all points with the given value range
+        """
+        if N2 =="":
+            N2=N
+        indexMatrix = (self.matrix>=N) * (self.matrix<=N2)
+        locations = np.argwhere(indexMatrix)
+        if locations == []:
+            return (-1,-1,0,0)
+        else:
+            iMax = max([v[0] for v in locations])
+            iMin = min([v[0] for v in locations])
+            jMax = max([v[1] for v in locations])
+            jMin = min([v[1] for v in locations])
+            return (iMin, jMin, iMax-iMin, jMax-jMin)
+
+
 
     def getWindow(self, bottom=0, left=0, height=100, width=100):
         """return a dbz object, a window view of itself
@@ -2173,9 +2194,9 @@ class VectorField(object):
         plt.axis([left, left+width-1, bottom, bottom+height-1])
         plt.title(title)
 
-    def showPlot(self,**kwargs):
+    def showPlot(self, block=False, **kwargs):
         self.plot(**kwargs)
-        plt.show()
+        plt.show(block=block)
 
     def show(self,**kwargs):  #alias
         self.showPlot(**kwargs)
