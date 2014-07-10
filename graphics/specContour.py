@@ -1,4 +1,5 @@
 
+import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -53,7 +54,11 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             r = random.randint(0, len(maps)-1)
             cmap = plt.get_cmap(maps[r])
         else:
-            cmap = plt.cm.BuPu
+            try:
+                cmap_name = kwargs['cmap']
+                cmap = plt.get_cmap(cmap_name)
+            except(KeyError):
+                cmap = plt.cm.BuPu
 
         plt.xlabel('sigma, log scale base=2')
         plt.ylabel('Intensity')
@@ -63,25 +68,20 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.title(title)
 
         CS0 = plt.contourf(X, Y, Z, 20, cmap=cmap, origin='lower')
-        #CS1 = plt.contour(CS0, levels=CS0.levels, colors='k',
-        #                  origin='lower', hold='on', alpha=0.8, inline=1,
-        #                  linestyles='solid')
-        CS1 = plt.contour(X,Y,Z, 10, colors='k',
+        CS1 = plt.contour(CS0, levels=CS0.levels[::2], colors='k',
                           origin='lower', hold='on', alpha=0.8, inline=1,
-                          linestyles='solid')
-
-
+                          fontsize=10, linestyles='solid')
 
         plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
         plt.semilogx(Y, basex=2, visible=False)
-        
+
         diver = make_axes_locatable(plt.gca())
         cax = diver.append_axes("bottom", "5%", pad="8%")
         cbar = plt.colorbar(CS0, orientation='horizontal', cax=cax)
-        cax.set_title('10^N', fontsize=12, y=-1.4)
+        cax.set_title('10^N', fontsize=12, y=-2.0)
         cbar.add_lines(CS1)
         plt.tight_layout(h_pad=0.5)
-            
+
     else:
         Z3 = np.zeros([len(Z), len(Z[0])])
         for i in range(0, len(Z)):
@@ -99,9 +99,9 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.title(title)
 
         CS1 = plt.contour(X, Y, Z, 20, colors='k', origin='lower', hold='on',
-                          alpha=0.6, linestyles='solid', inline=1)
+                          alpha=0.6, linestyles='solid', inline=1, fontsize=10)
         CS2 = plt.contour(X, Y, Z2, 20, colors='r', origin='lower', hold='on',
-                          alpha=1, linestyles='solid', inline=1)
+                          alpha=1, linestyles='solid', inline=1, fontsize=11)
         plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
         plt.clabel(CS2, inline=1, fontsize=11, fmt='%1.1f')
 
@@ -111,13 +111,14 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             r = random.randint(0, len(maps)-1)
             cmap = plt.get_cmap(maps[r])
         else:
-            cmap = plt.cm.coolwarm
+            try:
+                cmap_name = kwargs['cmap']
+                cmap = plt.get_cmap(cmap_name)
+            except(KeyError):
+                cmap = plt.cm.coolwarm
 
         CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower')
-        #CS4 = plt.contour(CS3, levels=CS3.levels, colors='w',
-        #            origin='lower', hold='on', alpha=0.6, inline=1,
-        #            fontsize=10)
-        CS4 = plt.contour(X, Y, Z3 ,10, colors='w',
+        CS4 = plt.contour(CS3, levels=CS3.levels[::2], colors='w',
                     origin='lower', hold='on', alpha=0.6, inline=1,
                     fontsize=10)
         plt.semilogx(Y, basex=2, visible=False)
@@ -125,26 +126,34 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         diver = make_axes_locatable(plt.gca())
         cax = diver.append_axes("bottom", "5%", pad="8%")
         cbar = plt.colorbar(CS3, orientation='horizontal', cax=cax)
-        cax.set_title('10^N', fontsize=12, y=-1.4)
+        cax.set_title('10^N', fontsize=12, y=-2.0)
         cbar.add_lines(CS4)
         plt.tight_layout(h_pad=0.5)
 
     try:
-        display = kwargs['display']
+        showup = kwargs['display']
     except(KeyError):
-        display = True
+        showup = True
 
     try:
-        outputFolder = kwargs['outputFolder']
+        folder = kwargs['outputFolder']
     except(KeyError):
-        outputFolder = os.getcwd()
+        folder = os.getcwd()
 
     try:
-        fileName = kwargs['fileName']
-        plt.savefig(outputFolder +  fileName)
-        plt.close()
+        savename = kwargs['filename']
+        plt.savefig(folder + '/' + savename)
     except(KeyError):
         None
 
-    if display:
+    if showup:
         plt.show()
+    else:
+        plt.close()
+
+
+if __name__ == '__main__':
+    aa = pickle.load(open('aa.pydump', 'r'))
+    bb = pickle.load(open('bb.pydump', 'r'))
+
+    specContour(aa, show=True, random_cmap=True)

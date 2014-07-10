@@ -53,7 +53,7 @@ for testName in testNamesList:
         XYZ['Z'] = Zmax
         spectrum3d.spectrum3d(XYZ, title = "Max Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, fileName = "Max_Spec_" + "_".join(testName.split('/')) + ".png")
         print 'saved to' , outputFolder
-        
+        pickle.dump(XYZ, open(outputFolder + str(time.time())  + "MaxSpecXYZ.pydump",'w'))
         #################################################################
         Ztotal=0
         CountTotal=0
@@ -71,6 +71,7 @@ for testName in testNamesList:
         spectrum3d.spectrum3d(XYZ, title = "Total Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, 
                             fileName = str(time.time()) + "Total_Spec_" + "_".join(testName.split('/')) + ".png")
         
+        pickle.dump(XYZ, open(outputFolder + str(time.time())  + "TotalSpecXYZ.pydump",'w'))
         print 'saved to' , outputFolder
     except:
         print "error! -- ", testName

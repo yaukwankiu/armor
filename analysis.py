@@ -74,6 +74,7 @@ from matplotlib import pyplot as plt
 dbz = pattern.DBZ
 import time
 import copy
+import os
 try:
     from armor import objects as ob
 except:
@@ -353,17 +354,26 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
         try:
-            specContour.specContour(XYZ=XYZmax, XYZ2=XYZmax2, outputFolder=outputFolder, fileName=fileName1)
-            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+            if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
+                specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+            else:
+                pass
+            if not XYZtotal['Z'].max() == 0 or not XYZtotal2['Z'].max() == 0:
+                specContour.specContour(XYZtotal, XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+            else:
+                pass
         except:
-            pass
+            print "Contour plot failure due to input data max = %f" % XYZmax['Z'].max()
+            os.system("pause")
     # debug
     a.XYZmax = XYZmax
     a.XYZtotal = XYZtotal
     # end debug
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
-    ##specContour.specContour(XYZ=XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+
+    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    
     if toPlotContours:
         try:
             specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
