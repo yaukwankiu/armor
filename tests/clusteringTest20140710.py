@@ -6,13 +6,10 @@ from armor.initialise import *
 from scipy.ndimage import morphology as mor
 from armor.geometry import morphology as morph
 
-
 def getTimeString():
     return str(time.time())
 
-
 outputFolder = 'testing/'
-
 
 m   = march('0312.2130')[0].load()
 
