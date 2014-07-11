@@ -303,7 +303,8 @@ def HMM():
 
 
 def powerSpec(a, b="", thres=0, outputFolder="", toReload=False, 
-             toPlotContours=False,
+             toPlotContours=True,
+             toPlot3d=False,
             #spectrumType = "numerical", 
             **kwargs):
     """
@@ -340,31 +341,33 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     maxSpec = psResults['maxSpec']
     XYZmax  = psResults['XYZmax']
     XYZtotal= psResults['XYZtotal']
-
-    spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
-    spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
+    if toPlot3d:
+        spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
+        spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
 
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
             #spectrumType = "numerical", 
             toPlotContours=toPlotContours, #2014-07-08
+            toPlot3d=toPlot3d,
             **kwargs)
         XYZmax2     = psResults_b['XYZmax']
         XYZtotal2   = psResults_b['XYZtotal']
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
-        try:
-            if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
-                specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
-            else:
-                pass
-            if not XYZtotal['Z'].max() == 0 or not XYZtotal2['Z'].max() == 0:
-                specContour.specContour(XYZtotal, XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
-            else:
-                pass
-        except:
-            print "Contour plot failure due to input data max = %f" % XYZmax['Z'].max()
-            os.system("pause")
+        if toPlot3d:
+            try:
+                if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
+                    specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+                else:
+                    pass
+                if not XYZtotal['Z'].max() == 0 or not XYZtotal2['Z'].max() == 0:
+                    specContour.specContour(XYZtotal, XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+                else:
+                    pass
+            except:
+                print "Contour plot failure due to input data max = %f" % XYZmax['Z'].max()
+                os.system("pause")
     # debug
     a.XYZmax = XYZmax
     a.XYZtotal = XYZtotal
