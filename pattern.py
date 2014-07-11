@@ -1216,6 +1216,34 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             a.show(block=False)
         return entropy(probArray)
 
+    def entropyLocal(self, cellSize=40, display=True,threshold=-999, cmap=defaultCmap, *args, **kwargs):
+        a = self
+        arr = self.matrix
+        height, width = arr.shape
+        entropyMap = np.ma.zeros((height,width))
+        entropyMap.mask = False
+        for i in range(height//cellSize):
+            for j in range(width//cellSize):
+                #print i,j
+                a1 = a.getWindow(i*cellSize, j*cellSize, cellSize, cellSize)
+                ent = a1.entropy(threshold=threshold)
+                if not(ent>0 or ent<=0):    #not a number, i.e. "nan" type
+                    ent = 0
+                entropyMap[i*cellSize: (i+1)*cellSize, j*cellSize: (j+1)*cellSize] = ent
+
+        #entropyMap.mask += (entropyMap== np.nan)
+        EntropyMap = a.copy()
+        EntropyMap.name="Entropy_Map_" + a.name
+        EntropyMap.matrix = entropyMap
+        EntropyMap.vmin=entropyMap.min()
+        EntropyMap.vmax=entropyMap.max()
+        EntropyMap.cmap=cmap
+        
+        if display:
+            EntropyMap.show()
+        self.entropyMap = EntropyMap                
+        return EntropyMap
+
     def entropy(self, *args, **kwargs):
         return self.entropyGlobal(*args, **kwargs)    
 
