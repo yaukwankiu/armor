@@ -357,12 +357,18 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
         if toPlotContours:
             try:
-                if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
-                    specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+                plt.close()
+                XYZ1 = XYZmax
+                XYZ2 = XYZmax2
+                if not XYZmax['Z'].max() <= 0 or not XYZmax2['Z'].max() <= 0:
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName1)
                 else:
                     pass
-                if not XYZtotal['Z'].max() == 0 or not XYZtotal2['Z'].max() == 0:
-                    specContour.specContour(XYZtotal, XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+                XYZ1 = XYZtotal
+                XYZ2 = XYZtotal2
+                plt.close()
+                if not XYZtotal['Z'].max() <= 0 or not XYZtotal2['Z'].max() <= 0:
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
                 else:
                     pass
             except:
