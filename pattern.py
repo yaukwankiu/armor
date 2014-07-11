@@ -1190,13 +1190,20 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a1.matrix = (a.matrix >threshold)
         return a1
 
-    def entropyGlobal(self, strata = [0, 10, 20, 25, 20, 35, 40, 45, 50, 55, 60, 65, 70, 75, 999]):
+    def entropyGlobal(self, threshold=-999, 
+                      strata = [0, 10, 20, 25, 20, 35, 40, 45, 50, 55, 60, 65, 70, 75, 999],
+                      display=False):
         """
         http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.stats.entropy.html
         scipy:  from probability/frequency distribution to entropy
         """
         from scipy.stats import entropy
-        arr = self.matrix
+        if threshold != -999:
+            a = self.threshold(0)
+            arr = a.matrix
+        else:
+            a=self
+            arr = self.matrix
         freqList =[]
         N   = len(strata)
         for i in range(N-1):
@@ -1205,6 +1212,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         freqList = np.array(freqList)
         freqTotal = freqList.sum()
         probArray   = 1.* freqList / freqTotal
+        if display:
+            a.show(block=False)
         return entropy(probArray)
 
     def entropy(self, *args, **kwargs):
