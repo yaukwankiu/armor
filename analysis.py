@@ -302,7 +302,8 @@ def HMM():
 
 
 def powerSpec(a, b="", thres=0, outputFolder="", toReload=False, 
-             toPlotContours=False,
+             toPlotContours=True,
+             toPlot3d = False,
             #spectrumType = "numerical", 
             **kwargs):
     """
@@ -340,8 +341,9 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     XYZmax  = psResults['XYZmax']
     XYZtotal= psResults['XYZtotal']
 
-    spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
-    spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
+    if toPlot3d:
+        spectrum3d.spectrum3d(XYZmax, outputFolder=outputFolder, fileName  = str(time.time())+ 'maxSpec3d_' + a.name+ '.png')
+        spectrum3d.spectrum3d(XYZtotal, outputFolder=outputFolder, fileName= str(time.time())+ 'totalSpec3d_' + a.name+'.png')
 
     if b != "":
         psResults_b = powerSpec(b, thres=thres, outputFolder=outputFolder, toReload=toReload, 
@@ -373,6 +375,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
 
+#################################################################################
 from armor.initialise import *
 #WRFwindow = (200,200,600,560)
 
