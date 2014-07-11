@@ -355,14 +355,20 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         XYZtotal2   = psResults_b['XYZtotal']
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
-        if toPlot3d:
+        if toPlotContours:
             try:
-                if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
-                    specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
+                plt.close()
+                XYZ1 = XYZmax
+                XYZ2 = XYZmax2
+                if not XYZmax['Z'].max() <= 0 or not XYZmax2['Z'].max() <= 0:
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName1)
                 else:
                     pass
-                if not XYZtotal['Z'].max() == 0 or not XYZtotal2['Z'].max() == 0:
-                    specContour.specContour(XYZtotal, XYZtotal2, outputFolder=outputFolder, fileName=fileName2)
+                XYZ1 = XYZtotal
+                XYZ2 = XYZtotal2
+                plt.close()
+                if not XYZtotal['Z'].max() <= 0 or not XYZtotal2['Z'].max() <= 0:
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
                 else:
                     pass
             except:
@@ -375,13 +381,18 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
 
-    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)
+    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)    
     
     if toPlotContours:
         try:
-            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
+            plt.close()
+            XYZ1=XYZtotal
+            XYZ2=XYZmax
+
+            specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
         except:
             print "function specContour.specContour() failed!!"
+            return {'XYZtotal': XYZtotal, 'XYZmax': XYZmax}
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
