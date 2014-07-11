@@ -73,6 +73,7 @@ def spectrum3d(XYZ, **kwargs):
         fileName = kwargs['fileName']
         figure.savefig( outputFolder +fileName)
         print "Save figure with name and path %s" % outputFolder +fileName
+        figure.close()
     except(KeyError):
         print "figure not saved."
 

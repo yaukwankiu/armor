@@ -131,17 +131,17 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.tight_layout(h_pad=0.5)
 
     try:
-        showup = kwargs['display']
+        showup = kwargs['show']
     except(KeyError):
         showup = True
 
     try:
-        folder = kwargs['outputFolder']
+        folder = kwargs['folder']
     except(KeyError):
         folder = os.getcwd()
 
     try:
-        savename = kwargs['filename']
+        savename = kwargs['savename']
         plt.savefig(folder + '/' + savename)
     except(KeyError):
         None
