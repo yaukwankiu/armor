@@ -13,9 +13,6 @@ testNamesList = ['sampling/1404810469.8monsoon/', 'sampling/1404810469.8COMPREF_
 #testNamesList = ['sampling/1404810469.8COMPREF_Rainband_May_2014/','averaging/1404805135.46COMPREF_Rainband_May_2014/','averaging/1404805399.89COMPREF_Rainband_May_2014/'
 #                ]
 
-testNamesList = ['averaging/1404805399.89monsoon/']
-testNamesList = ['1404803356.97COMPREF_Rainband_March_2014/']
-
 inputFolderBase = dp.root + "labLogs2/powerSpec3/" 
 #inputFolderBase = "c:/yau/"
 #testNamesList = os.listdir(inputFolderBase)
@@ -56,7 +53,7 @@ for testName in testNamesList:
         XYZ['Z'] = Zmax
         spectrum3d.spectrum3d(XYZ, title = "Max Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, fileName = "Max_Spec_" + "_".join(testName.split('/')) + ".png")
         print 'saved to' , outputFolder
-        
+        pickle.dump(XYZ, open(outputFolder + str(time.time())  + "MaxSpecXYZ.pydump",'w'))
         #################################################################
         Ztotal=0
         CountTotal=0
@@ -74,6 +71,8 @@ for testName in testNamesList:
         spectrum3d.spectrum3d(XYZ, title = "Total Spec " + testName + "\nwith total count="+ str(CountMax), display=False, outputFolder=outputFolder, 
                             fileName = str(time.time()) + "Total_Spec_" + "_".join(testName.split('/')) + ".png")
         
+        pickle.dump(XYZ, open(outputFolder + str(time.time())  + "TotalSpecXYZ.pydump",'w'))
         print 'saved to' , outputFolder
     except:
         print "error! -- ", testName
+
