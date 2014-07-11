@@ -33,6 +33,11 @@ w.load()
 
 WRFwindow = (200,200,600,560)
 
+
+
+wrfsList    =  [kongreywrf, maywrf19, maywrf20, maywrf21, maywrf21, maywrf22, maywrf23, marchwrf, kongreywrf]
+radarsList  =  [monsoon, march, may, kongrey]
+
 """
 k12 =kongrey[12]
 k11 =kongrey[11]

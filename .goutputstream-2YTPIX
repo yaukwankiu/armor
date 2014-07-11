@@ -355,7 +355,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         XYZtotal2   = psResults_b['XYZtotal']
         fileName1   = str(time.time())+ "maxSpec_" + a.name + "_" + b.name + ".png"
         fileName2   = str(time.time())+ "totalSpec_" + a.name + "_" + b.name + ".png"
-        if toPlotContours:
+        if toPlot3d:
             try:
                 if not XYZmax['Z'].max() == 0 or not XYZmax2['Z'].max() == 0:
                     specContour.specContour(XYZmax, XYZmax2, outputFolder=outputFolder, fileName=fileName1)
@@ -375,18 +375,13 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
 
-    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)    
+    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)
     
     if toPlotContours:
         try:
-            plt.close()
-            XYZ1=XYZtotal
-            XYZ2=XYZmax
-
-            specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
+            specContour.specContour(XYZ=XYZtotal, XYZ2=XYZmax, outputFolder=outputFolder, fileName=fileName2)
         except:
             print "function specContour.specContour() failed!!"
-            return {'XYZtotal': XYZtotal, 'XYZmax': XYZmax}
     #specContour.specContour(XYZ=XYZmax,  display=True)
     #specContour.specContour(XYZ=XYZmax,  display=True)
     return psResults
@@ -435,29 +430,15 @@ def powerSpecTest0709(a,
 
 ##############################################################################s
 
-def randomEntropyTest(samples='all', iterations=50, sleep=5, *args, **kwargs):
+def randomEntropyTest():
     from . import objects4 as ob
     from . import initialise as ini 
     wrfsList = ini.wrfsList
     radarsList = ini.radarsList
-    #wrfsList = sum([v.list for v in wrfsList],[])
-    if samples == 'all':
-        samples = radarsList + wrfsList
-    elif samples == 'wrf' or samples =='wrfs':
-        samples = wrfsList
-    elif samples == 'radar' or samples =='radars' or samples =='compref':
-        samples = radarsList
-    N = len(samples)    
-    print "name, sum, entropy:"
-    for i in range(iterations):
-        event = samples[int(np.random.random()*N)]
-        a = event[int(np.random.random()*len(event))]
-        a.load()
-        entropy = a.entropy(*args, **kwargs)
-        print a.name, a.matrix.sum(), a.entropy()
-        a.show(block=False)
-        time.sleep(sleep)
-        
+    wrfs    = sum([v.list for v in ini.wrfsList],[])
+    radars  = sum([v.list for v in ini.radarsList],[])
+
+
 def main():
     pass
     

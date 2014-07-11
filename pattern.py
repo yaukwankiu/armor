@@ -484,7 +484,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.save()
 
     def makeImage(self, matrix="", vmin=99999, vmax=-99999, cmap="", title="",\
-                  showColourbar=True, closeAll=True):
+                  showColourbar=True, closeAll=True,
+                  *args, **kwargs):
         """
         requires: matplotlib
         to make the plot before you save/print it to screen
@@ -541,10 +542,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         plt.savefig(imagePath, dpi=dpi)  
 
     #def printToScreen(self, matrix="", cmap=""):
-    def printToScreen(self, *args, **kwargs):   #2013-12-06
+    def printToScreen(self,  block=False, *args, **kwargs):   #2013-12-06
         #self.makeImage(matrix=matrix, cmap=cmap)
         self.makeImage(*args, **kwargs)
-        plt.show()        
+        plt.show(block=block)        
         
     #def show(self, matrix="", cmap=""):
     def show(self, *args, **kwargs):  #2013-12-06
@@ -1188,7 +1189,26 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a1.vmax = 2
         a1.matrix = (a.matrix >threshold)
         return a1
-    
+
+    def entropyGlobal(self, strata = [0, 10, 20, 25, 20, 35, 40, 45, 50, 55, 60, 65, 70, 75, 999]):
+        """
+        http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.stats.entropy.html
+        scipy:  from probability/frequency distribution to entropy
+        """
+        from scipy.stats import entropy
+        arr = self.matrix
+        freqList =[]
+        N   = len(strata)
+        for i in range(N-1):
+            m = (arr>=strata[i]) * (arr<strata[i+1])
+            freqList.append(m.sum())
+        freqList = np.array(freqList)
+        freqTotal = freqList.sum()
+        probArray   = 1.* freqList / freqTotal
+        return entropy(probArray)
+
+    def entropy(self, *args, **kwargs):
+        return self.entropyGlobal(*args, **kwargs)    
 
     def affineTransform(self, T=np.matrix([[1,0,0],[0,1,0]]), origin=""):
         """2013-10-17
@@ -2975,4 +2995,5 @@ try:
       )
 except:
     print 'data not found!  construction of cx and dx skipped'
+
 

@@ -10,3 +10,4 @@
 *log.txt
 defaultParameters.py
 defaultParameters.pyc
+*.epp
