@@ -430,7 +430,7 @@ def powerSpecTest0709(a,
 
 ##############################################################################s
 
-def randomEntropyTest(samples='all', iterations=50, sleep=5):
+def randomEntropyTest(samples='all', iterations=50, sleep=5, *args, **kwargs):
     from . import objects4 as ob
     from . import initialise as ini 
     wrfsList = ini.wrfsList
@@ -443,11 +443,12 @@ def randomEntropyTest(samples='all', iterations=50, sleep=5):
     elif samples == 'radar' or samples =='radars' or samples =='compref':
         samples = radarsList
     N = len(samples)    
+    print "name, sum, entropy:"
     for i in range(iterations):
         event = samples[int(np.random.random()*N)]
         a = event[int(np.random.random()*len(event))]
         a.load()
-        entropy = a.entropy()
+        entropy = a.entropy(*args, **kwargs)
         print a.name, a.matrix.sum(), a.entropy()
         a.show(block=False)
         time.sleep(sleep)
