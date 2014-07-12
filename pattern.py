@@ -1216,20 +1216,46 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             a.show(block=False)
         return entropy(probArray)
 
-    def entropyLocal(self, cellSize=40, display=True,threshold=-999, cmap=defaultCmap, *args, **kwargs):
+    def entropyLocal(self, cellSize=40, region = "", iMin="", iMax="", jMin="", jMax="", stepSize="", 
+                    display=True,threshold=-999, 
+                    #cmap=defaultCmap, 
+                    cmap = 'jet',
+                    verbose=True,
+                    *args, **kwargs):
+        time0 = time.time()
         a = self
+        if stepSize =="":
+            stepSize = cellSize
         arr = self.matrix
         height, width = arr.shape
+
+        if region !="":
+            iMin = region[0]
+            jMin = region[1]
+            iMax = iMin + region[2]
+            jMax = jMin + region[3]
+            
+        if iMin =="":
+            iMin = 0
+        if jMin=="":
+            jMin=0
+        if iMax =="":
+            iMax = height
+        if jMax =="":
+            jMax = width
+        if verbose:
+            print "Entropy for the region from (i,j) = (%d, %d) to (%d, %d)" % (iMin,jMin,iMax,jMax)
+            print "stepSize  =", stepSize
         entropyMap = np.ma.zeros((height,width))
         entropyMap.mask = False
-        for i in range(height//cellSize):
-            for j in range(width//cellSize):
+        for i in range(iMin, iMax-stepSize, stepSize):
+            for j in range(jMin, jMax-stepSize, stepSize):
                 #print i,j
-                a1 = a.getWindow(i*cellSize, j*cellSize, cellSize, cellSize)
+                a1 = a.getWindow(i, j, cellSize, cellSize)
                 ent = a1.entropy(threshold=threshold)
                 if not(ent>0 or ent<=0):    #not a number, i.e. "nan" type
                     ent = 0
-                entropyMap[i*cellSize: (i+1)*cellSize, j*cellSize: (j+1)*cellSize] = ent
+                entropyMap[i: i+cellSize, j: j+cellSize] = ent
 
         #entropyMap.mask += (entropyMap== np.nan)
         EntropyMap = a.copy()
@@ -1242,6 +1268,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if display:
             EntropyMap.show()
         self.entropyMap = EntropyMap                
+        if verbose:
+            print "time spent:", time.time() - time0
         return EntropyMap
 
     def entropy(self, *args, **kwargs):
