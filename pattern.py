@@ -1216,7 +1216,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             a.show(block=False)
         return entropy(probArray)
 
-    def entropyLocal(self, cellSize=40, region = "", iMin="", iMax="", jMin="", jMax="", stepSize="", 
+    def entropyLocal(self, cellSize="", region = "", iMin="", iMax="", jMin="", jMax="", stepSize="", 
                     display=True,threshold=-999, 
                     #cmap=defaultCmap, 
                     cmap = 'jet',
@@ -1224,10 +1224,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                     *args, **kwargs):
         time0 = time.time()
         a = self
-        if stepSize =="":
-            stepSize = cellSize
         arr = self.matrix
         height, width = arr.shape
+        if cellSize =="":
+            cellSize = max(2, height//20)
+        if stepSize =="":
+            stepSize = cellSize
 
         if region !="":
             iMin = region[0]
