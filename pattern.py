@@ -1251,7 +1251,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         for i in range(iMin, iMax-stepSize, stepSize):
             for j in range(jMin, jMax-stepSize, stepSize):
                 #print i,j
-                a1 = a.getWindow(i, j, cellSize, cellSize)
+                a1 = a.getWindow(i-cellSize//2, j-cellSize//2, cellSize, cellSize)
                 ent = a1.entropy(threshold=threshold)
                 if not(ent>0 or ent<=0):    #not a number, i.e. "nan" type
                     ent = 0

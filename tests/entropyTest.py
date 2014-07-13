@@ -27,5 +27,5 @@ for N in range(loops):
         an.outputPath = event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.dat'
         an.imagePath = event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.png'
         #an.saveMatrix()
-        pickle.dump(an, open(event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.pydump'))
+        pickle.dump(an, open(event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.pydump','w'))
         an.saveImage()
