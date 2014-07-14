@@ -13,6 +13,11 @@ for event in eventsList:
 
 loops = 100
 
+#   shuffle!!
+N = int(np.random.random()*len(eventsList))
+
+eventsList  = eventsList[N:] + eventsList[:N]
+
 for N in range(loops):     
     for event in eventsList:
         timeString_a = str(int(time.time()))
@@ -30,3 +35,4 @@ for N in range(loops):
         #an.saveMatrix()
         pickle.dump(an, open(event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.pydump','w'))
         an.saveImage()
+        plt.close()
