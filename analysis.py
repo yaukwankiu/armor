@@ -463,7 +463,108 @@ def randomEntropyTest(samples='all', iterations=50, sleep=3, *args, **kwargs):
         print a.name, "\t", a.matrix.sum(),"\t", a.entropy()
         #a.show(block=False)
         time.sleep(sleep)
+
+
+########################################################################
+
+
+def entropyLocal(a, cellSize="", region = "", iMin="", iMax="", jMin="", jMax="", stepSize="", 
+                outputFolder = "", 
+                display=True,threshold=-999, 
+                #cmap=defaultCmap, 
+                cmap = 'jet',
+                verbose=True,
+                *args, **kwargs):
+    time0 = time.time()
+    if outputFolder!="":
+        if not os.path.exists(outputFolder):
+            os.makedirs(outputFolder)
+    a = a
+    arr = a.matrix
+    height, width = arr.shape
+    if cellSize =="":
+        cellSize = max(2, height//20)
+    if stepSize =="":
+        stepSize = max(1, cellSize//5)
+
+    if region !="":
+        iMin = region[0]
+        jMin = region[1]
+        iMax = iMin + region[2]
+        jMax = jMin + region[3]
         
+    if iMin =="":
+        iMin = 0
+    if jMin=="":
+        jMin=0
+    if iMax =="":
+        iMax = height
+    if jMax =="":
+        jMax = width
+    if verbose:
+        print "Entropy for the region from (i,j) = (%d, %d) to (%d, %d)" % (iMin,jMin,iMax,jMax)
+        print "stepSize  =", stepSize
+    entropyMap = np.ma.zeros((height,width))
+    entropyMap.mask = False
+    for i in range(iMin, iMax-stepSize, stepSize):
+        for j in range(jMin, jMax-stepSize, stepSize):
+            #print i,j
+            a1 = a.getWindow(i-cellSize//2, j-cellSize//2, cellSize, cellSize)
+            ent = a1.entropy(threshold=threshold)
+            if not(ent>0 or ent<=0):    #not a number, i.e. "nan" type
+                ent = 0
+            entropyMap[i: i+cellSize, j: j+cellSize] = ent
+
+    #entropyMap.mask += (entropyMap== np.nan)
+    EntropyMap = a.copy()
+    EntropyMap.name="Entropy_Map_" + a.name
+    EntropyMap.matrix = entropyMap
+    EntropyMap.vmin=entropyMap.min()
+    EntropyMap.vmax=entropyMap.max()
+    EntropyMap.cmap=cmap
+    
+    if display:
+        EntropyMap.show()
+    a.entropyMap = EntropyMap                
+
+    if outputFolder != "":
+        EntropyMap.saveImage(outputFolder+str(time.time())+EntropyMap.name+".png")
+    #############################################
+    #   adopted from armor.tests.entropyTest2
+    x = EntropyMap
+    m = x.matrix
+    mMin = m.min()
+    mMax = m.max()
+    entThres = 0.8 * mMax + 0.2 * mMin
+    m1 = (m>entThres)
+
+    x1=x.copy()
+    x1.matrix=m1
+    x2 = x1.connectedComponents()
+
+    #a.backupMatrix(0)
+    a1 = a.copy()
+    for i in range(9):
+        reg = (x2.getRegionForValue(i))
+        if reg[0] + reg[2] > height-2 and reg[1] + reg[3]>width-2:  # if it's the entire frame
+            pass
+        else:
+            x2 = x2.drawRectangle(*reg)
+            x2.show()
+            print reg
+            a1=a1.drawRectangle(*reg)
+            if display:
+                a1.show()
+    if outputFolder != "":
+        a1.saveImage(outputFolder+str(time.time()) + "High_Entropy_Regions_"+a.name+".png")
+    #
+    ##############################################
+    if verbose:
+        print "time spent:", time.time() - time0
+    #a.restoreMatrix(0)        
+    plt.close()
+    return EntropyMap
+            
 def main():
     pass
     

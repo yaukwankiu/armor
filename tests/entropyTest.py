@@ -23,7 +23,8 @@ for N in range(loops):
         print a.name
         a.show()
         a.saveImage(event.outputFolder+timeString_a+a.name+'.png')
-        an = a.entropyLocal(stepSize=(a.matrix.shape[0]//200)+1)
+        an = a.entropyLocal(stepSize=(a.matrix.shape[0]//200)+1, 
+                            outputFolder=event.outputFolder)
         an.outputPath = event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.dat'
         an.imagePath = event.outputFolder+ timeString_a + "Entropy_Map_" + a.name + '.png'
         #an.saveMatrix()
