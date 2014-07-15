@@ -1,6 +1,6 @@
-import pickle
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import random
 import os
@@ -59,14 +59,25 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             except(KeyError):
                 cmap = plt.cm.BuPu
 
-        plt.xlabel('sigma, log scale base=2')
+        try:
+            Vmax = kwargs['setMax']
+        except(KeyError):
+            Vmax = Z.max()
+
+        try:
+            Vmin = kwargs['setMin']
+        except(KeyError):
+            Vmin = Z.min()
+
+        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=14)
         plt.ylabel('Intensity')
 
         if name1:
             title = title + '\n' + name1
         plt.title(title)
 
-        CS0 = plt.contourf(X, Y, Z, 20, cmap=cmap, origin='lower')
+        levels = np.linspace(Vmin, Vmax, num=20)
+        CS0 = plt.contourf(X, Y, Z, levels=levels, cmap=cmap, origin='lower')
         CS1 = plt.contour(CS0, levels=CS0.levels[::2], colors='k',
                           origin='lower', hold='on', alpha=0.8, inline=1,
                           fontsize=10, linestyles='solid')
@@ -75,9 +86,9 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.semilogx(Y, basex=2, visible=False)
 
         diver = make_axes_locatable(plt.gca())
-        cax = diver.append_axes("bottom", "5%", pad="8%")
-        cbar = plt.colorbar(CS0, orientation='horizontal', cax=cax)
-        cax.set_title('10^N', fontsize=12, y=-2.0)
+        cax = diver.append_axes("bottom", "5%", pad="15%")
+        cbar = plt.colorbar(CS0, orientation='horizontal', cax=cax, format='%1.2f')
+        cax.set_title(r'log$_{10}$(N)', fontsize=12, y=-2.0)
         cbar.add_lines(CS1)
         plt.tight_layout(h_pad=0.5)
 
@@ -87,7 +98,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             for j in range(0, len(Z[i])):
                 Z3[i][j] = Z2[i][j] - Z[i][j]
 
-        plt.xlabel('sigma, log scale base=2')
+        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=14)
         plt.ylabel('Intensity')
 
         if name1:
@@ -97,10 +108,10 @@ def specContour(XYZ, XYZ2=None, **kwargs):
 
         plt.title(title)
 
-        CS1 = plt.contour(X, Y, Z, 20, colors='k', origin='lower', hold='on',
-                          alpha=0.6, linestyles='solid', inline=1, fontsize=10)
-        CS2 = plt.contour(X, Y, Z2, 20, colors='r', origin='lower', hold='on',
-                          alpha=1, linestyles='solid', inline=1, fontsize=11)
+        CS1 = plt.contour(X, Y, Z, 10, colors='k', origin='lower', hold='on',
+                          alpha=0.4, linestyles='solid', inline=1, fontsize=10)
+        CS2 = plt.contour(X, Y, Z2, 7, colors='r', origin='lower', hold='on',
+                          alpha=0.7, linestyles='solid', inline=1, fontsize=11)
         plt.clabel(CS1, inline=1, fontsize=10, fmt='%1.1f')
         plt.clabel(CS2, inline=1, fontsize=11, fmt='%1.1f')
 
@@ -116,16 +127,29 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             except(KeyError):
                 cmap = plt.cm.coolwarm
 
-        CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower')
-        CS4 = plt.contour(CS3, levels=CS3.levels[::2], colors='w',
+        if math.fabs(Z3.max()) >= math.fabs(Z3.min()):
+            maxVal = math.fabs(Z3.max())
+        else:
+            maxVal = math.fabs(Z3.min())
+
+        levels = np.linspace(-maxVal, maxVal, num=20)            
+
+        CS3 = plt.contourf(X, Y, Z3, levels=levels, cmap=cmap, origin='lower')
+        CS4 = plt.contour(CS3, levels=CS3.levels[::4], colors='w',
+                    origin='lower', hold='on', alpha=0.4, inline=1,
+                    fontsize=10, linestyles='solid')
+
+        CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower', alpha=0.7)
+        CS4 = plt.contour(CS3, levels=CS3.levels[::4], colors='w',
                     origin='lower', hold='on', alpha=0.6, inline=1,
-                    fontsize=10)
+                    fontsize=10, alpha=0.4)
+
         plt.semilogx(Y, basex=2, visible=False)
 
         diver = make_axes_locatable(plt.gca())
-        cax = diver.append_axes("bottom", "5%", pad="8%")
+        cax = diver.append_axes("bottom", "5%", pad="15%")
         cbar = plt.colorbar(CS3, orientation='horizontal', cax=cax)
-        cax.set_title('10^N', fontsize=12, y=-2.0)
+        cax.set_title(r'$\Delta$ [log$_{10}$ (N)]', fontsize=12, y=-2.0)
         cbar.add_lines(CS4)
         plt.tight_layout(h_pad=0.5)
 
@@ -149,11 +173,3 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.show(block=False)
     else:
         plt.close()
-
-
-if __name__ == '__main__':
-    aa = pickle.load(open('aa.pydump', 'r'))
-    bb = pickle.load(open('bb.pydump', 'r'))
-
-    specContour(aa, show=True, random_cmap=True)
-
