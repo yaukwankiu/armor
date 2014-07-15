@@ -19,8 +19,15 @@ def spectrum3d(XYZ, **kwargs):
             if XYZ['Z'][i][j] != 0:
                 Z[i][j] = np.log10(XYZ['Z'][i][j])
 
-    Zmax = Z.max()
-    Zmin = Z.min()
+    try:
+        Zmax = kwargs['setMax']
+    except(KeyError):
+        Zmax = Z.max()
+    try:
+        Zmin = kwargs['setMin']
+    except(KeyError):
+        Zmin = Z.min()
+
     figure = plt.figure()
     ax = figure.gca(projection='3d')
     randcolor = False
@@ -59,9 +66,9 @@ def spectrum3d(XYZ, **kwargs):
         title = ""
 
     plt.title(title)
-    plt.ylabel('sigma(log scale base=2)')
-    plt.xlabel('Intensity class (2 for power-of-10)')
-    ax.set_zlabel(' 10^N')
+    plt.ylabel(r'$\sigma$=2$^x$', fontsize=18)
+    plt.xlabel(r'Intensity class(0.1$\times$10$^{0.5y}$)', fontsize=16)
+    ax.set_zlabel(r'log$_{10}$(N)')
 
     try:
         outputFolder = kwargs['outputFolder']
@@ -70,21 +77,18 @@ def spectrum3d(XYZ, **kwargs):
 
     try:
         fileName = kwargs['fileName']
-        figure.savefig( outputFolder +fileName)
-        print "Save figure with name and path %s" % outputFolder +fileName
-        figure.close()
+        figure.savefig( outputFolder + "/" + fileName)
+        print "Save figure with name and path %s" % outputFolder + "\\" \
+                + fileName
     except(KeyError):
         print "figure not saved."
 
-    show = True
     try:
-        show = kwargs['show']
+        show = kwargs['display']
     except(KeyError):
         show = False
-    try:
-        show=kwargs['display']
-    except(KeyError):
-        pass
 
     if show:
         plt.show()
+    else:
+        plt.close()

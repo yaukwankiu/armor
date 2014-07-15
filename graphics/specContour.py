@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -15,14 +16,14 @@ def specContour(XYZ, XYZ2=None, **kwargs):
 
     X, Y = np.meshgrid(y, x)
 
-    Z = np.transpose(XYZ['Z'])
+    Z = np.transpose(XYZ['Z'].copy())
     for i in range(0, len(Z)):
         for j in range(0, len(Z[i])):
             if Z[i][j] > 0:
                 Z[i][j] = np.log10(Z[i][j])
 
     if XYZ2 is not None:
-        Z2 = np.transpose(XYZ2['Z'])
+        Z2 = np.transpose(XYZ2['Z'].copy())
         for i in range(0, len(Z2)):
             for j in range(0, len(Z2[i])):
                 if Z2[i][j] > 0:
@@ -62,22 +63,15 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         try:
             Vmax = kwargs['setMax']
         except(KeyError):
-            try:
-                Vmax = kwargs['vmax']
-            except:
-                Vmax = Z.max()
+            Vmax = Z.max()
 
         try:
             Vmin = kwargs['setMin']
         except(KeyError):
-            try:
-                Vmin = kwargs['vmin']
-            except:
-                Vmin = Z.min()
-        print "Vmin, Vmax:", Vmin, Vmax #debug
+            Vmin = Z.min()
 
-        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=14)
-        plt.ylabel('Intensity')
+        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
+        plt.ylabel('Intensity 0.1$\\times$10$^{0.5y}$', fontsize=16)
 
         if name1:
             title = title + '\n' + name1
@@ -105,8 +99,8 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             for j in range(0, len(Z[i])):
                 Z3[i][j] = Z2[i][j] - Z[i][j]
 
-        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=14)
-        plt.ylabel('Intensity')
+        plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
+        plt.ylabel('Intensity 0.1$\\times$10$^{0.5y}$', fontsize=16)
 
         if name1:
             title = title + '\n' + name1
@@ -148,8 +142,8 @@ def specContour(XYZ, XYZ2=None, **kwargs):
 
         CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower', alpha=0.7)
         CS4 = plt.contour(CS3, levels=CS3.levels[::4], colors='w',
-                    origin='lower', hold='on', inline=1,
-                    fontsize=10, alpha=0.4)
+                    origin='lower', hold='on', alpha=0.6, inline=1,
+                    fontsize=10, linestyles='solid')
 
         plt.semilogx(Y, basex=2, visible=False)
 
@@ -180,3 +174,8 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.show(block=False)
     else:
         plt.close()
+
+    if XYZ2 is not None:
+        return {'X':X, 'Y':Y, 'Z': Z}, {'X':X, 'Y': Y, 'Z':Z3}
+    else:
+        return {'X':X, 'Y':Y, 'Z': Z}
