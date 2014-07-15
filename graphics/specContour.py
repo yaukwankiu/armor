@@ -71,7 +71,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
             Vmin = Z.min()
 
         plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
-        plt.ylabel('Intensity 0.1$\\times$10$^{0.5y}$', fontsize=16)
+        plt.ylabel('Intensity 0.01$\\times$10$^{0.5y}$', fontsize=16)
 
         if name1:
             title = title + '\n' + name1
@@ -100,7 +100,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
                 Z3[i][j] = Z2[i][j] - Z[i][j]
 
         plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
-        plt.ylabel('Intensity 0.1$\\times$10$^{0.5y}$', fontsize=16)
+        plt.ylabel('Intensity 0.01$\\times$10$^{0.5y}$', fontsize=16)
 
         if name1:
             title = title + '\n' + name1
@@ -176,6 +176,6 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.close()
 
     if XYZ2 is not None:
-        return {'X':X, 'Y':Y, 'Z': Z}, {'X':X, 'Y': Y, 'Z':Z3}
+        return {'X':X.T, 'Y':Y.T, 'Z': Z.T}, {'X':X.T, 'Y': Y.T, 'Z':Z3.T}
     else:
-        return {'X':X, 'Y':Y, 'Z': Z}
+        return {'X':X.T, 'Y':Y.T, 'Z': Z.T}
