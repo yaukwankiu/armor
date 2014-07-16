@@ -140,11 +140,6 @@ def specContour(XYZ, XYZ2=None, **kwargs):
                     origin='lower', hold='on', alpha=0.4, inline=1,
                     fontsize=10, linestyles='solid')
 
-        CS3 = plt.contourf(X, Y, Z3, 20, cmap=cmap, origin='lower', alpha=0.7)
-        CS4 = plt.contour(CS3, levels=CS3.levels[::4], colors='w',
-                    origin='lower', hold='on', alpha=0.6, inline=1,
-                    fontsize=10, linestyles='solid')
-
         plt.semilogx(Y, basex=2, visible=False)
 
         diver = make_axes_locatable(plt.gca())
