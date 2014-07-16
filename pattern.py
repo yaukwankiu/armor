@@ -539,7 +539,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if imagePath == "":
             imagePath = self.imagePath
         self.makeImage(matrix, **kwargs)
-        plt.savefig(imagePath, dpi=dpi)  
+        if dpi =="default":
+            plt.savefig(imagePath)
+        else:
+            plt.savefig(imagePath, dpi=dpi)  
 
     #def printToScreen(self, matrix="", cmap=""):
     def printToScreen(self,  block=False, *args, **kwargs):   #2013-12-06

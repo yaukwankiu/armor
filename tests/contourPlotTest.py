@@ -13,6 +13,13 @@ testName     = 'Contour_Spec_COMPREF_Rainband_March_2014'
 L = os.listdir(inputFolder)
 Ltotal = [v for v in L if 'XYZ.pydump' in v]
 Lmax   = [v for v in L if 'XYZmax.pydump' in v]
+print Ltotal
+
+print Lmax
+########
+####
+##
+#
 L0=L
 vmins = [0,0]
 vmaxs = [0,0]
@@ -33,13 +40,20 @@ for count , L in enumerate([Ltotal, Lmax]):
     #vmaxs[count] = (np.log10(XYZ["Z"])* (Z>0)).max()
     X = XYZ['X']
     Y = XYZ['Y']
-    XYZout = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, fileName = testName+ labels[count] + "_average_of_" + str(frameCount+1) +'images.png')
+    XYZout = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, 
+                                vmin=-1.0, vmax=3.6,
+                                fileName = testName+ labels[count] + "_average_of_" + str(frameCount+1) +'images.png')
     plt.close()
     XYZs[count] = {'X': X.copy(), 'Y': Y.copy(), 'Z': Z.copy()}
 
-specContour.specContour(XYZs[0], XYZs[1], outputFolder=outputFolder, fileName=testName+"total-max.png", vmin=-.8, vmax=3.17)
+specContour.specContour(XYZs[0], XYZs[1], outputFolder=outputFolder, fileName=testName+"total-max.png")
+#specContour.specContour(XYZs[0], XYZs[1], outputFolder=outputFolder, fileName=testName+"total-max.png", vmin=-.8, vmax=3.17)
 print testName, "number of frames", frameCount+1
 
+#
+##
+####
+########
 
 ##   set the "setMin/setMax"  - edit here
 #vmax = max(vmaxs)
