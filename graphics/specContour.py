@@ -135,7 +135,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
 
         levels = np.linspace(-maxVal, maxVal, num=20)            
 
-        CS3 = plt.contourf(X, Y, Z3, levels=levels, cmap=cmap, origin='lower')
+        CS3 = plt.contourf(X, Y, Z3, levels=levels, cmap=cmap, origin='lower', alpha=0.95)
         CS4 = plt.contour(CS3, levels=CS3.levels[::4], colors='w',
                     origin='lower', hold='on', alpha=0.4, inline=1,
                     fontsize=10, linestyles='solid')
