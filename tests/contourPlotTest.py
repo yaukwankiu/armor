@@ -37,7 +37,7 @@ for count , L in enumerate([Ltotal, Lmax]):
     plt.close()
     XYZs[count] = {'X': X.copy(), 'Y': Y.copy(), 'Z': Z.copy()}
 
-specContour.specContour(XYZs[0], XYZs[1], outputFolder=outputFolder, fileName=testName+"total-max.png")
+specContour.specContour(XYZs[0], XYZs[1], outputFolder=outputFolder, fileName=testName+"total-max.png", vmin=-.8, vmax=3.17)
 print testName, "number of frames", frameCount+1
 
 
