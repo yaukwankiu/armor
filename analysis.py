@@ -567,7 +567,12 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", *args, **kwargs):
     res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, *args, **kwargs)
     plt.close()
     res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, *args, **kwargs)
-    plt.close()
+
+
+    XYZmax1 = res1['XYZmax']
+    XYZmax2 = res2['XYZmax']
+    XYZtotal1 = res1['XYZtotal']
+    XYZtotal2 = res2['XYZtotal']
 
     if outputFolder =="":
         outputFolder = ds1.outputFolder
@@ -575,11 +580,11 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", *args, **kwargs):
     #   contourplots
     plt.close()
 
-    crossContourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
+    crossContourMax = specContour.specContour(XYZmax1,XYZmax2 ,outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
                                  title= ds.name+"Max Spectrum Contours", display=True)
     plt.close()
 
-    crossContourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
+    crossContourTotal = specContour.specContour(XYZtotal1, XYZtotal2, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
                                  title= ds.name+"Total Spectrum Contours", display=True)
     plt.close()
 
