@@ -94,6 +94,8 @@ L = os.listdir(inputFolderCOMPREF)
 
 Ltotal = [v for v in L if 'XYZ.pydump' in v]
 Lmax   = [v for v in L if 'XYZmax.pydump' in v]
+LtotalCOMPREF = Ltotal
+LmaxCOMPREF   = Lmax
 
 inputFolder = inputFolderCOMPREF
 testName     = 'Contour_Spec_COMPREF_Rainband_March_2014'
@@ -170,6 +172,9 @@ Ltotal[:20]
 
 Lmax[:20]
 
+LtotalWRF= Ltotal
+LmaxWRF  = Lmax
+
 # ----> contourPlotTest.py lines 19-56
 
 XYZoutsRADAR = XYZouts
@@ -178,7 +183,7 @@ XYZoutsRADAR = XYZouts
 #   dual plots
 #   2014-07-16
 
-def getXYZout(L, label="", vmin="", vmax=""):
+def specContourWithXYZout(L, label="", vmin="", vmax=""):
     if label=="":
         label = str(time.time())
     plt.close()
@@ -201,4 +206,7 @@ def getXYZout(L, label="", vmin="", vmax=""):
     plt.close()
     print testName, "number of frames", frameCount+1
     return XYZout
+
+XYZ1 = specContourWithXYZout(L=LmaxCOMPREF, label="COMPREF_max", vmin="", vmax="")
+XYZ2 = specContourWithXYZout(L=LmaxWRF, label="WRF_max", vmin="", vmax="")
 
