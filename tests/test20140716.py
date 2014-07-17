@@ -138,13 +138,8 @@ for i in range(13):
     plt.show(block=False)
 
 ###
-<<<<<<< HEAD
-#   3.  COMPREF:  Maximal Spectrum:(2-day average)
-#   4.  COMPREF:  Total Spectrum:(2-day average)
-=======
 #   3.  COMPREF:  Maximal Spectrum(2-day average)
 #   4.  COMPREF:  Total Spectrum(2-day average)
->>>>>>> 671a249c7e45f5bad2458d21b544d73329551b60
 
 #   imports
 from armor.initialise import *
@@ -157,10 +152,10 @@ from armor.graphics import specContour
 #import pickle, os
 
 #   setups
-inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
-inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
-inputFolderCOMPREF = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
-inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+#inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
+#inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+inputFolderCOMPREF  = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
+inputFolderWRF      = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.08WRF_Rainband_March_2014/'
 
 
 
