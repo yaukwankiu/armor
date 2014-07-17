@@ -581,11 +581,11 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", *args, **kwargs):
     plt.close()
 
     crossContourMax = specContour.specContour(XYZmax1,XYZmax2 ,outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
-                                 title= ds.name+"Max Spectrum Contours", display=True)
+                                 title= ds1.name+ "_versus_" + ds2.name + "Max Spectrum Contours", display=True)
     plt.close()
 
     crossContourTotal = specContour.specContour(XYZtotal1, XYZtotal2, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
-                                 title= ds.name+"Total Spectrum Contours", display=True)
+                                 title= ds1.name+ "_versus_" + ds2.name + "Total Spectrum Contours", display=True)
     plt.close()
 
     return {'crossContourMax':crossContourMax, 
