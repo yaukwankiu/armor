@@ -191,7 +191,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
 
     a.restoreMatrix(0)
     if toDumpResponseImages:
-        pickle.dump(a.responseImages, open(outputFolder+a.name+"responseImagesList.pydump",'w'))
+        pickle.dump(a.responseImages, open(outputFolder+ str(time.time()) +a.name+"responseImagesList.pydump",'w'))
     responseImages0 = a.responseImages
     #####################################
     #debug
@@ -207,7 +207,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #
     ######################################
     a.LOGspec     = dbz(name= a.name + "Laplacian-of-Gaussian_numerical_spectrum",
-                        imagePath=outputFolder+a1.name+"_LOG_numerical_spec.png",
+                        imagePath=outputFolder+ str(time.time())+a1.name+"_LOG_numerical_spec.png",
                         outputPath = outputFolder+a1.name+"_LOG_numerical_spec.dat",
                         cmap = 'jet',
                         coastDataPath = a.coastDataPath
@@ -227,11 +227,11 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     vmax = aResponseMax.max()
     vmin = aResponseMax.min()
     print "vmax, vmin for ", a.name, ":", vmax, vmin
-    try:
-        a.drawCoast(matrix=aResponseMax)
-    except:
-        pass
-    a.saveImage(imagePath=outputFolder+a.name+"LOG_max_response.png", 
+    #try:
+    #    a.drawCoast(matrix=aResponseMax)
+    #except:
+    #    pass
+    a.saveImage(imagePath=outputFolder+ str(time.time()) + a.name+"LOG_max_response.png", 
                 matrix =aResponseMax,
                 title=a.name+" Max Responses of L-O-G filter",
                 vmax = vmax, vmin=vmin,
@@ -256,14 +256,14 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     #a.LOGspec.matrix = np.ma.array(a.LOGspec.matrix, mask=mask, fill_value=-999.)
     #
     ##########################################
-    pickle.dump(a.LOGspec, open(outputFolder+ a.LOGspec.name + ".pydump","w"))    
+    pickle.dump(a.LOGspec, open(outputFolder+ str(time.time()) + a.LOGspec.name + ".pydump","w"))    
     print a.LOGspec.outputPath
     print "saving to:", a.LOGspec.imagePath
     a.LOGspec.backupMatrix('goodCopy')
-    try:
-        a.LOGspec.drawCoast()
-    except:
-        pass
+    #try:
+    #    a.LOGspec.drawCoast()
+    #except:
+    #    pass
     print "saving a.LOGspec image to", a.LOGspec.imagePath
 
     a.LOGspec.saveImage()
@@ -272,14 +272,14 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
     a.LOGspec.saveMatrix()
 
 
-    a.LOGspec.histogram(display=False, matrix=a.LOGspec.matrix, outputPath=outputFolder+a1.name+\
+    a.LOGspec.histogram(display=False, matrix=a.LOGspec.matrix, outputPath=outputFolder+ str(time.time()) + a1.name+\
                         "_LOGspec_numerical" +  ("_logScale" * useLogScale) + "_histogram.png")
     plt.close()
     plt.plot(sigmas, a.LOGtotalSpec)      # plot(xs, ys)
     plt.title(a.name+" Total Spectrum for the L-O-G Kernel")
-    plt.savefig(outputFolder + a.name + "_LOGspec_total"+  \
+    plt.savefig(outputFolder + str(time.time()) +a.name + "_LOGspec_total"+  \
                         ("_logScale" * useLogScale) + "_histogram.png")
-    pickle.dump(a.LOGtotalSpec, open(outputFolder+ a.name + "LOGtotalSpec.pydump","w"))        
+    pickle.dump(a.LOGtotalSpec, open(outputFolder+ str(time.time()) +a.name + "LOGtotalSpec.pydump","w"))        
     
     #a.LOGtotalSpec     = dbz(matrix = a.LOGtotalSpec,
     #                           name= a.name + "Laplacian-of-Gaussian_total_spectrum",
@@ -376,7 +376,7 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
             'XYZtotal'       : XYZ,
             'XYZmax'        :XYZ2,
             'responseImages'    : a.responseImages,
-            
+            'sigmas'        : sigmas
             }
 
 def plotting(folder):

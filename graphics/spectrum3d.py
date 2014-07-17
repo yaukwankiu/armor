@@ -7,6 +7,7 @@ import os
 
 
 def spectrum3d(XYZ, **kwargs):
+    plt.close()
     x = XYZ['X'][0]
     y = np.zeros(len(XYZ['Y']))
     for i in range(0, len(XYZ['Y'])):
@@ -89,6 +90,9 @@ def spectrum3d(XYZ, **kwargs):
         show = False
 
     if show:
-        plt.show()
+        plt.show(block=False)
     else:
         plt.close()
+
+    XYZ = {'X': X.T, 'Y': Y.T, 'Z':Z.T}
+    return XYZ

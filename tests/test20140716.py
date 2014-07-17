@@ -35,14 +35,15 @@ WRF14
 
 """
 #   imports
-from armor import objects4 as ob
-from armor import pattern
-from armor import defaultParameters as dp
-import time, os, shutil, re
-import numpy as np
-import matplotlib.pyplot as plt
+from armor.initialise import *
+#from armor import objects4 as ob
+#from armor import pattern
+#from armor import defaultParameters as dp
+#import time, os, shutil, re
+#import numpy as np
+#import matplotlib.pyplot as plt
 from armor.graphics import specContour
-import pickle, os
+#import pickle, os
 
 #   setups
 inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
@@ -51,6 +52,8 @@ inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
 outputFolder = dp.root + 'labLogs2/july2014report/'
 WRFwindow = (200,200,600,560)
 sigmas  = [1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128]
+
+plt.close()
 ##########################################################
 #   1. COMPREF
 """
@@ -65,13 +68,13 @@ COMPREF:  march 20140311.0000
 """
 m = ob.march2014('20140311.0000')[0]
 m.load()
-m.show()
+m.show(block=False)
 m.saveImage(outputFolder+ '1.png')
 m1 = m.getWindow(*WRFwindow)
-m1.show()
+m1.show(block=False)
 m1.saveImage(outputFolder+'2.png')
 m2 = m1.coarser().coarser()
-m2.show()
+m2.show(block=False)
 m2.saveImage(outputFolder+'3.png')
 
 x2 = m2.powerSpec(outputFolder=outputFolder, toPlotContours=True, toPlot3d=True)
@@ -84,11 +87,11 @@ for i in range(13):
     plt.colorbar()
     plt.title('Laplacian-of-Gaussian filter;  sigma=' + str(sigmas[i]))
     plt.savefig(outputFolder+m.name+ "_sigma" + str(sigmas[i])+ ".png")
-    plt.show()
+    plt.show(block=False)
 
 ###
-#   3.  COMPREF:  Maximal Spectrum(2-day average)
-#   4.  COMPREF:  Total Spectrum(2-day average)
+#   3.  COMPREF:  Maximal Spectrum(2-day average)
+#   4.  COMPREF:  Total Spectrum(2-day average)
 
 L = os.listdir(inputFolderCOMPREF)
 
@@ -100,8 +103,7 @@ LmaxCOMPREF   = Lmax
 inputFolder = inputFolderCOMPREF
 testName     = 'Contour_Spec_COMPREF_Rainband_March_2014'
 # ----> contourPlotTest.py lines 19-56
-
-XYZoutsCOMPREF = XYZouts
+#XYZoutsCOMPREF = XYZouts
 
 ##################
 
@@ -133,11 +135,11 @@ for i in range(13):
     plt.colorbar()
     plt.title('Laplacian-of-Gaussian filter;  sigma=' + str(sigmas[i]))
     plt.savefig(outputFolder+w.name+ "_sigma" + str(sigmas[i])+ ".png")
-    plt.show()
+    plt.show(block=False)
 
 ###
-#   3.  COMPREF:  Maximal Spectrum(2-day average)
-#   4.  COMPREF:  Total Spectrum(2-day average)
+#   3.  COMPREF:  Maximal Spectrum(2-day average)
+#   4.  COMPREF:  Total Spectrum(2-day average)
 
 #   imports
 from armor.initialise import *
@@ -176,8 +178,7 @@ LtotalWRF= Ltotal
 LmaxWRF  = Lmax
 
 # ----> contourPlotTest.py lines 19-56
-
-XYZoutsRADAR = XYZouts
+#XYZoutsRADAR = XYZouts
 
 ###########
 #   dual plots

@@ -211,6 +211,8 @@ missingDataThreshold = defaultMissingDataThreshold  # this line is for backward 
 """
 defaultWRFHeight    = 150
 defaultWRFWidth     = 140
+COMPREF2WRFwindow = (200,200,600,560)
+
 defaultWRFLowerLeftCornerLatitudeLongitude      = (20., 117.5)
 #defaultWRFUpperRightCornerLatitudeLongitude     = (28., 124.5)
 defaultWRFUpperRightCornerLatitudeLongitude     = (27.-0.05, 124.5-0.05)  #2014-06-13
