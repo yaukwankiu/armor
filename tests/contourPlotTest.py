@@ -26,6 +26,7 @@ vmaxs = [0,0]
 labels =['total', 'max']
 XYZs = [0,0]
 count = 0
+XYZouts = [0,0]
 for count , L in enumerate([Ltotal, Lmax]):
     plt.close()
     Z = np.zeros((13,8))
@@ -40,9 +41,9 @@ for count , L in enumerate([Ltotal, Lmax]):
     #vmaxs[count] = (np.log10(XYZ["Z"])* (Z>0)).max()
     X = XYZ['X']
     Y = XYZ['Y']
-    XYZout = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, 
-                                vmin=-1.0, vmax=3.6,
-                                fileName = testName+ labels[count] + "_average_of_" + str(frameCount+1) +'images.png')
+    XYZouts[count] = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, 
+                                            vmin=-1.0, vmax=3.6,
+                                            fileName = testName+ labels[count] + "_average_of_" + str(frameCount+1) +'images.png')
     plt.close()
     XYZs[count] = {'X': X.copy(), 'Y': Y.copy(), 'Z': Z.copy()}
 

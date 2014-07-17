@@ -97,7 +97,9 @@ Lmax   = [v for v in L if 'XYZmax.pydump' in v]
 
 inputFolder = inputFolderCOMPREF
 testName     = 'Contour_Spec_COMPREF_Rainband_March_2014'
-# ----> contourPlotTest.py
+# ----> contourPlotTest.py lines 19-56
+
+XYZoutsCOMPREF = XYZouts
 
 ##################
 
@@ -168,4 +170,35 @@ Ltotal[:20]
 
 Lmax[:20]
 
-# ----> contourPlotTest.py
+# ----> contourPlotTest.py lines 19-56
+
+XYZoutsRADAR = XYZouts
+
+###########
+#   dual plots
+#   2014-07-16
+
+def getXYZout(L, label="", vmin="", vmax=""):
+    if label=="":
+        label = str(time.time())
+    plt.close()
+    Z = np.zeros((13,8))
+    for frameCount, fileName in enumerate(L):
+        XYZ = pickle.load(open(inputFolder+fileName,'r'))
+        #X   = XYZ['X']
+        #Y   = XYZ['Y']
+        Z1  = XYZ['Z']
+        Z  += Z1
+    XYZ['Z'] = Z/ (frameCount+1)
+    #vmins = (np.log10(XYZ["Z"])* (Z>0)).min()
+    #vmaxs = (np.log10(XYZ["Z"])* (Z>0)).max()
+    X = XYZ['X']
+    Y = XYZ['Y']
+    XYZout = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, 
+                                            #vmin=-1.0, vmax=3.6,
+                                            vmin=vmin, vmax=vmax,
+                                            fileName = testName+ label + "_average_of_" + str(frameCount+1) +'images.png')
+    plt.close()
+    print testName, "number of frames", frameCount+1
+    return XYZout
+

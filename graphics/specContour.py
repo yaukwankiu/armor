@@ -68,6 +68,8 @@ def specContour(XYZ, XYZ2=None, **kwargs):
                 Vmax = kwargs['vmax']
             except(KeyError):
                 Vmax = Z.max()
+        if Vmax == "":
+            Vmax = Z.max()
 
         try:
             Vmin = kwargs['setMin']
@@ -76,6 +78,8 @@ def specContour(XYZ, XYZ2=None, **kwargs):
                 Vmin = kwargs['vmin']
             except(KeyError):
                 Vmin = Z.min()  
+        if Vmin == "":
+            Vmin = Z.min()
 
         plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
         plt.ylabel('Intensity 0.01$\\times$10$^{0.5y}$', fontsize=16)
