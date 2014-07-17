@@ -484,15 +484,19 @@ def powerSpecTest(a, outputFolder="",
     
     #   save the totalspec data                                         -pass (too big)
     #   3d plots
+    plt.close()
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpec3d.png",
                                  title= a.name+"Max 3d Spectrum", display=True)
+    plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpec3d.png",
                                  title= a.name+"Total 3d Spectrum", display=True)
 
     #   contourplots
 
+    plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpecContour.png",
                                  title= a.name+"Max Spectrum Contours", display=True)
+    plt.close()
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpecContour.png",
                                  title= a.name+"Total Spectrum Contours", display=True)
 
@@ -531,18 +535,23 @@ def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
 
     XYZmax['Z']     = Zmax
     XYZtotal['Z']   = Ztotal
+    plt.close()
 
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ ds.name+ "_maxSpec3d.png",
                                  title= ds.name+"Max 3d Spectrum", display=True)
+    plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_totalSpec3d.png",
                                  title= ds.name+"Total 3d Spectrum", display=True)
 
     #   contourplots
-
+    plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_maxSpecContour.png",
                                  title= ds.name+"Max Spectrum Contours", display=True)
+    plt.close()
+
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_totalSpecContour.png",
                                  title=ds.name+"Total Spectrum Contours", display=True)
+    plt.close()
 
     return {'XYZmax'    :   XYZmax,
             'XYZtotal'  :   XYZtotal,
@@ -554,19 +563,26 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", *args, **kwargs):
     from armor.initialise import *; march.list=[v for v in march.list if '0311.12' in v.dataTime] ; marchwrf.list=[v for v in marchwrf.list if '0311.12' in v.dataTime] ; from armor import analysis as an; an.crossStreamsPowerSpecTest(march,marchwrf, outputFolder='testing/')
 
     """
-
+    plt.close()
     res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, *args, **kwargs)
+    plt.close()
     res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, *args, **kwargs)
+    plt.close()
 
     if outputFolder =="":
         outputFolder = ds1.outputFolder
     
     #   contourplots
+    plt.close()
 
     crossContourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
                                  title= ds.name+"Max Spectrum Contours", display=True)
+    plt.close()
+
     crossContourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
                                  title= ds.name+"Total Spectrum Contours", display=True)
+    plt.close()
+
     return {'crossContourMax':crossContourMax, 
             'crossContourTotal':crossContourTotal,
             }
