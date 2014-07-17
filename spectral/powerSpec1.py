@@ -81,7 +81,8 @@ radar_wrf_grid_ratio = wrfGridSize / radarGridSize
 #sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128, 160, 256,]
 sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128]
 bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.]
-scaleSpacePower = 2     # <-- edit here
+#scaleSpacePower = 2     # <-- edit here
+scaleSpacePower = 0     # <-- edit here
 dbzList = ob.kongrey
 
 ############################################################################
