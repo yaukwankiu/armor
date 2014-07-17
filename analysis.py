@@ -439,7 +439,160 @@ def powerSpecTest0709(a,
     a2.powerSpec(outputFolder=outputFolder)
 
 
-##############################################################################s
+def powerSpecTest(a, outputFolder="", 
+                sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128],
+                bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
+                *args, **kwargs):
+    """
+    2014-07-17
+    
+    """
+    from graphics import spectrum3d
+    from graphics import specContour
+    timeStamp = str(int(time.time()))
+    if outputFolder =="":
+        outputFolder = a.outputFolder
+    if not os.path.exists(outputFolder):
+        os.makedirs(outputFolder)
+
+    plt.close()
+    #   save the original image
+    a.saveImage(outputFolder+str(time.time())+a.name+'.png')
+    psResults = a.powerSpec(outputFolder=outputFolder, toPlot3d=True, toPlotContours=True, toReload=True, 
+                            sigmas=sigmas, bins=bins,
+                            *args, **kwargs)
+    #   save the response for each gaussian filter with each sigma
+    responseImages= psResults['responseImages']
+    sigmas        = psResults['sigmas']
+    maxSpec       = psResults['maxSpec']
+    XYZmax        = psResults['XYZmax']
+    XYZtotal      = psResults['XYZtotal']
+    height, width, depth = responseImages.shape
+    for i in range(depth):
+        resp = responseImages[:,:,i]
+        plt.close()
+        plt.imshow(resp, origin='lower', cmap='jet',)
+        plt.colorbar()
+        plt.title("Filter Intensity for sigma=%d" % sigmas[i])
+        plt.savefig(outputFolder+ str(time.time()) + a.name + "_LOG_sigma%d.png" %sigmas[i])
+
+    #   save the max response sigma (2d maxspec)                            -DONE ("~LOG_numerical_spec.png")
+    #   save the max responses for each max response sigma for each point  - DONE ("~_max_response.png")
+    #   save all the responses                                           - DONE ("~responseImagesList.pydump")
+    #   save the max spec data
+    pickle.dump(maxSpec, open(outputFolder+ str(time.time()) + a.name + "maxSpec.pydump", 'w'))
+    
+    #   save the totalspec data                                         -pass (too big)
+    #   3d plots
+    plt.close()
+    XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpec3d.png",
+                                 title= a.name+"Max 3d Spectrum", display=True)
+    plt.close()
+    XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpec3d.png",
+                                 title= a.name+"Total 3d Spectrum", display=True)
+
+    #   contourplots
+
+    plt.close()
+    XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpecContour.png",
+                                 title= a.name+"Max Spectrum Contours", display=True)
+    plt.close()
+    XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpecContour.png",
+                                 title= a.name+"Total Spectrum Contours", display=True)
+
+
+
+    #   XYZ max spec dump                                               - DONE ("~XYZmax.pydump")
+    #   XYZ total spec dump                                              - DONE ("~XYZ.pydump")
+
+    return {'XYZ3dMax'      : XYZ3dMax,
+            'XYZ3dTotal'    : XYZ3dTotal,
+            'XYZcontourMax' : XYZcontourMax,
+            'XYZcontourTotal':XYZcontourTotal,
+            'XYZmax':XYZcontourMax,
+            'XYZtotal':XYZcontourTotal,
+            }
+
+
+
+def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
+    if outputFolder =="":
+        outputFolder=ds.outputFolder
+    N = len(ds)
+    Ztotal=0
+    Zmax  =0
+    for a in ds:
+        a.load()
+        a1 = a.getWRFwindow()
+        XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
+        XYZmax  = XYZs['XYZmax']
+        XYZtotal= XYZs['XYZtotal']
+        Zmax   += XYZmax['Z']
+        Ztotal += XYZtotal['Z']
+        
+    Zmax    /= N
+    Ztotal  /= N
+
+    XYZmax['Z']     = Zmax
+    XYZtotal['Z']   = Ztotal
+    plt.close()
+
+    XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ ds.name+ "_maxSpec3d.png",
+                                 title= ds.name+"Max 3d Spectrum", display=True)
+    plt.close()
+    XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_totalSpec3d.png",
+                                 title= ds.name+"Total 3d Spectrum", display=True)
+
+    #   contourplots
+    plt.close()
+    XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_maxSpecContour.png",
+                                 title= ds.name+"Max Spectrum Contours", display=True)
+    plt.close()
+
+    XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_totalSpecContour.png",
+                                 title=ds.name+"Total Spectrum Contours", display=True)
+    plt.close()
+
+    return {'XYZmax'    :   XYZmax,
+            'XYZtotal'  :   XYZtotal,
+            }
+        
+    
+def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", *args, **kwargs):
+    """ 2014-07-17
+    from armor.initialise import *; march.list=[v for v in march.list if '0311.12' in v.dataTime] ; marchwrf.list=[v for v in marchwrf.list if '0311.12' in v.dataTime] ; from armor import analysis as an; an.crossStreamsPowerSpecTest(march,marchwrf, outputFolder='testing/')
+
+    """
+    plt.close()
+    res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, *args, **kwargs)
+    plt.close()
+    res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, *args, **kwargs)
+
+
+    XYZmax1 = res1['XYZmax']
+    XYZmax2 = res2['XYZmax']
+    XYZtotal1 = res1['XYZtotal']
+    XYZtotal2 = res2['XYZtotal']
+
+    if outputFolder =="":
+        outputFolder = ds1.outputFolder
+    
+    #   contourplots
+    plt.close()
+
+    crossContourMax = specContour.specContour(XYZmax1,XYZmax2 ,outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
+                                 title= ds1.name+ "_versus_" + ds2.name + "Max Spectrum Contours", display=True)
+    plt.close()
+
+    crossContourTotal = specContour.specContour(XYZtotal1, XYZtotal2, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
+                                 title= ds1.name+ "_versus_" + ds2.name + "Total Spectrum Contours", display=True)
+    plt.close()
+
+    return {'crossContourMax':crossContourMax, 
+            'crossContourTotal':crossContourTotal,
+            }
+    
+##############################################################################
 
 def randomEntropyTest(samples='all', iterations=50, sleep=3, *args, **kwargs):
     from . import objects4 as ob
@@ -564,6 +717,34 @@ def entropyLocal(a, cellSize="", region = "", iMin="", iMax="", jMin="", jMax=""
     #a.restoreMatrix(0)        
     plt.close()
     return EntropyMap
+
+#####################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             
 def main():
     pass

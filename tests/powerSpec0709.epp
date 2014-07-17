@@ -350,11 +350,11 @@ ForcedReadOnly=0
 
 [File10]
 DataLen=7143
-TopLine=6
-SelStart=567
-SelStop=417
+TopLine=30
+SelStart=1784
+SelStop=1784
 RectSel=0
-CaretPos=417
+CaretPos=1784
 CaretVisible=1
 TopLineAlt=0
 SelStartAlt=0
@@ -384,12 +384,12 @@ FTPFilename=
 ForcedReadOnly=0
 
 [File11]
-DataLen=4781
-TopLine=122
-SelStart=4619
-SelStop=4619
+DataLen=4911
+TopLine=27
+SelStart=1367
+SelStop=1367
 RectSel=0
-CaretPos=4619
+CaretPos=1367
 CaretVisible=1
 TopLineAlt=0
 SelStartAlt=0
@@ -424,9 +424,40 @@ BookmarksProjectWide=0
 TabIndex=11
 FirstFileTab=0
 FileCount=12
-RemovedCount=4
+RemovedCount=5
 
 [Removed0]
+DataLen=16559
+TopLine=306
+SelStart=15255
+SelStop=15255
+RectSel=0
+CaretPos=15255
+CaretVisible=0
+TopLineAlt=0
+SelStartAlt=0
+SelStopAlt=0
+RectSelAlt=0
+CaretPosAlt=0
+CaretVisibleAlt=0
+BookmarkCount=1
+Folding=
+FileType=
+DataFormat=utf8
+AutoIndent=0
+NumberLines=0
+WordWrapIndent=0
+NumberColumns=0
+ShowSpaces=0
+ShowLineBreaks=0
+LiveSpell=0
+WrapPos=-2
+RecordSize=-2
+HexEditor=0
+HexSections=-2
+Filename=D:\CWB\downloadpics.py
+
+[Removed1]
 DataLen=7755
 TopLine=0
 SelStart=0
@@ -457,7 +488,7 @@ HexEditor=0
 HexSections=-2
 Filename=D:\ARMOR\labLogs2\powerSpec3\sampling\1404810469.8COMPREF_Rainband_May_2014\1404810548powerSpec1.py
 
-[Removed1]
+[Removed2]
 DataLen=3162
 TopLine=45
 SelStart=2089
@@ -488,7 +519,7 @@ HexEditor=0
 HexSections=-2
 Filename=F:\ARMOR\python\armor\tests\powerSpec20140708.py
 
-[Removed2]
+[Removed3]
 DataLen=307
 TopLine=0
 SelStart=291
@@ -519,7 +550,7 @@ HexEditor=0
 HexSections=-2
 Filename=D:\ARMOR\labLogs2\powerSpec3\1404803356.97COMPREF_Rainband_March_2014\1404803409.92log.txt
 
-[Removed3]
+[Removed4]
 DataLen=349
 TopLine=0
 SelStart=0

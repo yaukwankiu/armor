@@ -485,6 +485,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
     def makeImage(self, matrix="", vmin=99999, vmax=-99999, cmap="", title="",\
                   showColourbar=True, closeAll=True,
+                  useSubplot=False,
                   *args, **kwargs):
         """
         requires: matplotlib
@@ -517,23 +518,34 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             #plt.clf()
             plt.close()
         # make the image
-        fig, axes = plt.subplots(nrows=1, ncols=1)
         if not self.imageTopDown:
             #matrix = np.flipud(matrix)
             imshowOrigin = 'lower'
         else:
             imshowOrigin = 'upper'
-        im = axes.imshow(matrix,                       # or np.flipud(self.matrix)?
-                         vmin=vmin, vmax=vmax, cmap=cmap,   # The vmin and vmax arguments specify the color limits
-                         origin=imshowOrigin,               # 2013-10-15
-                         )
+        if useSubplot:
+            fig, axes = plt.subplots(nrows=1, ncols=1)
+
+            im = axes.imshow(matrix,                       # or np.flipud(self.matrix)?
+                             vmin=vmin, vmax=vmax, cmap=cmap,   # The vmin and vmax arguments specify the color limits
+                             origin=imshowOrigin,               # 2013-10-15
+                             )
+            if showColourbar :
+                cax = fig.add_axes([0.9, 0.1, 0.01, 0.8])
+                fig.colorbar(im,cax=cax)
+        else:
+            plt.imshow(matrix, vmin=vmin, vmax=vmax, cmap=cmap, origin=imshowOrigin)    #2014-07-17
+            if showColourbar:
+                #plt.add_axes([0.9, 0.1, 0.01, 0.8])
+                plt.colorbar()
         plt.title(title)
-        if showColourbar :
-            cax = fig.add_axes([0.9, 0.1, 0.01, 0.8])
-            fig.colorbar(im,cax=cax)
+
         #plt.show()                                          # wait, don't show!
 
-    def saveImage(self, imagePath="", matrix="",  dpi=200, **kwargs):
+    def saveImage(self, imagePath="", matrix="",  
+                    #dpi=200,
+                    dpi='default', 
+                    **kwargs):
         if matrix=="":
             matrix = self.matrix
         if imagePath == "":
@@ -1121,6 +1133,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                                         self.coordinateOrigin[1] //scale ) ,
                     verbose=self.verbose)
 
+
+    def getWRFwindow(self, window=dp.COMPREF2WRFwindow):
+        if self.matrix.shape == (881,921):
+            a1 = self.getWindow(*window)
+            a1.name = self.name + "_to_WRF_window"
+            a1.outputFolder = self.outputFolder
+            a1.outputPath   = self.outputPath[:-4] + "_to_WRF_window" + self.outputPath[-4:]
+            a1.coarser().coarser()
+            return a1
+        else:
+            return self
 
 
     def getPrediction(self, C):
@@ -1955,6 +1978,15 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 ###########
 
     #   end supplementary functions
+    ########################################################
+
+    ########################################################
+    #   tests
+    
+    def powerSpecTest(self, *args, **kwargs):
+        from . import analysis
+        return analysis.powerSpecTest(self, *args, **kwargs)
+    #
     ########################################################
 
 ################################################################################
@@ -2908,6 +2940,7 @@ class DBZstream:
         """
         ds1 = self
         pass
+
     
 ################################################################################
 
