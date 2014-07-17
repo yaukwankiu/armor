@@ -2,13 +2,13 @@
 # constructing the objects for the report
 """
 COMPREF:  march 20140311.0000
--1. COMPREF Intensity plotScale = 2
-0.  COMPREF Intensity plotScale = 4
-1.  COMPREF Max IntensityScale plot (Scale 1=0.05deg) 
+-1. COMPREF Intensity plot:Scale = 2
+0.  COMPREF Intensity plot:Scale = 4
+1.  COMPREF Max Intensity:Scale plot (Scale 1=0.05deg) 
     20140311.0000
-2.  COMPREF Max IntensityIntensity plot (corresp. to scale) 
-3.  COMPREF:  Maximal Spectrum(2-day average)
-4.  COMPREF:  Total Spectrum(2-day average)
+2.  COMPREF Max Intensity:Intensity plot (corresp. to scale) 
+3.  COMPREF:  Maximal Spectrum:(2-day average)
+4.  COMPREF:  Total Spectrum:(2-day average)
 
 WRF01-WRF20
 
@@ -55,13 +55,13 @@ sigmas  = [1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128]
 #   1. COMPREF
 """
 COMPREF:  march 20140311.0000
--1. COMPREF Intensity plotScale = 2
-0.  COMPREF Intensity plotScale = 4
-1.  COMPREF Max IntensityScale plot (Scale 1=0.05deg) 
+-1. COMPREF Intensity plot:Scale = 2
+0.  COMPREF Intensity plot:Scale = 4
+1.  COMPREF Max Intensity:Scale plot (Scale 1=0.05deg) 
     20140311.0000
-2.  COMPREF Max IntensityIntensity plot (corresp. to scale) 
-3.  COMPREF:  Maximal Spectrum(2-day average)
-4.  COMPREF:  Total Spectrum(2-day average)
+2.  COMPREF Max Intensity:Intensity plot (corresp. to scale) 
+3.  COMPREF:  Maximal Spectrum:(2-day average)
+4.  COMPREF:  Total Spectrum:(2-day average)
 """
 m = ob.march2014('20140311.0000')[0]
 m.load()
@@ -87,8 +87,8 @@ for i in range(13):
     plt.show()
 
 ###
-#   3.  COMPREF:  Maximal Spectrum(2-day average)
-#   4.  COMPREF:  Total Spectrum(2-day average)
+#   3.  COMPREF:  Maximal Spectrum:(2-day average)
+#   4.  COMPREF:  Total Spectrum:(2-day average)
 
 L = os.listdir(inputFolderCOMPREF)
 
@@ -132,8 +132,8 @@ for i in range(13):
     plt.show()
 
 ###
-#   3.  COMPREF:  Maximal Spectrum(2-day average)
-#   4.  COMPREF:  Total Spectrum(2-day average)
+#   3.  COMPREF:  Maximal Spectrum:(2-day average)
+#   4.  COMPREF:  Total Spectrum:(2-day average)
 
 #   imports
 from armor.initialise import *
@@ -148,6 +148,10 @@ from armor.graphics import specContour
 #   setups
 inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
 inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+inputFolderCOMPREF = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
+inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+
+
 
 outputFolder = dp.root + 'labLogs2/july2014report/'
 WRFwindow = (200,200,600,560)
