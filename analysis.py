@@ -304,8 +304,10 @@ def HMM():
 
 def powerSpec(a, b="", thres=0, outputFolder="", toReload=False, 
              toPlotContours=True,
-             toPlot3d=False,
+             toPlot3d=True,
             #spectrumType = "numerical", 
+            vmin="",
+            vmax="",
             **kwargs):
     """
     updated 2014-07-03 
@@ -350,6 +352,8 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
             #spectrumType = "numerical", 
             toPlotContours=toPlotContours, #2014-07-08
             toPlot3d=toPlot3d,
+            vmin=vmin,
+            vmax=vmax,
             **kwargs)
         XYZmax2     = psResults_b['XYZmax']
         XYZtotal2   = psResults_b['XYZtotal']
@@ -361,14 +365,18 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
                 XYZ1 = XYZmax
                 XYZ2 = XYZmax2
                 if not XYZmax['Z'].max() <= 0 or not XYZmax2['Z'].max() <= 0:
-                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName1)
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName1,
+                                                        vmin=vmin,
+                                                        vmax=vmax,)
                 else:
                     pass
                 XYZ1 = XYZtotal
                 XYZ2 = XYZtotal2
                 plt.close()
                 if not XYZtotal['Z'].max() <= 0 or not XYZtotal2['Z'].max() <= 0:
-                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
+                    specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2,
+                                                        vmin=vmin,
+                                                        vmax=vmax,)
                 else:
                     pass
             except:
@@ -380,8 +388,10 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
     # end debug
     fileName1   = str(time.time())+ "maxSpec_" + a.name + ".png"
     fileName2   = str(time.time())+ "totalSpec_" + a.name + ".png"
-
-    #specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1)    
+    plt.close()
+    specContour.specContour(XYZmax,  outputFolder=outputFolder, fileName=fileName1, vmin=vmin, vmax=vmax)   
+    plt.close() 
+    specContour.specContour(XYZtotal,  outputFolder=outputFolder, fileName=fileName2, vmin=vmin, vmax=vmax)    
     
     if toPlotContours:
         try:
@@ -389,7 +399,9 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
             XYZ1=XYZtotal
             XYZ2=XYZmax
 
-            specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2)
+            specContour.specContour(XYZ1, XYZ2, outputFolder=outputFolder, fileName=fileName2,
+                                                        vmin=vmin,
+                                                        vmax=vmax,)
         except:
             print "function specContour.specContour() failed!!"
             return {'XYZtotal': XYZtotal, 'XYZmax': XYZmax}

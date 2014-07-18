@@ -46,8 +46,10 @@ from armor.graphics import specContour
 #import pickle, os
 
 #   setups
-inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
-inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+#inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
+#inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+inputFolderCOMPREF = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
+inputFolderWRF= '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.08WRF_Rainband_March_2014/'
 
 outputFolder = dp.root + 'labLogs2/july2014report/'
 WRFwindow = (200,200,600,560)
@@ -77,18 +79,20 @@ m2 = m1.coarser().coarser()
 m2.show(block=False)
 m2.saveImage(outputFolder+'3.png')
 
-x2 = m2.powerSpec(outputFolder=outputFolder, toPlotContours=True, toPlot3d=True)
+x2 = m2.powerSpec(outputFolder=outputFolder, toPlotContours=True, toPlot3d=True,
+                  vmin=-2.0, vmax=3.0)
 
 resp = x2['responseImages']
 resp.shape
 
 for i in range(13):
+    plt.close()
     plt.imshow(resp[:,:,i], origin='lower')
     plt.colorbar()
     plt.title('Laplacian-of-Gaussian filter;  sigma=' + str(sigmas[i]))
     plt.savefig(outputFolder+m.name+ "_sigma" + str(sigmas[i])+ ".png")
     plt.show(block=False)
-
+    plt.close()
 ###
 #   3.  COMPREF:  Maximal Spectrum(2-day average)
 #   4.  COMPREF:  Total Spectrum(2-day average)
@@ -124,18 +128,20 @@ WRF01-WRF14
 """
 
 w = marchwrf('20140311.0300')[0]
-x2 = w.powerSpec(outputFolder=outputFolder, toPlotContours=True, toPlot3d=True)
+x2 = w.powerSpec(outputFolder=outputFolder, toPlotContours=True, toPlot3d=True, vmin=-2., vmax=3.)
 
 
 resp = x2['responseImages']
 resp.shape
 
 for i in range(13):
+    plt.close()
     plt.imshow(resp[:,:,i], origin='lower')
     plt.colorbar()
     plt.title('Laplacian-of-Gaussian filter;  sigma=' + str(sigmas[i]))
     plt.savefig(outputFolder+w.name+ "_sigma" + str(sigmas[i])+ ".png")
     plt.show(block=False)
+    plt.close()
 
 ###
 #   3.  COMPREF:  Maximal Spectrum(2-day average)
