@@ -1,7 +1,0 @@
-#   local deformation module
-#   to study local deformations with existing local/global techniques
-#   to compute local deformations and similarities etc
-
-#   plan - two step algorithm:  1. segementation; 2. estimation
-#   various combinations of these two steps
-#   key - segementation and detection of local features

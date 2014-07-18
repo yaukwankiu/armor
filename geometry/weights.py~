@@ -1,6 +1,0 @@
-# functions to compute the weights of patterns
-
-
-def measure(a, lower=0., upper=120., withWeights=True):
-    pass
-    
