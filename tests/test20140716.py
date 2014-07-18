@@ -46,12 +46,14 @@ from armor.graphics import specContour
 #import pickle, os
 
 #   setups
-#inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
-#inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
-inputFolderCOMPREF = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
-inputFolderWRF= '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.08WRF_Rainband_March_2014/'
+inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
+inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+outputFolder = 'c:/yau/july2014report/'
 
-outputFolder = dp.root + 'labLogs2/july2014report/'
+#inputFolderCOMPREF = '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.06COMPREF_Rainband_March_2014/'
+#inputFolderWRF= '/media/TOSHIBA EXT/ARMOR/labLogs2/july2014report/1404716726.08WRF_Rainband_March_2014/'
+
+#outputFolder = dp.root + 'labLogs2/july2014report/'
 WRFwindow = (200,200,600,560)
 sigmas  = [1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128]
 
@@ -169,6 +171,21 @@ outputFolder = dp.root + 'labLogs2/july2014report/'
 WRFwindow = (200,200,600,560)
 sigmas  = [1, 2, 4, 5, 8, 10, 16, 20, 32, 40, 64, 80, 128]
 
+
+######
+#   setups
+inputFolderCOMPREF = 'C:/yau/1404716726.06COMPREF_Rainband_March_2014/'
+inputFolderWRF= 'C:/yau/1404716726.08WRF_Rainband_March_2014/'
+outputFolder = 'c:/yau/july2014report/'
+
+plt.close()
+    
+
+
+########
+
+
+
 inputFolder = inputFolderWRF
 testName     = 'Contour_Spec_WRF_Rainband_March_2014'
 
@@ -194,7 +211,8 @@ LmaxWRF  = Lmax
 #   dual plots
 #   2014-07-16
 
-def specContourWithXYZout(L, label="", vmin="", vmax=""):
+#   single plots
+def specContourWithXYZout(L, inputFolder=inputFolderWRF, label="", vmin="", vmax="", title=""):
     if label=="":
         label = str(time.time())
     plt.close()
@@ -213,11 +231,69 @@ def specContourWithXYZout(L, label="", vmin="", vmax=""):
     XYZout = specContour.specContour(XYZ, display=True,  outputFolder=outputFolder, 
                                             #vmin=-1.0, vmax=3.6,
                                             vmin=vmin, vmax=vmax,
-                                            fileName = testName+ label + "_average_of_" + str(frameCount+1) +'images.png')
+                                            fileName = testName+ label + "_average_of_" + str(frameCount+1) +'images.png',
+                                            title=title,
+                                            )
     plt.close()
+    
+
+
     print testName, "number of frames", frameCount+1
     return XYZout
 
-XYZ1 = specContourWithXYZout(L=LmaxCOMPREF, label="COMPREF_max", vmin="", vmax="")
-XYZ2 = specContourWithXYZout(L=LmaxWRF, label="WRF_max", vmin="", vmax="")
+XYZ1 = specContourWithXYZout(L=LmaxCOMPREF, inputFolder=inputFolderCOMPREF, label="COMPREF_max", vmin=-1, vmax=5,
+                             title = "Mean Max Spectrum for WRF")
+XYZ2 = specContourWithXYZout(L=LmaxWRF, label="WRF_max", vmin=-1, vmax=5, title="Mean Max Spectrum for COMPREF")
+
+#   dual plots
+
+def crossContourWithXYZout(L, inputFolder, L2, inputFolder2, label="", vmin=-1, vmax=5, title=""):
+    if label=="":
+        label = str(time.time())
+    plt.close()
+    Z = np.zeros((13,8))
+    for frameCount, fileName in enumerate(L):
+        XYZ = pickle.load(open(inputFolder+fileName,'r'))
+        #X   = XYZ['X']
+        #Y   = XYZ['Y']
+        Z1  = XYZ['Z']
+        Z  += Z1
+    XYZ['Z'] = Z/ (frameCount+1)
+    #vmins = (np.log10(XYZ["Z"])* (Z>0)).min()
+    #vmaxs = (np.log10(XYZ["Z"])* (Z>0)).max()
+    X = XYZ['X']
+    Y = XYZ['Y']
+
+    ###
+    Z2 = np.zeros((13,8))
+    for frameCount, fileName in enumerate(L2):
+        XYZ = pickle.load(open(inputFolder2+fileName,'r'))
+        #X   = XYZ['X']
+        #Y   = XYZ['Y']
+        Z3  = XYZ['Z']
+        Z2  += Z3
+    XYZ2={'X':X,
+          'Y':Y,
+          'Z':  Z2/ (frameCount+1),
+          }
+
+    XYZout = specContour.specContour(XYZ, XYZ2, display=True,  outputFolder=outputFolder, 
+                                            #vmin=-1.0, vmax=3.6,
+                                            vmin=vmin, vmax=vmax,
+                                            fileName = testName+ label + "_average_of_" + str(frameCount+1) +'images.png',
+                                            title=title,
+                                            )
+    plt.close()
+    
+
+
+    print testName, "number of frames", frameCount+1
+    return XYZout
+
+crossContourWithXYZout(LmaxWRF, inputFolderWRF, LmaxCOMPREF, inputFolderCOMPREF,title="Mean Max Spectra: COMPREF(red)-WRF", vmin=-1, vmax=5)
+
+crossContourWithXYZout(LtotalWRF, inputFolderWRF, LtotalCOMPREF, inputFolderCOMPREF,title="Total Max Spectra: COMPREF(red)-WRF", vmin=-1, vmax=5)
+
+
+
 

@@ -454,6 +454,7 @@ def powerSpecTest0709(a,
 def powerSpecTest(a, outputFolder="", 
                 sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128],
                 bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
+                vmin=-1, vmax=5,
                 *args, **kwargs):
     """
     2014-07-17
@@ -498,19 +499,19 @@ def powerSpecTest(a, outputFolder="",
     #   3d plots
     plt.close()
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpec3d.png",
-                                 title= a.name+"Max 3d Spectrum", display=True, **kwargs)
+                                 title= a.name+"Max 3d Spectrum", display=True, vmin=vmin, vmax=vmax,**kwargs)
     plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpec3d.png",
-                                 title= a.name+"Total 3d Spectrum", display=True, **kwargs)
+                                 title= a.name+"Total 3d Spectrum", display=True,vmin=vmin, vmax=vmax, **kwargs)
 
     #   contourplots
 
     plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpecContour.png",
-                                 title= a.name+"Max Spectrum Contours", display=True, **kwargs)
+                                 title= a.name+"Max Spectrum Contours", display=True, vmin=vmin, vmax=vmax,**kwargs)
     plt.close()
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpecContour.png",
-                                 title= a.name+"Total Spectrum Contours", display=True, **kwargs)
+                                 title= a.name+"Total Spectrum Contours", display=True,vmin=vmin, vmax=vmax, **kwargs)
 
 
 
@@ -527,7 +528,7 @@ def powerSpecTest(a, outputFolder="",
 
 
 
-def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
+def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5,*args, **kwargs):
     if outputFolder =="":
         outputFolder=ds.outputFolder
     N = len(ds)
@@ -541,7 +542,7 @@ def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
         XYZtotal= XYZs['XYZtotal']
         Zmax   += XYZmax['Z']
         Ztotal += XYZtotal['Z']
-        
+        a.matrix = np.ma.array([0]) # unload
     Zmax    /= N
     Ztotal  /= N
 
@@ -557,35 +558,38 @@ def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
     time.sleep(5)
 
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ ds.name+ "_mean_maxSpec3d.png",
-                                 title= ("Mean Max 3d Spectrum from %d Images: " %N) + ds.name, display=True, **kwargs)
+                                 title= ("Mean Max 3d Spectrum from %d Images: " %N) + ds.name, display=True, vmin=vmin, vmax=vmax,**kwargs)
     plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_totalSpec3d.png",
-                                 title= ("Mean Total 3d Spectrum from %d Images: " % N) + ds.name, display=True, **kwargs)
+                                 title= ("Mean Total 3d Spectrum from %d Images: " % N) + ds.name, display=True, vmin=vmin, vmax=vmax,**kwargs)
 
     #   contourplots
     plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_maxSpecContour.png",
-                                 title= "Mean Max Spectrum: " + ds.name, display=True, **kwargs)
+                                 title= "Mean Max Spectrum: " + ds.name, display=True, vmin=vmin, vmax=vmax,**kwargs)
     plt.close()
 
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_totalSpecContour.png",
-                                 title= "Mean Total Spectrum: " + ds.name, display=True, **kwargs)
+                                 title= "Mean Total Spectrum: " + ds.name, display=True,vmin=vmin, vmax=vmax, **kwargs)
     plt.close()
 
-    return {'XYZmax'    :   XYZmax,
-            'XYZtotal'  :   XYZtotal,
-            }
+    returnValues= {'XYZmax'    :   XYZmax,
+                    'XYZtotal'  :   XYZtotal,
+                    'ds'        : ds.dataFolder,
+                    }
         
+    pickle.dump(returnValues, open(outputFolder+str(time.time())+'dbzstreamSpec_returnValues.pydump','w'))
+    return returnValues
     
-def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, crossContourVmin=-1, *args, **kwargs):
+def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
     """ 2014-07-17
     from armor.initialise import *; march.list=[v for v in march.list if '0311.1200' in v.dataTime or '0311.1230' in v.dataTime] ; marchwrf.list=[v for v in marchwrf.list if '0311.12' in v.dataTime and ('WRF01' in v.name or 'WRF02' in v.name)] ; from armor import analysis as an; res = an.crossStreamsPowerSpecTest(marchwrf,march, outputFolder='testing/')
 
     """
     plt.close()
-    res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, *args, **kwargs)
+    res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
     plt.close()
-    res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, *args, **kwargs)
+    res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
 
 
     XYZmax1 = res1['XYZmax']
@@ -607,9 +611,14 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, cro
                                  title= "Total Spectrum: " + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
     plt.close()
 
-    return {'crossContourMax':crossContourMax, 
-            'crossContourTotal':crossContourTotal,
-            }
+    returnValues= {'crossContourMax':crossContourMax, 
+                'crossContourTotal':crossContourTotal,
+                'ds1': ds1.dataFolder,
+                'ds2': ds2.dataFolder,
+                }
+
+    pickle.dump(returnValues, open(outputFolder+str(time.time())+'crossSpec_returnValues.pydump','w'))
+    return returnValues
     
 ##############################################################################
 
