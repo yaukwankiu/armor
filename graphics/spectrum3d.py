@@ -94,5 +94,7 @@ def spectrum3d(XYZ, **kwargs):
     else:
         plt.close()
 
-    XYZ = {'X': X.T, 'Y': Y.T, 'Z':Z.T}
-    return XYZ
+    X = XYZ['X']
+    Y = XYZ['Y']
+    Z = Z.T
+    return {'X':X, 'Y':Y, 'Z': Z}

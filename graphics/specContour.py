@@ -8,6 +8,7 @@ import os
 
 
 def specContour(XYZ, XYZ2=None, **kwargs):
+    
     x = XYZ['X'][0]
     y = np.zeros([len(XYZ['Y'])])
 
@@ -181,7 +182,10 @@ def specContour(XYZ, XYZ2=None, **kwargs):
     else:
         plt.close()
 
+    X = XYZ['X']
+    Y = XYZ['Y']
+    Z = Z.T
     if XYZ2 is not None:
-        return {'X':X.T, 'Y':Y.T, 'Z': Z.T}, {'X':X.T, 'Y': Y.T, 'Z':Z3.T}
+        return {'X':X, 'Y':Y, 'Z': Z}, {'X':X, 'Y': Y, 'Z':Z3.T}
     else:
-        return {'X':X.T, 'Y':Y.T, 'Z': Z.T}
+        return {'X':X, 'Y':Y, 'Z': Z}
