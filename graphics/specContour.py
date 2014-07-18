@@ -35,11 +35,6 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         rand_cmap = False
 
     try:
-        title = kwargs['title']
-    except(KeyError):
-        title = ""
-
-    try:
         name1 = kwargs['name1']
     except(KeyError):
         name1 = ""
@@ -48,7 +43,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
     except(KeyError):
         name2 = ""
 
-
+    title=""
     if XYZ2 is None:
         if rand_cmap:
             maps = [m for m in plt.cm.datad if not m.endswith("_r")]
@@ -85,6 +80,7 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.xlabel(r'$\sigma$, 2$^x$', fontsize=18)
         plt.ylabel('Intensity 0.01$\\times$10$^{0.5y}$', fontsize=16)
 
+        
         if name1:
             title = title + '\n' + name1
         plt.title(title)
@@ -160,6 +156,15 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         cax.set_title(r'$\Delta$ [log$_{10}$ (N)]', fontsize=12, y=-2.0)
         cbar.add_lines(CS4)
         plt.tight_layout(h_pad=0.5)
+
+
+
+    try:
+        title = kwargs['title']
+        plt.title(title)
+    except(KeyError):
+        pass
+
 
     try:
         display = kwargs['display']

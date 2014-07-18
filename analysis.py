@@ -498,19 +498,19 @@ def powerSpecTest(a, outputFolder="",
     #   3d plots
     plt.close()
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpec3d.png",
-                                 title= a.name+"Max 3d Spectrum", display=True)
+                                 title= a.name+"Max 3d Spectrum", display=True, **kwargs)
     plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpec3d.png",
-                                 title= a.name+"Total 3d Spectrum", display=True)
+                                 title= a.name+"Total 3d Spectrum", display=True, **kwargs)
 
     #   contourplots
 
     plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_maxSpecContour.png",
-                                 title= a.name+"Max Spectrum Contours", display=True)
+                                 title= a.name+"Max Spectrum Contours", display=True, **kwargs)
     plt.close()
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpecContour.png",
-                                 title= a.name+"Total Spectrum Contours", display=True)
+                                 title= a.name+"Total Spectrum Contours", display=True, **kwargs)
 
 
 
@@ -557,19 +557,19 @@ def streamPowerSpecTest(ds,  outputFolder="", *args, **kwargs):
     time.sleep(5)
 
     XYZ3dMax = spectrum3d.spectrum3d(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ ds.name+ "_mean_maxSpec3d.png",
-                                 title= ds.name+"Mean Max 3d Spectrum", display=True)
+                                 title= ("Mean Max 3d Spectrum from %d Images: " %N) + ds.name, display=True, **kwargs)
     plt.close()
     XYZ3dTotal = spectrum3d.spectrum3d(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_totalSpec3d.png",
-                                 title= ds.name+"Mean Total 3d Spectrum", display=True)
+                                 title= ("Mean Total 3d Spectrum from %d Images: " % N) + ds.name, display=True, **kwargs)
 
     #   contourplots
     plt.close()
     XYZcontourMax = specContour.specContour(XYZ=XYZmax, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_maxSpecContour.png",
-                                 title= ds.name+"Mean Max Spectrum Contours", display=True)
+                                 title= "Mean Max Spectrum: " + ds.name, display=True, **kwargs)
     plt.close()
 
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+ds.name+ "_mean_totalSpecContour.png",
-                                 title=ds.name+"Mean Total Spectrum Contours", display=True)
+                                 title= "Mean Total Spectrum: " + ds.name, display=True, **kwargs)
     plt.close()
 
     return {'XYZmax'    :   XYZmax,
@@ -600,11 +600,11 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, cro
     plt.close()
 
     crossContourMax = specContour.specContour(XYZmax1,XYZmax2 ,outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
-                                 title= ds1.name+ "-" + ds2.name + "_Max Spec", vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+                                 title= "Max Spectrum: " + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
     plt.close()
 
     crossContourTotal = specContour.specContour(XYZtotal1, XYZtotal2, outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
-                                 title= ds1.name+ "-" + ds2.name + "Total Spec", vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+                                 title= "Total Spectrum: " + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
     plt.close()
 
     return {'crossContourMax':crossContourMax, 

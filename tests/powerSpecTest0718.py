@@ -6,7 +6,10 @@ from armor import analysis as an;
 
 march.name = "COMPREF"
 marchwrf.name = "WRF14"
-marchwrf.list = [v for v in marchwrf if "WRF14" in v and v.dataTime<="20140313.0000"]
+marchwrf.list = [v for v in marchwrf if ("WRF14" in v.name)and v.dataTime<="20140313.0000"]
 
-res = an.crossStreamsPowerSpecTest(march, marchwrf, outputFolder='testing/')
+
+marchwrf.list = marchwrf.list[:2]
+march.list = march.list[:2]
+res = an.crossStreamsPowerSpecTest(marchwrf, march, outputFolder='testing/', vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2)
 
