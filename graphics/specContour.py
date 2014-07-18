@@ -114,9 +114,9 @@ def specContour(XYZ, XYZ2=None, **kwargs):
         plt.ylabel('Intensity 0.01$\\times$10$^{0.5y}$', fontsize=16)
 
         if name1:
-            title = title + '\n' + name1
+            title = title + '\n' + name2
         if name2:
-            title = title + '\n' + 'and ' + name2
+            title = title + '\n' + ' - ' + name1
 
         plt.title(title)
 
