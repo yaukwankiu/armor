@@ -1,6 +1,5 @@
 *.*~
 *.py~
-*.pyc
 *.png
 *.jpg
 *.dat
@@ -9,5 +8,5 @@
 *.log.txt
 *log.txt
 defaultParameters.py
-defaultParameters.pyc
 *.epp
+*.pyc
