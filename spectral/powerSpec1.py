@@ -377,7 +377,8 @@ def getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, o
             'XYZtotal'       : XYZ,
             'XYZmax'        :XYZ2,
             'responseImages'    : a.responseImages,
-            'sigmas'        : sigmas
+            'sigmas'        : sigmas,
+            'bins'        : bins,
             }
 
 def plotting(folder):
