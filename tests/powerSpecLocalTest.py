@@ -6,7 +6,7 @@ L = monsoon.list + march.list + kongrey.list + may.list
 outputFolder = dp.root+"labLogs2/powerSpecLocal/"
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
-I = 4
+I = 3
 J = 3
 #plt.figure()
 
@@ -40,7 +40,7 @@ for count in range(30):
         for j in range(J):
             try:
     
-                plt.subplot(I, J, 1+j+J*i)
+                plt.subplot(I, J, j+ J*(I-i-1))
                 plt.xlabel('sigma')
                 plt.ylabel('frequency')
                 plt.title("Regional Power Spectrum for " + m.name)
