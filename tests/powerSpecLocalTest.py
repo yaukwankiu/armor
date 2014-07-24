@@ -28,6 +28,9 @@ for count in range(30):
             try:
                 psResults[(i,j)] = m1.powerSpec(scaleSpacePower=2, outputFolder=outputFolder, 
                                                 bins=[0, 0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
+                                                sigmas  = [1, 2, 4, 8 ,16, 32, 64, 128, 256],
+                                                 responseThreshold=0.00 ,   
+                                                 useOnlyPointsWithSignals=False,
                                                 )
             except:
                 print "Error!\n\n==============", i, j
@@ -44,14 +47,17 @@ for count in range(30):
             try:
     
                 plt.subplot(I, J, 1+j+ J*(I-i-1))
-                plt.xlabel('sigma')
-                plt.ylabel('frequency')
-                plt.title("Regional Power Spectrum for " + m.name)
+                if 1+j+ J*(I-i-1)==2:
+                    plt.title( m.name)
+                if j==0 and i==0:
+                    plt.xlabel('log2(sigma)')
+                    plt.ylabel('log10(frequency)')
+                
                 sigmas = psResults[(i,j)]['sigmas']
                 arr    = psResults[(i,j)]['maxSpec'].matrix
                 hist, edges = np.histogram(arr, bins=[0]+ sigmas+[999999])
-                plt.plot([0]+sigmas, np.log10(hist))
-        
+                #plt.plot([0]+sigmas, np.log10(hist))
+                plt.plot([-1]+np.log2(sigmas).tolist(), np.log10(hist))
             except KeyError:
                 print "key error!", i, j
                 plt.imshow(m.matrix, origin='lower', cmap = m.cmap, vmin=m.vmin,vmax=m.vmax)
