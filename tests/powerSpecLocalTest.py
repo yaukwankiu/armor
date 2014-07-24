@@ -55,9 +55,12 @@ for count in range(30):
                 
                 sigmas = psResults[(i,j)]['sigmas']
                 arr    = psResults[(i,j)]['maxSpec'].matrix
-                hist, edges = np.histogram(arr, bins=[0]+ sigmas+[999999])
+                hist, edges = np.histogram(arr, bins=[0]+ sigmas+[999999], )
                 #plt.plot([0]+sigmas, np.log10(hist))
-                plt.plot([-1]+np.log2(sigmas).tolist(), np.log10(hist))
+                plt.xlim([-1,8])
+                plt.ylim([0,8])
+                plt.plot([-1]+np.log2(sigmas).tolist(), np.log10(hist), "o-")
+                #plt.plot([-1]+np.log2(sigmas).tolist(), hist)
             except KeyError:
                 print "key error!", i, j
                 plt.imshow(m.matrix, origin='lower', cmap = m.cmap, vmin=m.vmin,vmax=m.vmax)

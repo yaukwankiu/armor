@@ -328,7 +328,7 @@ def powerSpec(a, b="", thres=0, outputFolder="", toReload=False,
         outputFolder= a.outputFolder
     from armor.spectral import powerSpec1 as ps1
     #getLaplacianOfGaussianSpectrum(a, sigmas=sigmas, thres=thresPreprocessing, outputFolder=outputFolder, toReload=True)
-    psResults = ps1.getLaplacianOfGaussianSpectrum(a, thres=0, outputFolder=outputFolder,
+    psResults = ps1.getLaplacianOfGaussianSpectrum(a, thres=thres, outputFolder=outputFolder,
                                                      toReload=toReload, 
                                                      #spectrumType=spectrumType, 
                                                      **kwargs)
