@@ -26,7 +26,9 @@ for count in range(30):
         for j in range(J):
             m1 = m.getWindow(height*i//I, width*j//J, height//I, width//J)
             try:
-                psResults[(i,j)] = m1.powerSpec(scaleSpacePower=2, outputFolder=outputFolder)
+                psResults[(i,j)] = m1.powerSpec(scaleSpacePower=2, outputFolder=outputFolder, 
+                                                bins=[0, 0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
+                                                )
             except:
                 print "Error!\n\n==============", i, j
                 time.sleep(2)
