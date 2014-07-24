@@ -26,7 +26,7 @@ for count in range(30):
         for j in range(J):
             m1 = m.getWindow(height*i//I, width*j//J, height//I, width//J)
             try:
-                psResults[(i,j)] = m1.powerSpec(outputFolder=outputFolder)
+                psResults[(i,j)] = m1.powerSpec(scaleSpacePower=2, outputFolder=outputFolder)
             except:
                 print "Error!\n\n==============", i, j
                 time.sleep(2)
@@ -55,7 +55,7 @@ for count in range(30):
                 plt.imshow(m.matrix, origin='lower', cmap = m.cmap, vmin=m.vmin,vmax=m.vmax)
                 plt.colorbar()
                 time.sleep(2)
-    outputPath = outputFolder+ 'powerSpecLocal_' + m.dataTime + str(int(time.time())) + '.jpg'
+    outputPath = outputFolder+ 'powerSpecLocal_' + m.dataTime + "_"+ str(int(time.time())) + '.jpg'
     print "saving to:, ", outputPath ,'\n\n###################################################'
     plt.savefig(outputPath, dpi=200)
     plt.show(block=False)
