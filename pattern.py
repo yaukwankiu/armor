@@ -357,10 +357,15 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         DBZ.load            - load into DBZ.matrix
         adapted from basics.readToArray(path)
         """
+        if self.dataPath.endswith('.png') or self.dataPath.endswith('.jpg'):
+            return self.loadImage()         #2014-07-26
         try:    #if it's text
             m           = np.loadtxt(self.dataPath)
         except ValueError:  # try to load with the binary option
-            m           = self.loadBinary(**kwargs)            
+            m           = self.loadBinary(**kwargs)    
+        except IOError:
+            m           = self.loadImage().matrix        
+
         self.matrix = ma.array(m)
         # setting the mask
         self.matrix.fill_value  = -999                               # -999 for missing values
@@ -2400,6 +2405,8 @@ class DBZstream:
                  preload=False,
                  imageExtension = '.png',     #added 2013-09-27
                  dataExtension  = '.txt',
+                 dataExtension2 = '.dat',
+                 forceAll       =False ,        #2014-07-26
                  vmin           = -40.,          #added 2013-10-28
                  vmax           = 100.,
                  coastDataPath  = "",           #2014-06-25
@@ -2432,6 +2439,7 @@ class DBZstream:
         self.imageFolder = imageFolder
         self.imageExtension = imageExtension
         self.dataExtension  = dataExtension
+        self.dataExtension2  = dataExtension2
         self.vmin           = vmin
         self.vmax           = vmax
         self.coastDataPath  = coastDataPath
@@ -2444,16 +2452,21 @@ class DBZstream:
             self.name = dataSource            
         
         L = os.listdir(dataFolder)
-        L = [v for v in L if (v.lower().endswith('.txt') or v.lower().endswith('.dat'))\
+        if not forceAll:
+            L = [v for v in L if (v.lower().endswith(self.dataExtension) or v.lower().endswith(self.dataExtension2))\
                               and (key1 in v) and (key2 in v) and (key3 in v)]  # fetch the data files
         L.sort()
         for fileName in L:
+            dataTime = ""
             dataTime    = re.findall(r'\d{4}', fileName)
-            if len(dataTime)<3:         # NOT DATED DBZ FILE, REJECT
+            if len(dataTime)<3 and not forceAll:         # NOT DATED DBZ FILE, REJECT
                 continue
             if len(dataTime)>3:             # 2014-05-06 hack - assuming the date-time would be at the end of the filename
                 dataTime = dataTime[-3:]
-            dataTime    = dataTime[0] + dataTime[1] + '.' + dataTime[2]
+            try:
+                dataTime    = dataTime[0] + dataTime[1] + '.' + dataTime[2]
+            except:
+                dataTime = ""
             dbzName     = name + dataTime
             dataPath    = dataFolder + fileName
             a = DBZ(dataTime=dataTime, 
@@ -2583,8 +2596,8 @@ class DBZstream:
 
     ###########################################################
     #
-    #   basic I/O
     #def load(self, N=-999, name="",  verbose=False):
+    #   basic I/O
     def load(self, N=-999, key2="", toInferPositionFromShape=True, verbose=False):
         """
         N - index of object to be loaded, if N==-999 : load all

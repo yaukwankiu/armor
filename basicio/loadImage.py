@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 from armor import defaultParameters as dp
 
 
-def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg', verbose=True, *args, **kwargs):
+def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg', verbose=True, 
+               multiplier=50.,
+               *args, **kwargs):
 
     if dataPath =="":
         if dataTime!="":
@@ -36,6 +38,7 @@ def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg',
         #img = np.flipud(img)
         img2= ((img[:,:,0] > threshold) * (img[:,:,1] > threshold) * (img[:,:,2]>threshold)).astype(int)
         a.matrix = np.ma.array(img2, fill_value=-999)
+        a.matrix*=multiplier
         a.matrix.mask=False   
         a.matrix.set_fill_value(-999)
         a.setMaxMin()
