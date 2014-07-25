@@ -856,18 +856,20 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return self.recentreTaichungPark()
 
 
-    def drawRectangle(self, bottom=0, left=0, height=100, width=100, intensity=9999, newObject=True):
+    def drawRectangle(self, bottom=0, left=0, height=100, width=100, intensity=9999, thickness=1, newObject=True):
         """ return a copy with a rectangle on the image
         """
         vmax    = self.vmax
         matrix  = self.matrix.copy()
         for i in range(bottom, bottom+height):
-            matrix[i        , left:left+2]  = intensity
-            matrix[i        , left+width]   = intensity
+            matrix[i        , left:left+thickness]  = intensity
+            #matrix[i        , left]  = intensity
+            matrix[i        , left+width:left+width+thickness]   = intensity
 
         for j in range(left, left+width):
-            matrix[bottom:bottom+2, j]      = intensity
-            matrix[bottom+height, j]        = intensity
+            #matrix[bottom:bottom+2, j]      = intensity
+            matrix[bottom, j:j+thickness]      = intensity
+            matrix[bottom+height:bottom+height+thickness, j]        = intensity
             
         if newObject:
             return DBZ(dataTime =self.dataTime,
