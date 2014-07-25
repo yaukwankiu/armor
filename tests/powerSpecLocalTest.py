@@ -35,7 +35,7 @@ for count in range(30):
                 psResults[(i,j)] = m1.powerSpec(scaleSpacePower=0, outputFolder=outputFolder, 
                                                 bins=[0, 0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
                                                 sigmas  = [1, 2, 4, 8 ,16, 32, 64, 128, 256],
-                                                 responseThreshold=0.00 ,   
+                                                 responseThreshold=0.50 ,   
                                                  useOnlyPointsWithSignals=True,
                                                 )
                 #
@@ -85,9 +85,10 @@ for count in range(30):
                 responses    = psResults[(i,j)]['responseImages']
                 hist         = responses.sum(axis=0).sum(axis=0).tolist()    #keeping the last axis = sigmas
                 #plt.plot([0]+sigmas, np.log10(hist))
+                logHist = np.log10(hist)
                 plt.xlim([-1,8])
                 plt.ylim([0,12])
-                plt.plot(np.log2(sigmas).tolist(), np.log10(hist), "o-")
+                plt.plot(np.log2(sigmas).tolist(), logHist, "o-")
                 #plt.plot([-1]+np.log2(sigmas).tolist(), hist)
                 #
                 #
@@ -100,6 +101,13 @@ for count in range(30):
                 #plt.colorbar()
                 plt.axis('off')
                 time.sleep(2)
+            except AttributeError:
+                print "Attribute error!", i, j
+                plt.imshow(m.matrix, origin='lower', cmap = m.cmap, vmin=m.vmin,vmax=m.vmax)
+                #plt.colorbar()
+                plt.axis('off')
+                time.sleep(2)
+            
     outputPath = outputFolder+ 'powerSpecLocal_' + m.dataTime + "_"+ str(int(time.time())) + '.jpg'
     print "saving to:, ", outputPath ,'\n\n###################################################'
     plt.savefig(outputPath, dpi=200)
