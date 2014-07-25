@@ -10,3 +10,4 @@
 defaultParameters.py
 *.epp
 *.pyc
+pattern_*.py
