@@ -401,6 +401,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.matrix = ma.array(data)
         return self.matrix
 
+    def loadImage(self, *args, **kwargs):
+        #   to load an image into matrix (jpg/png), if it's not grey-scale make it so
+        from basicio import loadImage
+        return loadImage.loadImage(a=self, *args, **kwargs)
+
     def loadCoast(self):
         try:
             self.coastData = np.loadtxt(self.coastDataPath)
