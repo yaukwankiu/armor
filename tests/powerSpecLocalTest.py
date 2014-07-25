@@ -47,7 +47,7 @@ for count in range(30):
     m.load()
     for i in range(I):
         for j in range(J):
-            m.drawRectangle(height*i//I, width*j//J, height//I-1, width//J-1, newObject=False)
+            m.drawRectangle(height*i//I, width*j//J, height//I-1, width//J-1, thickness=2,newObject=False)
     
     plt.figure()
     for i in range(I):
