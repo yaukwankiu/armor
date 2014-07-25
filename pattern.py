@@ -857,11 +857,13 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         vmax    = self.vmax
         matrix  = self.matrix.copy()
         for i in range(bottom, bottom+height):
-            matrix[i        , left:left+2]  = intensity
+            #matrix[i        , left:left+2]  = intensity
+            matrix[i        , left]  = intensity
             matrix[i        , left+width]   = intensity
 
         for j in range(left, left+width):
-            matrix[bottom:bottom+2, j]      = intensity
+            #matrix[bottom:bottom+2, j]      = intensity
+            matrix[bottom, j]      = intensity
             matrix[bottom+height, j]        = intensity
             
         if newObject:

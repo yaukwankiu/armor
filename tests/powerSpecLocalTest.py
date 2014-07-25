@@ -32,10 +32,10 @@ for count in range(30):
             try:
                 #########################################################################
                 #   key line for computation
-                psResults[(i,j)] = m1.powerSpec(scaleSpacePower=0, outputFolder=outputFolder, 
+                psResults[(i,j)] = m1.powerSpec(scaleSpacePower=1.5, outputFolder=outputFolder, 
                                                 bins=[0, 0.003, 0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
                                                 sigmas  = [1, 2, 4, 8 ,16, 32, 64, 128, 256],
-                                                 responseThreshold=0.50 ,   
+                                                 responseThreshold=0.0 ,   
                                                  useOnlyPointsWithSignals=True,
                                                 )
                 #
