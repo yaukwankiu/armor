@@ -163,7 +163,14 @@ def morlet2dFilter(dbzpattern, scale=1, N=200, renormalisation=0.1, realPart=Tru
     dbzpattern2.vmax = arr2.max()
     return dbzpattern2
 
-
+def embed881921(a):
+    a.backupMatrix()
+    height, width = a.matrix.shape
+    z = np.ma.zeros((881,921), fill_value=-999.)
+    z.mask = False
+    z[0:height, 0:width] = a.matrix
+    a.matrix = z
+    return a
 
 
 

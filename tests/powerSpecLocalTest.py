@@ -8,6 +8,7 @@ from armor.initialise import *
 #L = monsoon.list + march.list + kongrey.list + may.list 
 L = pattern.DBZstream(dataFolder='/media/TOSHIBA EXT/CWB/hs1p/2014-07-22/',
                         forceAll=True) # 2014-07-26
+
 for a in L:
     a.name= ('hs1p' + a.dataPath[-20:]).replace("/", "_")
     a.matrix*=100

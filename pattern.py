@@ -1768,6 +1768,36 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         except ImportError:
             print 'Cannot import scipy module "ndimage".  Check your scipy package or (re)install it.'
 
+    def hausdorffDim(self, sigma=1, *args, **kwargs):
+        from geometry import fractal
+
+        a1 = self.laplacianOfGaussian(sigma=1.5)
+        a1.matrix= (abs(a1.matrix>1))
+        a1.setMaxMin()
+        a1.cmap ='jet'
+        #a1.show()
+        res = fractal.hausdorffDim(a1, sigma, *args, **kwargs)
+        try:
+            self.dimH[sigma] = res
+        except AttributeError:
+            self.dimH = {sigma: res}
+        return {'dimH': self.dimH, 'a1': a1}       
+
+    def hausdorffDimPlot(self, epsilons = [1, 2, 4, 8, 16, 32, 64], display=True, imagePath="", closePlots=True):
+        for epsilon in epsilons:
+            self.hausdorffDim(epsilon)
+        x   = np.log2(epsilons)
+        y   = [self.dimH[v] for v in epsilons]
+        if closePlots:
+            plt.close()
+        plt.plot(x,y, 'o-')
+        plt.title("Hausdorff Dimension Plot")
+        plt.ylabel("dimension ~ side length/epsilon")
+        plt.xlabel("log2(epsilon)")
+        if imagePath!="":
+            plt.savefig(imagePath)                
+        if display:
+            plt.show()
 
     def binaryClosing(self, scale=10, threshold=20):
         """
