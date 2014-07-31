@@ -684,12 +684,12 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", cr
             
         #   contourplots
         plt.close()
-        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour.png",
-                                     title= "Max Spectrum: " + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName=str(time.time())+ "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
+                                     title= "Max Spectrum(%d): " %(i+1) + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
         plt.close()
     
-        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName=str(time.time())+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour.png",
-                                     title= "Total Spectrum: " + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName=str(time.time())+"Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
+                                     title= "Total Spectrum(%d): "%(i+1) + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
         plt.close()
     
         returnValues= {'crossContourMax':crossContourMax, 
