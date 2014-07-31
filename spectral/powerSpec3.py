@@ -143,8 +143,8 @@ if "pattern" in locals():
 
 timeString   = getTimeString()
 reload(ps1)
-outputFolder0 = '/media/TOSHIBA EXT/ARMOR/labLogs2/powerSpec3/'
-outputFolder = '/media/TOSHIBA EXT/ARMOR/labLogs2/powerSpec3/' + timeString + '/'
+outputFolder0 = dp.root+'labLogs2/powerSpec3/'
+outputFolder = dp.root+'/labLogs2/powerSpec3/' + timeString + '/'
 
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
@@ -179,13 +179,13 @@ ms1     = ob.march2014
 window1 = (200, 200, 600, 560)
 ms2     = ob.march2014wrf
 window2 = ""
-
-ms      = ms1       # <---- edit here
-window  = window1   # <---- edit here
-
-#ms  = ms2
 #window   = (0,0,880 ,920)       #window   = (i1, j1, i2-i1, j2-j1)
 
+#ms      = ms1       # <---- edit here
+#window  = window1   # <---- edit here
+
+ms      = ms2
+window = window2
 
 print '\n'.join([v.name for v in ms])
 print "sleeping 3 seconds"
