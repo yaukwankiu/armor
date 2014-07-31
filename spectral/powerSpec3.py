@@ -168,16 +168,24 @@ b   = monsoon("20140312.1150")[0]
 #monsoon.list = [v.getWindow(i1, j1, i2-i1, j2-j1).coarser().coarser() for v in ms.list]
 
 
-window = ""
-#window   = (i1, j1, i2-i1, j2-j1)
-window   = (0,0,880 ,920)
-ms = monsoon
-
-ms  = monsoon("20140312.12")
+#ms = monsoon
+#ms  = monsoon("20140312.12")
 #ms = wrf
-ms = monsoon("20140311.1140")
+#ms = monsoon("20140311.1140")
+#ms = monsoon("20140312.0900")
 
-ms = monsoon("20140312.0900")
+from armor import objects4 as ob
+ms1     = ob.march2014
+window1 = (200, 200, 600, 560)
+ms2     = ob.march2014wrf
+window2 = ""
+
+ms      = ms1       # <---- edit here
+window  = window1   # <---- edit here
+
+#ms  = ms2
+#window   = (0,0,880 ,920)       #window   = (i1, j1, i2-i1, j2-j1)
+
 
 print '\n'.join([v.name for v in ms])
 print "sleeping 3 seconds"
@@ -189,6 +197,7 @@ for k in ms:
     k.load()
     if window!="":
         k1=k.getWindow(*window).coarser().coarser()
+        k1.name = k.name + "_4x4_averaged"
         k1.coastDataPath = dp.defaultTaiwanReliefDataFolder150+'taiwanCoast.dat'
         #if count <3:
         #    count+=1
