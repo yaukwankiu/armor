@@ -8,7 +8,6 @@ dbz = pattern.DBZ
 
 a=dbz(dataTime='20140722.1300')
 a.loadImage()
-#a*=100
 a.setMaxMin()
 
 #a.powerSpec()
@@ -19,4 +18,17 @@ a1.matrix= (abs(a1.matrix>1))
 a1.setMaxMin()
 a1.cmap ='jet'
 a1.show()
+###################################
+
+from armor import pattern
+dbz = pattern.DBZ
+
+a=dbz(dataTime='20140722.1300')
+a.loadImage()
+a.setMaxMin()
+
+from armor.geometry import fractal
+reload(fractal)
+res = fractal.hausdorffDimLocal(a, epsilon=1)
+
 

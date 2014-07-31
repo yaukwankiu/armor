@@ -52,14 +52,25 @@ for epsilon in [64,32,16,8,4,2,1]:
 print dimH
 
 
-#######
+#############################################################################
+import os, time
+from armor import defaultParameters as dp
 from armor import pattern
 reload(pattern)
 dbz= pattern.DBZ
-a=dbz(dataTime='20140722.1300')
-a.loadImage(imageType='hs1p')
-a.setMaxMin()
 
-x  = a.hausdorffDimPlot()
+inputFolder = dp.root+'../CWB/hs1p/2014-07-22/'
+outputFolder = dp.root+ 'labLogs2/hausdorffDim/'
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+    
+for DT in os.listdir(inputFolder):
+    a=dbz(dataPath=inputFolder+DT)
+    a.loadImage(dataPath=a.dataPath, imageType='hs1p')
+    a.setMaxMin()
+    x  = a.hausdorffDimPlot(ylim=[1.5,2.05], imagePath=outputFolder+ str(time.time()) + "hausdorffDim_plot_" + DT)
+
+a.name = a.dataPath[-35:]
+a.saveImage(outputFolder+a.dataPath[-19:])
 
 
