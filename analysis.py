@@ -470,7 +470,14 @@ def powerSpecTest(a, outputFolder="",
 
     plt.close()
     #   save the original image
+    ##################
+    #   debug
+    print a.name, a.matrix.shape
+    a.show()
+    #
+    ###################
     a.saveImage(outputFolder+str(time.time())+a.name+'.png')
+    
     psResults = a.powerSpec(outputFolder=outputFolder, toPlot3d=True, toPlotContours=True, toReload=True, 
                             sigmas=sigmas, bins=bins,
                             *args, **kwargs)
@@ -537,7 +544,10 @@ def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5,*args, **kwargs):
     for a in ds:
         a.load()
         a1 = a.getWRFwindow()
-        XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
+        try:
+            XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
+        except:
+            print 'ERROR!  "XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)" <-- ' + a.name
         XYZmax  = XYZs['XYZmax']
         XYZtotal= XYZs['XYZtotal']
         Zmax   += XYZmax['Z']

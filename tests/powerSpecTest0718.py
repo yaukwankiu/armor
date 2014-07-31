@@ -10,9 +10,24 @@ from armor import defaultParameters as dp
 #marchwrf.name = "WRF14"
 #marchwrf.list = [v for v in marchwrf if ("WRF14" in v.name)and v.dataTime<="20140313.0000"]
 
+ds1 = march         # <-- edit these three lines
+ds2 = marchwrf
+N = 10
 
-marchwrf.list = marchwrf.list
-march.list = march.list
+n1 = len(ds1)
+n2 = len(ds2)
+L1 = []
+L2 = []
 
-res = an.crossStreamsPowerSpecTest(marchwrf, march, outputFolder= dp.root  + 'labLogs2/powerSpec3/' + timeString + '/', vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2)
+if N>0:
+    for i in range(N):
+        i1 = int(np.random.random()* n1)
+        i2 = int(np.random.random()* n2)
+        L1.append(ds1[i1])
+        L2.append(ds2[i2])
+    
+    ds1.list = L1
+    ds2.list = L2
+
+res = an.crossStreamsPowerSpecTest(ds1, ds2, outputFolder= dp.root  + 'labLogs2/powerSpec3/' + timeString + '/', vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2)
 
