@@ -667,8 +667,8 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", cr
                 continue
             XYZmaxes[j]  = XYZs['XYZmax']
             XYZtotals[j] = XYZs['XYZtotal']
-            Zmaxes[j]  += XYZmax['Z']
-            Ztotals[j] += XYZtotal['Z']
+            Zmaxes[j]  += XYZmaxes[j]['Z']
+            Ztotals[j] += XYZtotals[j]['Z']
             a.matrix = np.ma.array([0]) # unload
             Zmaxes[j]    /= (i+1)
             Ztotals[j]  /=  (i+1)
