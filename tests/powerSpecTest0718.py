@@ -13,6 +13,7 @@ from armor import defaultParameters as dp
 ds1 = march         # <-- edit these three lines
 ds2 = marchwrf
 N = 50
+#N = 30
 
 n1 = len(ds1)
 n2 = len(ds2)
@@ -29,5 +30,6 @@ if N>0:
     ds1.list = L1
     ds2.list = L2
 
-res = an.crossStreamsPowerSpecTest(ds1, ds2, outputFolder= dp.root  + 'labLogs2/powerSpec3/' + timeString + '/', vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2)
+res = an.crossStreamsPowerSpecTest2(ds1, ds2, outputFolder= dp.root  + 'labLogs2/powerSpec3/' + timeString + '/', 
+                                    toDumpResponseImages=False, vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2)
 

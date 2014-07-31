@@ -632,6 +632,86 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmi
     
 ##############################################################################
 
+
+def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
+    """ 2014-07-31
+    rewriting crossStreamsPowerSpecTest
+    with intermediate results outputted as soon as possible
+    """
+    timeString = str(int(time.time()))
+    plt.close()
+    if outputFolder =="":
+        outputFolder=ds.outputFolder
+    #res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
+    #plt.close()
+    #res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
+####################
+    ds = [ds1, ds2]
+    Ns = [len(ds1), len(ds2)]
+    Ztotals = [0,0]
+    Zmaxes  = [0,0]
+    Ztotals = [0,0]
+    XYZmaxes= [{},{}]
+    XYZtotals =[{},{}]
+
+    for i in range(numberOfTrials):
+        rns = [int(np.random.random() * v )for v in Ns]
+        for j in [0, 1]:
+            a = ds[j][rns[j]]
+            a.load()
+            a1 = a.getWRFwindow()
+            try:
+                XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
+            except:
+                print 'ERROR!  "XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)" <-- ' + a.name
+                continue
+            XYZmaxes[j]  = XYZs['XYZmax']
+            XYZtotals[j] = XYZs['XYZtotal']
+            Zmaxes[j]  += XYZmaxes[j]['Z']
+            Ztotals[j] += XYZtotals[j]['Z']
+            a.matrix = np.ma.array([0]) # unload
+            Zmaxes[j]    /= (i+1)
+            Ztotals[j]  /=  (i+1)
+            print "***************************************************************************************************************"    
+            print "***************************************************************************************************************"    
+            print ds[j][rns[j]].name
+            print "* *    Zmax, Ztotal:", Zmaxes[j], Ztotals[j]
+            print "***************************************************************************************************************"
+            print "***************************************************************************************************************"
+            time.sleep(1)
+            XYZmaxes[j]['Z']     = Zmaxes[j]
+            XYZtotals[j]['Z']   = Ztotals[j]
+            
+        #   contourplots
+        plt.close()
+        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName=str(time.time())+ "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
+                                     title= "Max Spectrum(%d): " %(i+1) + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        plt.close()
+    
+        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName=str(time.time())+"Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
+                                     title= "Total Spectrum(%d): "%(i+1) + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        plt.close()
+    
+        returnValues= {'crossContourMax':crossContourMax, 
+                    'crossContourTotal':crossContourTotal,
+                    'ds1': ds1.dataFolder,
+                    'ds2': ds2.dataFolder,
+                    }
+    
+        pickle.dump(returnValues, open(outputFolder+ timeString +'crossSpec_returnValues.pydump','w'))
+    return returnValues
+    
+##############################################################################
+
+
+
+
+
+
+
+
+
+
 def randomEntropyTest(samples='all', iterations=50, sleep=3, *args, **kwargs):
     from . import objects4 as ob
     from . import initialise as ini 
