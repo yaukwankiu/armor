@@ -2538,7 +2538,8 @@ class DBZstream:
 
     def __getitem__(self, N=-999):
         """alias for self.list[] """
-        return self.list[N]
+        item = self.list[N]
+        return item
 
     def __len__(self, dataTime=""):
         return len([v for v in self.list if dataTime in v.dataTime])
@@ -2624,6 +2625,14 @@ class DBZstream:
         for dbzpattern in self:
             dbzpattern.restoreMatrix()
 
+
+    def shuffle(self, n=1):
+        """
+        well, technically it's inverse shuffle
+        """
+        for i in range(n):
+            self.list = self.list[1::2] + self.list[0::2]
+        
     ###########################################################
     #
     #def load(self, N=-999, name="",  verbose=False):

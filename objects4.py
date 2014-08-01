@@ -10,7 +10,7 @@
 import pickle
 import numpy as np
 
-print "loading module 'objects'"
+print "loading module 'objects4'"
 import datetime
 from armor import defaultParameters as dp
 from armor import pattern
@@ -46,6 +46,7 @@ monsoon = DS(name='monsoon',
              )
 
 
+print "batch 1 done" #debug
 ################################################################################
 #   2014-03-26
 
@@ -70,6 +71,7 @@ march2014wrf    = DS(name='WRF_Rainband_March_2014',
                       dataFolder=dp.defaultRootFolder + 'data/march2014/WRFEPS/all/',
                       coastDataPath = dp.defaultTaiwanReliefDataFolder150+ 'taiwanCoast.dat',      #2014-06-25
                       )
+print "batch 2 done" #debug
 
 ###################################################################
 
@@ -110,6 +112,7 @@ may2014wrf23    = DS(name='WRF_Rainband_23_May_2014',
                       )
 
 
+print "batch 3 done" #debug
 
 
 ###################################################################
@@ -119,8 +122,16 @@ kongreyregridFolder = dp.defaultRootFolder + 'data/KONG-REY/summary/WRF[regridde
 kongreymodelsall = DS(name='kongreymodelsall',
                       dataFolder=dp.defaultRootFolder + 'data/KONG-REY/WRFEPS/'
                       )
+
+#print 'kongremodelall loaded', len(kongreymodelsall)  #debug
+
 for k in kongreymodelsall:
+    print k.name
     k.name += k.dataPath[-8:-4] #add model label
+
+
+
+print "batch 4 done" #debug
 
 ###############################################
 #
@@ -194,7 +205,8 @@ def march2014wrffix(ds=march2014wrf):
         #w.outputPath="kongreywrf"+
         #w.imagePath=
 
-
+print "batch 5 done" #debug
+print "now fixing" #debug
 monsoon.fix= monsoonfix
 soulik.fix = soulikfix
 kongrey.fix = kongreyfix

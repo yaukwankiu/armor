@@ -30,7 +30,7 @@ if N>0:
     ds2.list = L2
 
 res = an.crossStreamsPowerSpecTest2(ds1, ds2, outputFolder= dp.root  + 'labLogs2/powerSpec3/' + timeString + '/', 
-                                    toDumpResponseImages=False, vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2
+                                    toDumpResponseImages=False, vmin=-1, vmax=4, crossContourVmax=-2, crossContourVmin=2,
                                     randomise=False,
                                     numberOfShuffles=10,
                                     numberOfTrials=300,

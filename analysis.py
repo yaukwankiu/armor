@@ -633,9 +633,10 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmi
 ##############################################################################
 
 
-def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
+def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100, randomise=True, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
     """ 2014-07-31
     rewriting crossStreamsPowerSpecTest
+        with streamPowerSpecTest
     with intermediate results outputted as soon as possible
     """
     timeString = str(int(time.time()))
@@ -654,10 +655,19 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", cr
     XYZmaxes= [{},{}]
     XYZtotals =[{},{}]
 
+    ds1.shuffle(numberOfShuffles)
+    ds2.shuffle(numberOfShuffles)
+
     for i in range(numberOfTrials):
-        rns = [int(np.random.random() * v )for v in Ns]
+        if randomise:
+            rns = [int(np.random.random() * v )for v in Ns]
+        else:
+            rns = [i % v for v in Ns]
+        print '\n......................\n'
+        print i
         for j in [0, 1]:
             a = ds[j][rns[j]]
+            print a.name
             a.load()
             a1 = a.getWRFwindow()
             try:
@@ -670,8 +680,6 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", cr
             Zmaxes[j]  += XYZmaxes[j]['Z']
             Ztotals[j] += XYZtotals[j]['Z']
             a.matrix = np.ma.array([0]) # unload
-            Zmaxes[j]    /= (i+1)
-            Ztotals[j]  /=  (i+1)
             print "***************************************************************************************************************"    
             print "***************************************************************************************************************"    
             print ds[j][rns[j]].name
@@ -679,16 +687,16 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfTrials=100, outputFolder="", cr
             print "***************************************************************************************************************"
             print "***************************************************************************************************************"
             time.sleep(1)
-            XYZmaxes[j]['Z']     = Zmaxes[j]
-            XYZtotals[j]['Z']   = Ztotals[j]
+            XYZmaxes[j]['Z']     = Zmaxes[j].copy() /(i+1)
+            XYZtotals[j]['Z']    = Ztotals[j].copy() /(i+1)
             
         #   contourplots
         plt.close()
-        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName=str(time.time())+ "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
+        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName= "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
                                      title= "Max Spectrum(%d): " %(i+1) + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
         plt.close()
     
-        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName=str(time.time())+"Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
+        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName="Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
                                      title= "Total Spectrum(%d): "%(i+1) + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
         plt.close()
     
