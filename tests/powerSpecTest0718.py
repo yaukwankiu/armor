@@ -12,7 +12,8 @@ from armor import defaultParameters as dp
 
 ds1 = march         # <-- edit these three lines
 ds2 = marchwrf
-N = 30
+N = 50
+#N = 30
 
 n1 = len(ds1)
 n2 = len(ds2)

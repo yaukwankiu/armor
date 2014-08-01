@@ -9,6 +9,7 @@ from armor import defaultParameters as dp
 
 def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg', verbose=True, 
                multiplier=50.,
+               rawImage=False,
                *args, **kwargs):
 
     if dataPath =="":
@@ -28,7 +29,7 @@ def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg',
     if verbose:
         print "loading image from" , dataPath
 
-    if imageType == 'hs1p':
+    if imageType == 'hs1p' and rawImage==False:
 
         if "threshold" in kwargs.keys():
             threshold = kwargs['threshold']
@@ -45,7 +46,7 @@ def loadImage(a, dataTime="", dataPath="", imageType="hs1p", imageSuffix='.jpg',
         return a
     else:
         img = plt.imread(dataPath)
-        img = np.flipud(img)
+        #img = np.flipud(img)
         a.matrix = img
         a.setMaxMin()
         return a

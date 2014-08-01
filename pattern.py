@@ -733,13 +733,16 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if vmin=="":
             self.vmin = self.matrix.min()
 
-    def drawCross(self, i="", j="", radius=5, intensity=9999):
+    def drawCross(self, i="", j="", radius=5, intensity=9999, newObject=True):
         """to draw a cross (+) at the marked point
         """
         #   to draw a list of crosses - added 2014-01-23
         
         if isinstance(i, list):
-            a2  = self.copy()
+            if newObject:
+                a2  = self.copy()
+            else:
+                a2  = self
             if j!="":
                 radius = j
             for p, q in i:  # i = list of points
@@ -753,26 +756,30 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         matrix=self.matrix.copy()
         matrix[i-radius:i+radius+1, j                  ]  = intensity
         matrix[i                  , j-radius:j+radius+1]  = intensity
-        return DBZ(dataTime =self.dataTime,
-                   matrix   =     matrix,
-                   name     =self.name + \
-                           ", cross at x,y=(%d,%d), radius=%d" %\
-                                                  (j, i, radius),
-                   dt       =self.dt,
-                   dx       =self.dx,
-                   dy       =self.dy,
-                   dataPath =self.dataPath,
-                  outputPath=self.outputPath[:-4]+ '_with_cross' + self.outputPath[-4:],
-                   imagePath=self.imagePath[:-4]+ '_with_cross' + self.imagePath[-4:],
-               coastDataPath=self.coastDataPath,
-                   database =self.database,
-                   cmap     =self.cmap,
-                   vmin     =self.vmin, 
-                   vmax     =self.vmax, 
-                   coordinateOrigin= self.coordinateOrigin, 
- lowerLeftCornerLatitudeLongitude = self.lowerLeftCornerLatitudeLongitude, 
- upperRightCornerLatitudeLongitude =self.upperRightCornerLatitudeLongitude,
-                   verbose  =self.verbose)
+        if newObject:
+            return DBZ(dataTime =self.dataTime,
+                       matrix   =     matrix,
+                       name     =self.name + \
+                               ", cross at x,y=(%d,%d), radius=%d" %\
+                                                      (j, i, radius),
+                       dt       =self.dt,
+                       dx       =self.dx,
+                       dy       =self.dy,
+                       dataPath =self.dataPath,
+                      outputPath=self.outputPath[:-4]+ '_with_cross' + self.outputPath[-4:],
+                       imagePath=self.imagePath[:-4]+ '_with_cross' + self.imagePath[-4:],
+                   coastDataPath=self.coastDataPath,
+                       database =self.database,
+                       cmap     =self.cmap,
+                       vmin     =self.vmin, 
+                       vmax     =self.vmax, 
+                       coordinateOrigin= self.coordinateOrigin, 
+                 lowerLeftCornerLatitudeLongitude = self.lowerLeftCornerLatitudeLongitude, 
+                upperRightCornerLatitudeLongitude =self.upperRightCornerLatitudeLongitude,
+                       verbose  =self.verbose)
+        else:
+            self.matrix = matrix
+            return self   
 
     def drawFrame(self, intensity=9999, newCopy=False):
         """
@@ -1536,6 +1543,61 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return analysis.powerSpecTest0709(self, *args, **kwargs)
     
 
+    def classify(self, features="", k=10, cmap='jet', display=False, 
+                toWhiten=False,  
+                toDrawCentroids=False,
+                crossRadius=10,
+                 *args, **kwargs):
+        """
+        input:  feature vector field
+        output: classification of the image into various classes
+        """
+        if features =="":
+            try:
+                features = self.features
+            except AttributeError:
+                print "Features undefined!! -  ", self.name
+                return -1
+        height, width, depth = features.shape
+
+        #perform k-means stuff
+        from scipy.cluster import vq
+        f1 = features.reshape((height*width), depth)
+        if toWhiten:
+            f1 = vq.whiten(f1)
+        centroids, arr = vq.kmeans2(f1, k=k, *args, **kwargs)
+        a1 = self.copy()
+        a1.name  = "k-means, k=%d, for " %k + self.name 
+        a1.imagePath = self.imagePath[:-4] + "_kmeans_" + self.imagePath[-4:]
+        a1.outputPath = self.outputPath[:-4] + "_kmeans_" + self.outputPath[-4:]
+        a1.cmap       = cmap
+        if toDrawCentroids:
+            for i in range(len(centroids)):
+                try:
+                    print centroids[i,0], centroids[i,1]
+                    a1.drawCross(int(centroids[i,0]), int(centroids[i,1]), radius=crossRadius, newObject=False)    # assuming the first two features =i,j
+                except IndexError:
+                    pass
+        if display:
+            a1.show()
+        result= {'centroids':centroids, 'a1':a1}
+        return result
+
+    def initialiseFeatures(self, intensityThreshold=0, fill_value=-999):
+        """
+        basic feature vectors: i,j, and intensity
+        """
+        height, width = self.matrix.shape
+        X, Y          = np.meshgrid(range(width), range(height))
+        I, J          = Y, X
+        a1            = self.copy()
+        a1.setThreshold(intensityThreshold)
+        a1.matrix.fill_value= fill_value
+        a1.matrix = a1.matrix.filled()
+        self.features = np.dstack([I, J, a1.matrix])
+        return self.features
+        
+
     #   end new objects from old
     #############################################################
 
@@ -1768,7 +1830,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         except ImportError:
             print 'Cannot import scipy module "ndimage".  Check your scipy package or (re)install it.'
 
-    def hausdorffDim(self, sigma=1, *args, **kwargs):
+    def hausdorffDim(self, epsilon=1, *args, **kwargs):
         from geometry import fractal
 
         a1 = self.laplacianOfGaussian(sigma=1.5)
@@ -1776,14 +1838,15 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a1.setMaxMin()
         a1.cmap ='jet'
         #a1.show()
-        res = fractal.hausdorffDim(a1, sigma, *args, **kwargs)
+        res = fractal.hausdorffDim(a1, epsilon, *args, **kwargs)
         try:
-            self.dimH[sigma] = res
+            self.dimH[epsilon] = res
         except AttributeError:
-            self.dimH = {sigma: res}
+            self.dimH = {epsilon: res}
         return {'dimH': self.dimH, 'a1': a1}       
 
-    def hausdorffDimPlot(self, epsilons = [1, 2, 4, 8, 16, 32, 64], display=True, imagePath="", closePlots=True):
+    def hausdorffDimPlot(self, epsilons = [1, 2, 4, 8, 16, 32, 64], display=True, imagePath="", closePlots=True,
+                         ylim=[1,2]):
         for epsilon in epsilons:
             self.hausdorffDim(epsilon)
         x   = np.log2(epsilons)
@@ -1794,10 +1857,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         plt.title("Hausdorff Dimension Plot")
         plt.ylabel("dimension ~ side length/epsilon")
         plt.xlabel("log2(epsilon)")
+        plt.ylim(ylim)
         if imagePath!="":
             plt.savefig(imagePath)                
         if display:
-            plt.show()
+            plt.show(block=False)
 
     def binaryClosing(self, scale=10, threshold=20):
         """
