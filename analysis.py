@@ -75,10 +75,11 @@ dbz = pattern.DBZ
 import time
 import copy
 import os
-try:
-    from armor import objects as ob
-except:
-    pass
+
+#try:           #commented out 2014-08-04
+#    from armor import objects as ob
+#except:
+#    pass
 #reload(ob)
 #reload(pattern)
 #from armor.tests.roughwork20131106 import construct3by3
@@ -176,7 +177,8 @@ def shiibaLocal(a, b, windowSize=100, iRange=range(000, 881, 100),\
 #   pattern matching
 
 def gaussianSmooothNormalisedCorrelation(obs, wrf, sigma=20, sigmaWRF=5, thres=15, showImage=True,
-                                         saveImage=True,  outputFolder=""):
+                                         saveImage=True,  outputFolder="", 
+                                         *args, **kwargs):
     """
     to used normalised correlation to study the similarity between obs and wrf
     codes from

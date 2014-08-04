@@ -126,7 +126,7 @@ kongreymodelsall = DS(name='kongreymodelsall',
 #print 'kongremodelall loaded', len(kongreymodelsall)  #debug
 
 for k in kongreymodelsall:
-    print k.name
+    #print k.name
     k.name += k.dataPath[-8:-4] #add model label
 
 

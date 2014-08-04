@@ -352,7 +352,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
 ############################################################
 # basic i/o's
-    def load(self, toInferPositionFromShape=True, **kwargs):
+    def load(self, toInferPositionFromShape=True, *args, **kwargs):
         """
         DBZ.load            - load into DBZ.matrix
         adapted from basics.readToArray(path)
@@ -364,7 +364,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         except ValueError:  # try to load with the binary option
             m           = self.loadBinary(**kwargs)    
         except IOError:
-            m           = self.loadImage().matrix        
+            m           = self.loadImage(*args, **kwargs).matrix        
 
         self.matrix = ma.array(m)
         # setting the mask
@@ -1690,6 +1690,42 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         return self.eigenvalues, self.eigenvectors                                           
      
+    def getRelativeAngle(self, b, returnType="degree", threshold=0):
+        """2014-08-04
+        to get the relative angle between the axes
+        """
+        arr1 = self.matrix.copy()
+        arr2 = b.matrix.copy()
+        self.matrix = self.threshold(threshold).matrix
+        b.matrix    = b.threshold(threshold).matrix
+        ###
+        self.getEigens()
+        b.getEigens()
+        ###
+        cos = (self.eigenvectors[0,:] * b.eigenvectors[0,:]).sum()
+        angle = np.arccos(cos)
+
+        self.matrix = arr1
+        b.matrix    = arr2
+        if returnType == "deg" or returnType=="degree":
+            angle = angle / np.pi * 180
+        return angle
+        
+    def getAspectRatios(self, b, threshold=0):
+        arr1 = self.matrix.copy()
+        arr2 = b.matrix.copy()
+        self.matrix = self.threshold(threshold).matrix
+        b.matrix    = b.threshold(threshold).matrix
+        ###
+        self.getEigens()
+        b.getEigens()
+        ###
+        r0 = (self.eigenvalues[0] / b.eigenvalues[0]) **.5
+        r1 = (self.eigenvalues[1] / b.eigenvalues[1]) **.5
+        self.matrix = arr1
+        b.matrix    = arr2
+        return np.array([r0, r1])
+
 
     def cov(self, dbz2):
         """wrapping the ma.cov function:  covariance between two images
@@ -1984,13 +2020,13 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.scaleMap = scaleMap
         return scaleMap
 
-    def gaussianCorr(self, wrf, sigma=20, thres=15, showImage=True, saveImage=True, outputFolder=''):
+    def gaussianCorr(self, wrf, sigma=20, thres=15, showImage=True, saveImage=True, outputFolder='', *args, **kwargs):
         """
         wrapping analysis module
         """
         from armor import analysis
         return analysis.gaussianSmooothNormalisedCorrelation(self, wrf, sigma, thres, 
-                                                               showImage,saveImage, outputFolder)
+                                                               showImage,saveImage, outputFolder, *args, **kwargs)
 
     def histogram(self, bins=20, matrix="", outputPath="", display=True, **kwargs):
         """
