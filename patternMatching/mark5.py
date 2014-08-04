@@ -174,7 +174,7 @@ def getScore(a, b, weights=[1.0, 0.2, 0.1, 0.1, ], thres=0):
 
     score = weights[0]*corr - weights[1]*abs(angle) - weights[2]*abs(np.log(r0)) - weights[3]*abs(np.log(r1))
     print a.name, b.name, '\t', score
-    return corr
+    return score
     
 #   3.  processing
 #       c.  compare the matching and record
