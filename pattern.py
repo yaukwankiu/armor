@@ -2020,13 +2020,13 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.scaleMap = scaleMap
         return scaleMap
 
-    def gaussianCorr(self, wrf, sigma=20, thres=15, showImage=True, saveImage=True, outputFolder='', *args, **kwargs):
+    def gaussianCorr(self, wrf, sigma=0, sigmaWRF=0, thres=15, showImage=True, saveImage=True, outputFolder='', *args, **kwargs):
         """
         wrapping analysis module
         """
         from armor import analysis
-        return analysis.gaussianSmooothNormalisedCorrelation(self, wrf, sigma, thres, 
-                                                               showImage,saveImage, outputFolder, *args, **kwargs)
+        return analysis.gaussianSmooothNormalisedCorrelation(obs=self, wrf=wrf, sigma=sigma, thres=thres, 
+                                                               showImage=showImage,saveImage=saveImage, outputFolder=outputFolder, *args, **kwargs)
 
     def histogram(self, bins=20, matrix="", outputPath="", display=True, **kwargs):
         """

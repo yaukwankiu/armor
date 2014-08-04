@@ -8,12 +8,14 @@ ALGORITHM:
 USE:
 cd [.. FILL IN YOUR ROOT DIRECTORY HERE ..]/ARMOR/python/
 python
-from armor.patternMatching import mark4
-reload(mark4)
-x=mark4.main(verbose=True, saveImage=False,  display=False)  #<-- change it to saveImage=False to save space
+from armor.patternMatching import mark5
+reload(mark5)
+x=mark5.main(verbose=True, saveImage=True,  display=False)  #<-- change it to saveImage=False to save space
+
+x=mark5.main(verbose=True, saveImage=False,  display=False)  #<-- change it to saveImage=False to save space
 
 
-x=mark4.main(verbose=True, saveImage=False,  key2="e03", display=False)  #<-- change it to saveImage=False to save space
+x=mark5.main(verbose=True, saveImage=False,  key2="e03", display=False)  #<-- change it to saveImage=False to save space
 
 
 """
@@ -164,13 +166,13 @@ def read1Wrf(wrfPath=wrfPathList[0], rawReturn=False):
 
 #   scoring key lines
 
-def getScore(a, b, weights=[0.6, 0.2, 0.1, 0.1, ]):
+def getScore(a, b, weights=[1.0, 0.2, 0.1, 0.1, ], thres=0):
     #just a wrapper
     corr= a.gaussianCorr(b, sigma=0, sigmaWRF=0, thres=0, showImage=False, saveImage=False, outputFolder='')
     angle = a.getRelativeAngle(b, threshold=thres, returnType='radian')
-    r0, r1 = a.getAspectRatios(b, threshold=thes)
+    r0, r1 = a.getAspectRatios(b, threshold=thres)
 
-    score = weights[0]*corr + weights[1]*angle + weights[2]*np.log(r0) + weights[3]*np.log(r1)
+    score = weights[0]*corr - weights[1]*abs(angle) - weights[2]*abs(np.log(r0)) - weights[3]*abs(np.log(r1))
     print a.name, b.name, '\t', score
     return corr
     
@@ -237,7 +239,7 @@ def matching(a=a0, wepsFolder=wepsFolder, thres=0, maxTimeDiff=6, timeInterval=3
                 if verbose:
                     print count, a.name, "v", w.name, ":",
                 count +=1
-                score = getScore(a, w)   #   key line
+                score = getScore(a, w, thres=thres)   #   key line
                 if verbose:
                     print score
                 scores.append({'radar':a.name, 
