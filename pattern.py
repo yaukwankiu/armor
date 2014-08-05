@@ -1744,6 +1744,25 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             corr = corr[0,1]                        # return a number
         return corr
 
+    def regress(self, dbz2):
+        """wrapping lstsq
+        http://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html
+        """
+        arr1 = self.matrix.flatten()
+        arr2 = dbz2.matrix.flatten()
+        mask = arr1.mask + arr2.mask
+        #print "(1-mask).sum()",(1-mask).sum()    #debug
+        arr1.mask = mask
+        arr2.mask = mask
+        arr1 = arr1.compressed()
+        arr2 = arr2.compressed()
+        arr1 = np.vstack([np.ones(len(arr1)), arr1,]).T
+        #debug
+        #print "arr1.shape, arr2.shape", arr1.shape, arr2.shape
+
+        x, residuals, rank, sing = np.linalg.lstsq(arr1, arr2)
+        return x, residuals
+
     def localCov(self, dbz2, windowSize=7):
         """plotting the local covariance of two dbz patterns
         a slow version of the function
@@ -2020,13 +2039,16 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.scaleMap = scaleMap
         return scaleMap
 
-    def gaussianCorr(self, wrf, sigma=0, sigmaWRF=0, thres=15, showImage=True, saveImage=True, outputFolder='', *args, **kwargs):
+    def gaussianCorr(self, wrf, sigma=0, sigmaWRF=0, thres=15, showImage=True, saveImage=True, 
+                     outputFolder='', outputType="correlation", *args, **kwargs):
         """
         wrapping analysis module
         """
         from armor import analysis
         return analysis.gaussianSmooothNormalisedCorrelation(obs=self, wrf=wrf, sigma=sigma, thres=thres, 
-                                                               showImage=showImage,saveImage=saveImage, outputFolder=outputFolder, *args, **kwargs)
+                                                               showImage=showImage,saveImage=saveImage, 
+                                                               outputFolder=outputFolder, 
+                                                               outputType=outputType,*args, **kwargs)
 
     def histogram(self, bins=20, matrix="", outputPath="", display=True, **kwargs):
         """

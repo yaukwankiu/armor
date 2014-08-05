@@ -166,14 +166,25 @@ def read1Wrf(wrfPath=wrfPathList[0], rawReturn=False):
 
 #   scoring key lines
 
-def getScore(a, b, weights=[1.0, 0.2, 0.1, 0.1, ], thres=0):
-    #just a wrapper
-    corr= a.gaussianCorr(b, sigma=0, sigmaWRF=0, thres=0, showImage=False, saveImage=False, outputFolder='')
+def getScore(a, b, weights=[0.01,  #weight for b0
+                            1.0,  #weight for abs log b1
+                            0.2,  #weight for angle (in radian)
+                            0.1,  #weight for aspect ratios
+                           ], 
+             thres=0,
+             ):
+    #
+    b0, b1= a.gaussianCorr(b, sigma=0, sigmaWRF=0, thres=0, showImage=False, saveImage=False,
+                        outputFolder='', outputType="regression")
     angle = a.getRelativeAngle(b, threshold=thres, returnType='radian')
     r0, r1 = a.getAspectRatios(b, threshold=thres)
 
-    score = weights[0]*corr - weights[1]*abs(angle) - weights[2]*abs(np.log(r0)) - weights[3]*abs(np.log(r1))
-    print a.name, b.name, '\t', score
+
+    score = -weights[0]*abs(b0) -weights[1]*abs(np.log(b1)) -weights[1]*abs(angle) \
+            -weights[2]*abs(np.log(r0)) - weights[3]*abs(np.log(r1))
+    #print a.name, b.name, '\t', score
+    print a.name, b.name, "b0, b1, angle, aspect ratios(short, long): score"
+    print b0, '\t', b1, '\t', angle, '\t', r0, '\t', r1, '\t:', score
     return score
     
 #   3.  processing

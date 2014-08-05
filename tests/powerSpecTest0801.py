@@ -10,8 +10,11 @@ from armor import defaultParameters as dp
 #marchwrf.name = "WRF14"
 #marchwrf.list = [v for v in marchwrf if ("WRF14" in v.name)and v.dataTime<="20140313.0000"]
 
-ds1 = march         # <-- edit these three lines
-ds2 = marchwrf
+#ds1 = march         # <-- edit these three lines
+#ds2 = marchwrf
+ds1 = kongrey
+ds2 = kongreywrf
+
 N = 30
 
 n1 = len(ds1)

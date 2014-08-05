@@ -178,6 +178,7 @@ def shiibaLocal(a, b, windowSize=100, iRange=range(000, 881, 100),\
 
 def gaussianSmooothNormalisedCorrelation(obs, wrf, sigma=20, sigmaWRF=5, thres=15, showImage=True,
                                          saveImage=True,  outputFolder="", 
+                                         outputType="correlation",
                                          *args, **kwargs):
     """
     to used normalised correlation to study the similarity between obs and wrf
@@ -217,19 +218,39 @@ def gaussianSmooothNormalisedCorrelation(obs, wrf, sigma=20, sigmaWRF=5, thres=1
     w1.matrix.mask = np.zeros(w1.matrix.shape)
     try:
         ############################################
-        #   punchlines
+        #   key lines
         w2 = w1.momentNormalise(k)
-        corr    = w2.corr(k)
         w3 = w1.momentNormalise(k, extraAngle=np.pi)
-        corr2   = w3.corr(k)
-        if  corr2 > corr:
-            print '180 degree switch: '
-            print '   ', k.name, w.name ,corr, corr2, '\n................................' 
-            corr = corr2
-            w2 = w3 
+        if outputType=="correlation" or outputType=="corr":
+            corr    = w2.corr(k)
+            corr2   = w3.corr(k)
+            if  corr2 > corr:
+                print '180 degree switch: '
+                print '   ', k.name, w.name ,corr, corr2, '\n................................' 
+                corr = corr2
+                w2 = w3
+            returnValue= corr 
+        #elif outputType=="regression" or outputType=="regress":
+        else:
+            x,  residuals   = w2.regress(k)
+            x2, residuals2  = w3.regress(k)
+            if residuals2 < residuals:
+                print '180 degree switch: '
+                print '   ', k.name, w.name, residuals2, "<", residuals, '\n................................' 
+                x = x2
+                w2 = w3 
+            returnValue = x
+                
+        #
+        #############################################
+
+        #######        
+        #   making the output image
 
         w2.matrix = ma.hstack([w1.matrix, w2.matrix, k.matrix])
-        w2.name   = w.name + ', normalised, and ' + k.name + '\nnormalised correlation:  ' + str(corr)
+        w2.name   = w.name + ', normalised, and ' + k.name + '\nnormalised '
+        if outputType=="corr" or outputType=="correlation":
+            w2.name += 'correlation:  ' + str(corr)
         w2.matrix = ma.vstack([w2.matrix, topRow])
         w2.name  = topRowName + '\n' + "bottom row:" + w2.name
         w2.imagePath = outputFolder + w.name + '_' + k.name + '_sigma' + str(sigma) + '_thres' + str(thres) + '.png'
@@ -245,12 +266,12 @@ def gaussianSmooothNormalisedCorrelation(obs, wrf, sigma=20, sigmaWRF=5, thres=1
         ############################################
     #except IndexError:
     except SyntaxError:
-        corr = -999
+        returnValue = -999
     # restoring the matrix
     k.backupMatrix('gaussian smooth normalised correlations, sigma='+ str(sigma) + 'threshold=' + str(thres)) 
     k.matrix = matrix0
 
-    return corr
+    return returnValue
 
 def gaussianCorr(*args, **kwargs):
     return gaussianSmooothNormalisedCorrelation(*args, **kwargs)
