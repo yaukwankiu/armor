@@ -478,6 +478,7 @@ def powerSpecTest(a, outputFolder="",
                 sigmas  = [1, 2, 4, 5, 8 ,10 ,16, 20, 32, 40, 64, 80, 128],
                 bins=[0.01, 0.03, 0.1, 0.3, 1., 3., 10., 30.,100.],
                 vmin=-1, vmax=5,
+                prefilterSigma=0, #2014-08-05
                 *args, **kwargs):
     """
     2014-07-17
@@ -500,7 +501,9 @@ def powerSpecTest(a, outputFolder="",
     #
     ###################
     a.saveImage(outputFolder+str(time.time())+a.name+'.png')
-    
+    if prefilterSigma > 0:
+        print "Prefiltering", a.name, "with sigma =", prefilterSigma
+        a.gaussianFilter(prefilterSigma)   #2014-08-05    
     psResults = a.powerSpec(outputFolder=outputFolder, toPlot3d=True, toPlotContours=True, toReload=True, 
                             sigmas=sigmas, bins=bins,
                             *args, **kwargs)
@@ -543,6 +546,10 @@ def powerSpecTest(a, outputFolder="",
     XYZcontourTotal = specContour.specContour(XYZ=XYZtotal, outputFolder=outputFolder, fileName=str(time.time())+a.name + "_totalSpecContour.png",
                                  title= a.name+"Total Spectrum Contours", display=True,vmin=vmin, vmax=vmax, **kwargs)
 
+    #   create tables
+    plt.close()
+    np.savetxt(str(time.time())+a.name + "_maxSpec.csv", XYZmax['Z'])
+    np.savetxt(str(time.time())+a.name + "_totalSpec.csv", XYZtotal['Z'])
 
 
     #   XYZ max spec dump                                               - DONE ("~XYZmax.pydump")
@@ -558,7 +565,8 @@ def powerSpecTest(a, outputFolder="",
 
 
 
-def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5,*args, **kwargs):
+def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5, 
+                        prefilterSigma=0, *args, **kwargs):
     if outputFolder =="":
         outputFolder=ds.outputFolder
     N = len(ds)
@@ -567,8 +575,12 @@ def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5,*args, **kwargs):
     for a in ds:
         a.load()
         a1 = a.getWRFwindow()
+        #debug
+        a1.show()
+        time.sleep(5)
+
         try:
-            XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
+            XYZs = powerSpecTest(a1, outputFolder=outputFolder, prefilterSigma=prefilterSigma, *args, **kwargs)
         except:
             print 'ERROR!  "XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)" <-- ' + a.name
         XYZmax  = XYZs['XYZmax']
@@ -614,15 +626,17 @@ def streamPowerSpecTest(ds,  outputFolder="", vmin=-1, vmax=5,*args, **kwargs):
     pickle.dump(returnValues, open(outputFolder+str(time.time())+'dbzstreamSpec_returnValues.pydump','w'))
     return returnValues
     
-def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
+def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, 
+                              prefilterSigma1=0, prefilterSigma2=0, #2014-08-05
+                              *args, **kwargs):
     """ 2014-07-17
     from armor.initialise import *; march.list=[v for v in march.list if '0311.1200' in v.dataTime or '0311.1230' in v.dataTime] ; marchwrf.list=[v for v in marchwrf.list if '0311.12' in v.dataTime and ('WRF01' in v.name or 'WRF02' in v.name)] ; from armor import analysis as an; res = an.crossStreamsPowerSpecTest(marchwrf,march, outputFolder='testing/')
 
     """
     plt.close()
-    res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
+    res1 = streamPowerSpecTest(ds1,  outputFolder=outputFolder, vmin=vmin, vmax=vmax, prefilterSigma=prefilterSigma1, *args, **kwargs)
     plt.close()
-    res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, vmin=vmin, vmax=vmax,*args, **kwargs)
+    res2 = streamPowerSpecTest(ds2,  outputFolder=outputFolder, vmin=vmin, vmax=vmax, prefilterSigma=prefilterSigma2, *args, **kwargs)
 
 
     XYZmax1 = res1['XYZmax']
@@ -656,7 +670,9 @@ def crossStreamsPowerSpecTest(ds1, ds2, outputFolder="", crossContourVmax=1, vmi
 ##############################################################################
 
 
-def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100, randomise=True, outputFolder="", crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
+def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100, randomise=True, outputFolder="", 
+                                prefilterSigmas=(0,0),               #2014-08-05
+                                crossContourVmax=1, vmin=-1, vmax=5,crossContourVmin=-1, *args, **kwargs):
     """ 2014-07-31
     rewriting crossStreamsPowerSpecTest
         with streamPowerSpecTest
@@ -694,8 +710,8 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100,
             a.load()
             a1 = a.getWRFwindow()
             try:
-                XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)
-            except:
+                XYZs = powerSpecTest(a1, outputFolder=outputFolder, prefilterSigma=prefilterSigmas[j], *args, **kwargs)
+            except AttributeError:
                 print 'ERROR!  "XYZs = powerSpecTest(a1, outputFolder=outputFolder, *args, **kwargs)" <-- ' + a.name
                 continue
             XYZmaxes[j]  = XYZs['XYZmax']
@@ -712,16 +728,26 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100,
             time.sleep(1)
             XYZmaxes[j]['Z']     = Zmaxes[j].copy() /(i+1)
             XYZtotals[j]['Z']    = Ztotals[j].copy() /(i+1)
+            np.savetxt(outputFolder+"Average"+ds[j].name + "_maxSpec(%d).csv" %(i+1), XYZmaxes[j]['Z'], delimiter=",")
+            np.savetxt(outputFolder+"Average"+ds[j].name + "_totalSpec(%d).csv"%(i+1), XYZtotals[j]['Z'] , delimiter=",")
             
         #   contourplots
+        try:
+            plt.close()
+            crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName= "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
+                                         title= "Max Spectrum(%d): " %(i+1) + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        except KeyError:
+            print "KeyError!"
+
+        try:
+            plt.close()
+            crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName="Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
+                                         title= "Total Spectrum(%d): "%(i+1) + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
+        except KeyError:
+            print "KeyError!"
+
         plt.close()
-        crossContourMax = specContour.specContour(XYZmaxes[0],XYZmaxes[1] ,outputFolder=outputFolder, fileName= "Average"+ds1.name+ "_versus_" + ds2.name + "_maxSpecContour(%d).png" %(i+1),
-                                     title= "Max Spectrum(%d): " %(i+1) + ds2.name+ " (Red) - " +ds1.name , vmax=crossContourVmax, vmin=crossContourVmin, display=True)
-        plt.close()
-    
-        crossContourTotal = specContour.specContour(XYZtotals[0], XYZtotals[1], outputFolder=outputFolder, fileName="Average"+ds1.name+ "_versus_" + ds2.name + "_totalSpecContour(%d).png" %(i+1),
-                                     title= "Total Spectrum(%d): "%(i+1) + ds2.name+ "(Red) - " +ds1.name, vmax=crossContourVmax, vmin=crossContourVmin, display=True)
-        plt.close()
+
     
         returnValues= {'crossContourMax':crossContourMax, 
                     'crossContourTotal':crossContourTotal,
@@ -733,14 +759,6 @@ def crossStreamsPowerSpecTest2(ds1, ds2, numberOfShuffles=0, numberOfTrials=100,
     return returnValues
     
 ##############################################################################
-
-
-
-
-
-
-
-
 
 
 def randomEntropyTest(samples='all', iterations=50, sleep=3, *args, **kwargs):
