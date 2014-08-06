@@ -14,15 +14,21 @@ from armor import defaultParameters as dp
 #ds1 = march         # <-- edit these lines
 #ds2 = marchwrf
 #
-ds1 = kongrey
-ds2 = kongreywrf
+#ds1 = kongrey
+#ds2 = kongreywrf
 #
 #ds1 = may
 #ds1.list = [v for v in ds1.list if '20140520' in v.dataTime]
 #ds2 = maywrf20
+#
+ds1 = may
+ds2 = maywrf19
+ds2.list    += maywrf20.list + maywrf21.list + maywrf22.list + maywrf23.list
+ds2.name    = 'WRF_Rainband_May_2014'
+
 #####
 
-N = 30
+N = 100
 
 n1 = len(ds1)
 n2 = len(ds2)
