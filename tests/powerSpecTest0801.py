@@ -15,7 +15,7 @@ ds2 = marchwrf
 #ds1 = kongrey
 #ds2 = kongreywrf
 
-N = 200
+N = 100
 
 n1 = len(ds1)
 n2 = len(ds2)

@@ -548,8 +548,8 @@ def powerSpecTest(a, outputFolder="",
 
     #   create tables
     plt.close()
-    np.savetxt(str(time.time())+a.name + "_maxSpec.csv", XYZmax['Z'])
-    np.savetxt(str(time.time())+a.name + "_totalSpec.csv", XYZtotal['Z'])
+    np.savetxt(outputFolder+str(time.time())+a.name + "_maxSpec.csv", XYZmax['Z'], delimiter=",")
+    np.savetxt(outputFolder+str(time.time())+a.name + "_totalSpec.csv", XYZtotal['Z'],delimiter=",")
 
 
     #   XYZ max spec dump                                               - DONE ("~XYZmax.pydump")

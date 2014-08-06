@@ -5,6 +5,7 @@
 *.dat
 *.DAT
 *.log
+*.csv
 *.log.txt
 *log.txt
 defaultParameters.py
