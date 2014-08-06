@@ -6,16 +6,23 @@ from armor.initialise import *;
 from armor import analysis as an; 
 from armor import defaultParameters as dp
 
+#####
 #march.name = "COMPREF"
 #marchwrf.name = "WRF14"
 #marchwrf.list = [v for v in marchwrf if ("WRF14" in v.name)and v.dataTime<="20140313.0000"]
 
-ds1 = march         # <-- edit these lines
-ds2 = marchwrf
-#ds1 = kongrey
-#ds2 = kongreywrf
+#ds1 = march         # <-- edit these lines
+#ds2 = marchwrf
+#
+ds1 = kongrey
+ds2 = kongreywrf
+#
+#ds1 = may
+#ds1.list = [v for v in ds1.list if '20140520' in v.dataTime]
+#ds2 = maywrf20
+#####
 
-N = 100
+N = 30
 
 n1 = len(ds1)
 n2 = len(ds2)
