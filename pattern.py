@@ -1863,9 +1863,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return interpolate.RectBivariateSpline(range(height), range(width), self.matrix)
         
 
-    def granulometry(self, scales=[4,10,14,40]):
+    def granulometry(self, scales=[4,10,14,40], outputFolder="",display=True, *args, **kwargs):
         from .geometry import granulometry as gr
-        granulo = gr.analyse(self, scales=scales)
+        granulo = gr.analyse(self, scales=scales, outputFolder=outputFolder, display=display,
+                                *args, **kwargs)
         self.granulo = granulo
         granulo_objects = [DBZ(matrix=granulo[i], name=self.name+'_granulo_'+str(scales[i]),
                                 vmax=1, vmin=-0.5,) for i in range(len(scales))]

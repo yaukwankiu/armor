@@ -9,7 +9,7 @@ import platform
 # computer settings
 
 computer = 'asus-laptop'
-if platform.node() == 'k-Aspire-E1-571G':
+if platform.node() == 'k-Aspire-E1-571G' or platform.node()=='yan-Aspire-E1-571G':
     computer = 'acer-laptop'
 elif platform.node() == 'k-801':
     computer = 'k-801'  # 801-desktop
@@ -224,6 +224,7 @@ UR  = defaultWRFUpperRightCornerLatitudeLongitude  #alias
 #   plotting
 from . import colourbar
 defaultCmap = colourbar.cmap
+coloursList = ['b','c','g','y','r','m','k',] * 30 #http://matplotlib.org/api/colors_api.html
 
 ################################################################
 #   filenames
