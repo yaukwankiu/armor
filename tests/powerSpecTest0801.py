@@ -17,14 +17,14 @@ from armor import defaultParameters as dp
 #ds1 = kongrey
 #ds2 = kongreywrf
 #
-#ds1 = may
-#ds1.list = [v for v in ds1.list if '20140520' in v.dataTime]
-#ds2 = maywrf20
-#
 ds1 = may
-ds2 = maywrf19
-ds2.list    += maywrf20.list + maywrf21.list + maywrf22.list + maywrf23.list
-ds2.name    = 'WRF_Rainband_May_2014'
+ds1.list = [v for v in ds1.list if '20140520' in v.dataTime]
+ds2 = maywrf20
+#
+#ds1 = may
+#ds2 = maywrf19
+#ds2.list    += maywrf20.list + maywrf21.list + maywrf22.list + maywrf23.list
+#ds2.name    = 'WRF_Rainband_May_2014'
 
 #####
 
@@ -50,6 +50,7 @@ res = an.crossStreamsPowerSpecTest2(ds1, ds2, outputFolder= dp.root  + 'labLogs2
                                     randomise=False,
                                     numberOfShuffles=10,
                                     numberOfTrials=300,
-                                    prefilterSigmas=(4,0),          #2014-08-05
+                                    #prefilterSigmas=(4,0),          #2014-08-05
+                                    prefilterSigmas=(0,0), 
                                     )
 
