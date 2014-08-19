@@ -2797,10 +2797,10 @@ class DBZstream:
             dbzPattern.imageFolder = folder
             #dbzPattern.imagePath   = folder +  dbzPattern.name + '_'+dbzPattern.dataTime + ".png"
             try:
-                dbzPattern.imagePath   = folder + self.name + dbzPattern.dataTime + self.imageExtension
+                dbzPattern.imagePath   = folder + self.name + '_' + dbzPattern.dataTime + self.imageExtension
             except AttributeError:      # hack added 2013-09-27
                 self.imageExtension = defaultImageExtension
-                dbzPattern.imagePath   = folder + self.name + dbzPattern.dataTime + self.imageExtension
+                dbzPattern.imagePath   = folder + self.name + '_' + dbzPattern.dataTime + self.imageExtension
 
     def setImagePaths(self, *args, **kwargs):
         """ alias"""
@@ -2847,7 +2847,7 @@ class DBZstream:
             dbzPattern.vmax = vmax
 
 
-    def saveImages(self, flipud=False, drawCoast=False, verbose=False, dpi=200):
+    def saveImages(self, toLoad=False, flipud=False, drawCoast=False, verbose=False, dpi=200):
         """ 
         note:  here we set the imagePath's first (imageFolder+dataTime+ .png) 
               and then save the images to it
@@ -2859,13 +2859,15 @@ class DBZstream:
             pass
         for dbzPattern in ds1.list:
             dbzPattern.imagePath = ds1.imageFolder + ds1.name + dbzPattern.dataTime + '.png'
+            if toLoad:
+                dbzPattern.load()
             if drawCoast:
                 dbzPattern.drawCoast()
             if flipud==True:
                 dbzPattern.matrix = np.flipud(dbzPattern.matrix)
             if verbose:
                 print dbzPattern.imagePath
-                xxx = raw_input('press enter to continue:')
+                #xxx = raw_input('press enter to continue:')
             dbzPattern.saveImage(dpi=dpi)
 
 
