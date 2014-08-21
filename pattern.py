@@ -522,9 +522,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 vmax    = self.vmax
         else:
             if vmin == 99999 or vmin=="":
-                vmax = matrix.max()
+                vmin = matrix.min()
             if vmax == -99999 or vmax=="":
-                vmin = matrix.min()            
+                vmax = matrix.max()            
+        print "vmax, vmin:", vmax, vmin #debug
+
         if title =="":
             title = self.name
         if cmap == "":
@@ -2180,14 +2182,14 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                     a1.drawCross(int(centroids[i,0]), int(centroids[i,1]), radius=crossRadius, newObject=False)    # assuming the first two features =i,j
                 except IndexError:
                     pass
+        result= {'centroids':centroids, 'a1':a1}
+        self.classification = result
         if display:
             a1.show()
             time.sleep(2)
         if display:
             #a1.show(matrix=np.ma.array(a1.matrix, mask=self.matrix.mask))
             a1.show(matrix=np.ma.array(a1.matrix, mask=(self.matrix<threshold)))
-        result= {'centroids':centroids, 'a1':a1}
-        self.classification = result
         return result
 
     def initialiseFeatures(self, intensityThreshold=0, fill_value=-999):
