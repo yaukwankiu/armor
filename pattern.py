@@ -238,6 +238,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.imageTopDown       = imageTopDown
         self.missingDataThreshold = missingDataThreshold
         self.verbose    = verbose
+        #self.features   = 0                  # initialise
         #self.matrix_backups = []            # for storage
         #if verbose:
         #    print(self.name + "initialised.  Use the command '___.load()' to load your data, " +\
@@ -513,8 +514,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         !!! TO DO: FIX THE AXES !!!
         """
-        if isinstance(matrix, str):
+        if matrix=="":
             matrix = self.matrix
+        else:
+            vmax = matrix.max()
+            vmin = matrix.min()            
         if title =="":
             title = self.name
         if cmap == "":
@@ -671,6 +675,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """alias
         """
         self.showInverted()
+
+    def showFeatureLayer(self, n=0, n2=""):
+        if n2=="":
+            self.show(matrix=self.features[:,:,n])
+        else:
+            self.show(matrix=self.features[:,:,n]-self.features[:,:,n2])
 
     def backupMatrix(self, name=""):
         """backing up self.matrix for analysis
@@ -1543,10 +1553,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return analysis.powerSpecTest0709(self, *args, **kwargs)
     
 
-    def classify(self, features="", k=10, cmap='jet', display=False, 
+    def classify(self, features="", k=20, cmap='jet', display=True, 
                 toWhiten=False,  
                 toDrawCentroids=False,
                 crossRadius=10,
+                verbose=True,
+                threshold=0,
                  *args, **kwargs):
         """
         input:  feature vector field
@@ -1559,18 +1571,41 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 print "Features undefined!! -  ", self.name
                 return -1
         height, width, depth = features.shape
-
+        #   review each layer and check for degeneracy
+        layersToBeDeleted = []
+        
+        for i in range(depth):
+            layerRank = np.linalg.matrix_rank(features[:,:,i])
+            if verbose:
+                print "feature layer", i, ":  Rank=",
+                print layerRank 
+                
+            if layerRank<1:
+                #features = np.dstack([features[:,:,:i], features[:,:,i+1]])
+                #features = np.delete(features, i, axis=2)
+                layersToBeDeleted.append(i)
+        if verbose:
+            print "removing layers", layersToBeDeleted
+        features = np.delete(features, layersToBeDeleted, axis=2)
+        height, width, depth = features.shape
         #perform k-means stuff
         from scipy.cluster import vq
         f1 = features.reshape((height*width), depth)
         if toWhiten:
             f1 = vq.whiten(f1)
         centroids, arr = vq.kmeans2(f1, k=k, *args, **kwargs)
+        arr = arr.reshape((height, width))
+        if verbose:
+            print arr
+            print arr.shape #debug
         a1 = self.copy()
         a1.name  = "k-means, k=%d, for " %k + self.name 
         a1.imagePath = self.imagePath[:-4] + "_kmeans_" + self.imagePath[-4:]
         a1.outputPath = self.outputPath[:-4] + "_kmeans_" + self.outputPath[-4:]
         a1.cmap       = cmap
+        a1.matrix   = np.ma.array(arr, fill_value=-999.)
+        a1.vmax     = arr.max()
+        a1.vmin     = arr.min()
         if toDrawCentroids:
             for i in range(len(centroids)):
                 try:
@@ -1580,7 +1615,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                     pass
         if display:
             a1.show()
+            time.sleep(2)
+        if display:
+            #a1.show(matrix=np.ma.array(a1.matrix, mask=self.matrix.mask))
+            a1.show(matrix=np.ma.array(a1.matrix, mask=(self.matrix<threshold)))
         result= {'centroids':centroids, 'a1':a1}
+        self.classification = result
         return result
 
     def initialiseFeatures(self, intensityThreshold=0, fill_value=-999):
@@ -1597,7 +1637,31 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.features = np.dstack([I, J, a1.matrix])
         return self.features
         
+    def deleteFeature(self, layers=[0]):
+        """
+        to edit the features array
+        """
+        self.features = np.delete(self.features, layers, axis=2)
 
+    def granulometryFeatures(self, threshold=0, scales=[1,2,4,8,16,32,64], verbose=True, display=False, outputFolder="",
+                              *args, **kwargs):
+        from scipy import ndimage
+        from geometry import granulometry as gr
+        if not hasattr(self,'features'):
+            self.initialiseFeatures()
+
+        granuloLayers = gr.analyse(im=self.matrix.filled(), threshold=threshold, scales=scales,  
+                                   verbose=verbose,display=display, outputFolder=outputFolder,
+                                   *args, **kwargs)
+        for n, layer in enumerate(granuloLayers):
+            scale = scales[n]
+            if verbose:
+                print 'constructing granulo feature for layer: scale =', scale
+            layer = layer.astype(float)
+            layer = (ndimage.gaussian_filter(layer, scale) >0)
+            layer = np.ma.array(layer, mask=0, fill_value=-999)
+            self.features = ma.dstack([self.features, layer])
+           
     #   end new objects from old
     #############################################################
 

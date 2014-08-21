@@ -26,12 +26,19 @@ def granulometry(data, sizes=None):
     return granulo
 
 
-def analyse(im, scales=[4,10,14,40], verbose=True,display=True, outputFolder=""):
-    try:
-        mask = im > im.mean()
-    except:
-        im = im.matrix
-        mask = im > im.mean()
+def analyse(im, threshold="", scales=[4,10,14,40], verbose=True,display=True, outputFolder=""):
+    if threshold != "":
+        try:
+            mask = (im>threshold)
+        except:
+            im = im.matrix
+            mask = (im>threshold)
+    else:
+        try:
+            mask = im > im.mean()
+        except:
+            im = im.matrix
+            mask = im > im.mean()
 
     #granulo = granulometry(mask, sizes=np.arange(2, 19, 4))
     granulo = granulometry(mask, sizes=scales)

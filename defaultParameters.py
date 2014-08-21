@@ -136,6 +136,9 @@ defaultLabReportFolder  = defaultLabReportsFolder   #alias
 defaultLabLogsFolder    = 'labLogs/'
 defaultLabLogFolder    = defaultLabLogsFolder   #alias
 
+defaultCWBfolder    = defaultRootFolder + '../CWB/'
+CWBfolder           = defaultCWBfolder #alias
+
 ################################################################
 # geography
 

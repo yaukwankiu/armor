@@ -1,0 +1,106 @@
+#   imageToData_charts2.py
+#   to extract information from CWB charts and convert them to regular data
+"""
+
+"""
+
+import os, shutil
+import numpy as np
+import matplotlib.pyplot as plt
+imshow = plt.imshow
+from scipy import ndimage
+from scipy import interpolate
+import matplotlib as mpl
+from scipy import cluster
+import time
+from armor import defaultParameters as dp
+
+
+#inputFolder='/media/TOSHIBA EXT/CWB/charts2/2014-06-03/'
+#imageName = '2014-06-03_2330.2MOS0.jpg'
+
+#inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
+inputFolder= dp.CWBfolder+'charts2/2014-08-16/'
+outputFolder = dp.root + 'labLogs2/charts/'
+#outputFolder  = dp.CWBfolder+'temp/'
+
+if not os.path.exists(outputFolder):
+    os.makedirs(outputFolder)
+
+##
+imageNames = os.listdir(inputFolder)
+imageNames = [v for v in imageNames if '2014-08-16_1200'< v and v<'2014-08-16_1900'] #afternoon convective storms?!
+print '\n'.join(imageNames)
+time.sleep(5)
+for imageName in imageNames:
+    #imageName = '2014-05-20_1700.2MOS0.jpg'
+
+
+    l   = plt.imread(inputFolder+imageName)
+    plt.imshow(l, origin='lower') ; plt.show(block=False)
+
+    l2  = np.zeros((600,600))
+    l2  = l[:,:,0].astype(int) + l[:,:,1].astype(int) * 256 + l[:,:,2].astype(int) * 65536 
+    np.histogram(l2)
+
+    l5=cluster.vq.kmeans2(l2.flatten(), k=50)
+    l6=l5[1].reshape((600,600))
+    plt.imshow(l6, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=False)
+
+    l3  = l[:,:,2].astype(int) + l[:,:,1].astype(int) * 256 + l[:,:,0].astype(int) * 65536 
+
+    thres=150
+    l4  = (l[:,:,2].astype(int)< thres) * (l[:,:,1].astype(int)<thres) * (l[:,:,0].astype(int)<thres)
+
+    l4.sum()
+    imshow(l4, origin='lower') ; plt.colorbar() ; plt.show(block=False)
+
+    filterSize=20
+    l5= ndimage.filters.median_filter(l[:,:,0], size=filterSize)
+    l6= ndimage.filters.median_filter(l[:,:,1], size=filterSize)
+    l7= ndimage.filters.median_filter(l[:,:,2], size=filterSize)
+
+    l8  = l.copy()
+    l8[:,:,0] = l5
+    l8[:,:,1] = l6
+    l8[:,:,2] = l7
+
+    imshow(l8, origin='lower') ; plt.colorbar() ; plt.show(block=False)
+
+    imshow(l, origin='lower') ;plt.show(block=False)
+
+    colourBarY =[273, 253, 238, 219, 206, 193, 175,160, 145, 130, 115, 100, 80,67,52,34,19]
+    colourBarX = 25
+
+    j = colourBarX
+    colourBar   = []
+    for i in colourBarY:
+        print l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]
+        colourBar.append((l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]))
+
+    colourbar = colourBar
+
+    colourbar   = [np.median(v, axis=0).astype(int).tolist() for v in colourBar]
+    colourbar   = np.array(colourbar).astype(np.uint8)
+    l9  = l.reshape((600*600, 3))
+    x=cluster.vq.vq(l9,colourbar)
+
+    x0  =x[0]
+    plt.close()
+    imshow(l, origin='lower')
+    plt.savefig(outputFolder+ imageName + "_0_"+str(time.time())+ '.jpg')    
+    plt.show(block=False)
+
+
+    for i in range(16):
+        plt.close()
+        l10 = (x[0]==i).reshape((600,600))
+        imshow(l10, origin='lower')
+        plt.savefig(outputFolder+ imageName + "_" + str(time.time())+'.jpg')
+        plt.show(block=False)
+
+
+
+
+    #interpolation:
+    #http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html#multivariate-data-interpolation-griddata
