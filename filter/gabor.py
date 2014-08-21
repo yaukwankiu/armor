@@ -30,6 +30,7 @@ from matplotlib import pyplot as plt
 import time
 import os
 import pickle
+from .. import defaultParameters as dp
 #from PIL import Image
 
 # defining the parameters
@@ -116,13 +117,14 @@ gabor.main(a)
     print "sigma, scales, NumberOfOrientations: ", sigma, scales, NumberOfOrientations
     print "filterdim: ", filterdim
     #xxx = raw_input('press enter to continue:')
-    print "sleeping 10 seconds;"
-    time.sleep(10)
+    print "sleeping 1 second;"
+    time.sleep(1)
     ############
     # ready? -  let's go
     time0 =    int(time.time())
     if outputFolder=="":
-        outputFolder = 'armor/filter/gaborFeatures%d/' % time0
+        #outputFolder = 'armor/filter/gaborFeatures%d/' % time0
+        outputFolder = dp.root + 'labLogs2/gaborFeatures%d/' % time0
     os.makedirs(outputFolder)
     for i in range(len(scales)):
         phi = scales[i]

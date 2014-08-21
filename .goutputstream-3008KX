@@ -618,7 +618,6 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 self.matrix.mask[v[0], v[1]].mask = 0    
             except AttributeError:  # AttributeError: 'numpy.float64' object has no attribute 'mask'
                 pass
-            #matrix=self.matrix #this line is commented out so that self.vmin and self.vmax are used in makeImage()
         self.show(matrix=matrix)        
 
     def showWithoutCoast(self):
