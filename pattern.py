@@ -525,7 +525,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 vmin = matrix.min()
             if vmax == -99999 or vmax=="":
                 vmax = matrix.max()            
-        print "vmax, vmin:", vmax, vmin #debug
+        #print "vmax, vmin:", vmax, vmin #debug
 
         if title =="":
             title = self.name
@@ -2099,7 +2099,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
     ########################################################
 
     ########################################################
-    #   features
+    #   features and classifications
     
     def showFeatureLayer(self, n=0, n2="", vmin="", vmax=""):
         if n2=="":
@@ -2145,7 +2145,6 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 layersToBeDeleted.append(i)
         if verbose:
             print "removing layers", layersToBeDeleted
-
 
         features = np.delete(features, layersToBeDeleted, axis=2)
         height, width, depth = features.shape
@@ -2213,6 +2212,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.features = np.delete(self.features, layers, axis=2)
 
     def granulometryFeatures(self, threshold=0, scales=[1,2,4,8,16,32,64], verbose=True, display=False, outputFolder="",
+                             multiplier=1.,
                               *args, **kwargs):
         from scipy import ndimage
         from geometry import granulometry as gr
@@ -2229,9 +2229,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             layer = layer.astype(float)
             layer = (ndimage.gaussian_filter(layer, scale) >0)
             layer = np.ma.array(layer, mask=0, fill_value=-999)
-            self.features = ma.dstack([self.features, layer])
+            self.features = ma.dstack([self.features, layer]) * multiplier
+        return granuloLayers
 
     def gaborFeatures(self, sigma=20, scales  = [1, 2, 4, 8, 16], NumberOfOrientations = 4, memoryProblem=False, 
+                      multiplier=1.,
                       outputFolder="", *args, **kwargs):
         if not hasattr(self, 'features'):
             self.initialiseFeatures()
@@ -2239,8 +2241,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         filterFeatures = gabor.main(self, sigma, scales, NumberOfOrientations, memoryProblem, 
                                     outputFolder, *args, **kwargs)
         try:
-            self.features = np.dstack([self.features, filterFeatures])
-            return filterFeatures
+            self.features = np.dstack([self.features, filterFeatures]) * multiplier
+            return filterFeatures 
         except:
             return filterFeatures
 
