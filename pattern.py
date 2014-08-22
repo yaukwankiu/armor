@@ -2193,7 +2193,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a2.name = a1.name + '_2'
         a2.matrix = np.ma.array(a1.matrix, mask=(self.matrix<threshold))
         result['a2'] = a2
+        self.classificationResult = result
         return result
+
 
     def initialiseFeatures(self, intensityThreshold=0, fill_value=-999):
         """
