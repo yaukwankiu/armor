@@ -2189,6 +2189,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if display:
             #a1.show(matrix=np.ma.array(a1.matrix, mask=self.matrix.mask))
             a1.show(matrix=np.ma.array(a1.matrix, mask=(self.matrix<threshold)))
+        a2 = a1.copy()
+        a2.name = a1.name + '_2'
+        a2.matrix = np.ma.array(a1.matrix, mask=(self.matrix<threshold))
+        result['a2'] = a2
         return result
 
     def initialiseFeatures(self, intensityThreshold=0, fill_value=-999):

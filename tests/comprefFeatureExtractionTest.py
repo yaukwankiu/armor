@@ -8,8 +8,8 @@ from armor import defaultParameters as dp
 outputFolder = dp.root + 'labLogs2/featureExtraction/'
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
-testComprefs = ob.may2014.list[20:60:6] + ob.monsoon[20:40:6] + \
-               ob.march2014.list[20:40:6] + ob.kongrey.list[20:40:6]
+testComprefs = ob.kongrey.list[20:40:6] + ob.may2014.list[20:60:6] +\
+               ob.march2014.list[20:40:6] + ob.monsoon[20:40:6]
 
 classificationResults = []
 for a in testComprefs:
