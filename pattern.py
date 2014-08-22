@@ -2250,8 +2250,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         except:
             return filterFeatures
 
-
-
+    def thresholdFeatures(self, threshold=0, multiplier=100., *args, **kwargs):
+        """
+        those masked or below the threshold are considered one class
+        """
+        if not hasattr(self, 'features'):
+            self.initialiseFeatures()
+        m = self.matrix.mask + (self.matrix < threshold)
+        m = (1-m) * multiplier
+        self.features = np.dstack([self.features, m])
+        return m
+        
     ########################################################
     #   tests
     
