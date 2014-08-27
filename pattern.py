@@ -2110,6 +2110,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
     def getFeatureLayer(self, n=0):
         return self.features[:,:,n]
 
+    #def whiten(self):  #doesn't work yet - whiten requires a rank-2 array
+    #    from scipy.cluster import vq  
+    #    self.features = vq.whiten(self.features)   
+
     def classify(self, features="", k=20, cmap='jet', display=True, 
                 algorithm = 'kmeans',
                 toWhiten=False,  
@@ -2117,11 +2121,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 crossRadius=10,
                 verbose=True,
                 threshold=0,
+                scope='full',   #whether to cluster all or just selected points
+                #scope='selected',
                  *args, **kwargs):
         """
         input:  feature vector field
         output: classification of the image into various classes
         """
+        from scipy.cluster import vq
+        if scope != 'full':
+            featuresMask = self.matrix.mask + (self.matrix.filled()<threshold)
+            self.featuresMask = featuresMask
         if features =="":
             try:
                 features = self.features
@@ -2149,20 +2159,53 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         features = np.delete(features, layersToBeDeleted, axis=2)
         height, width, depth = features.shape
         #perform k-means stuff
-        from scipy.cluster import vq
-        f1 = features.reshape((height*width), depth)
+        ###########################################################################
+        ##
+        #
+        if scope == 'full':       # form a line for the features before clustering
+            f1 = features.reshape((height*width), depth)
+        else:
+            #f1 = ma.array(features, mask=ma.dstack([featuresMask]*depth))
+            f1 = ma.array(features, mask=False)
+            f2 = np.zeros(((1-featuresMask).sum(), depth))
+            for i in range(depth):
+                f1.mask[:,:,i]= featuresMask
+                print i, "f1[:,:,i].count()", f1[:,:,i].count() #debug
+            f1 = ma.reshape(f1, (height*width, depth))
+            print "f1.shape, f2.shape:", f1.shape, f2.shape #debug
+            print "f1[:,0].compressed().shape, f2[:,0].shape ",f1[:,0].compressed().shape, f2[:,0].shape #debug
+            for i in range(depth):
+                f2[:,i] = f1[:,i].compressed()
+            f1 = f2
+
         if toWhiten:
             f1 = vq.whiten(f1)
         #######################################################################
-        ##
         #
         if algorithm == 'kmeans':
+            print "k, args, kwargs", k, args, kwargs #debug
             centroids, arr = vq.kmeans2(f1, k=k, *args, **kwargs)   #key line
         #
-        ##
         #######################################################################
+        if scope == 'full':       # reform the resulting arr into original shape
+            arr = arr.reshape((height, width))
+        else:
+            arr2 = ma.ones((height, width))* (-999)
+            arr2.mask = True
+            arr2.fill_value= -999
+            X, Y = np.meshgrid(range(width), range(height))       # don't assume that the first two features are x,y
+            I, J = Y, X
+            I = ma.array(I, mask=featuresMask)
+            J = ma.array(J, mask=featuresMask)
+            coords = np.vstack([I.compressed(),J.compressed()]).T
+            print 'len arr, len coords:', len(arr), len(coords) #debug
+            for i in range(len(coords)):
+                arr2[coords[i][0], coords[i][1]] = arr[i]
+            arr = arr2
+        #
+        ##
+        ###########################################################################
 
-        arr = arr.reshape((height, width))
         if verbose:
             print arr
             print arr.shape #debug
