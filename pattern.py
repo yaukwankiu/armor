@@ -2176,14 +2176,22 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             print "f1[:,0].compressed().shape, f2[:,0].shape ",f1[:,0].compressed().shape, f2[:,0].shape #debug
             for i in range(depth):
                 f2[:,i] = f1[:,i].compressed()
+                #print "displaying feature level", i #debug
+                #plt.imshow(features[:,:,i], origin='lower') #debug
+                #plt.show()  #debug
+                #time.sleep(1) #debug
             f1 = f2
 
         if toWhiten:
             f1 = vq.whiten(f1)
+        #plt.close()    #debug
+        #plt.imshow(f1[:depth,:], origin='lower') #debug
+        #plt.colorbar() #debug
+        #plt.show(block=False)  #debug
         #######################################################################
         #
         if algorithm == 'kmeans':
-            print "k, args, kwargs", k, args, kwargs #debug
+            print "k, args, kwargs:", k, args, kwargs #debug
             centroids, arr = vq.kmeans2(f1, k=k, *args, **kwargs)   #key line
         #
         #######################################################################
