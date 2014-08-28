@@ -2116,6 +2116,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
     def classify(self, features="", k=20, cmap='jet', display=True, 
                 algorithm = 'kmeans',
+                #algorithm='kmeans-with-weight'
                 toWhiten=False,  
                 toDrawCentroids=False,
                 crossRadius=10,
@@ -2184,15 +2185,43 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         if toWhiten:
             f1 = vq.whiten(f1)
+        #   check for other degeneracies
+        layersToBeDeleted2 = []
+        for i in range(depth):
+            if f1[:,i].min() == f1[:,i].max():
+                layersToBeDeleted2.append(i)
+                if verbose:
+                    print "deleting layer", i
+        f1 = np.delete(f1, layersToBeDeleted2, axis=1)
+        _, depth = f1.shape
+
+
         #plt.close()    #debug
         #plt.imshow(f1[:depth,:], origin='lower') #debug
         #plt.colorbar() #debug
         #plt.show(block=False)  #debug
         #######################################################################
         #
+        print "algorithm:", algorithm
         if algorithm == 'kmeans':
             print "k, args, kwargs:", k, args, kwargs #debug
             centroids, arr = vq.kmeans2(f1, k=k, *args, **kwargs)   #key line
+        if algorithm == "kmeans-with-weight":
+            print "k, args, kwargs:", k, args, kwargs #debug
+            # assuming the first three features are I, J and intensity
+            maxIntensity = int(f1[:,2].max())+1
+            f2 = f1.copy()            
+            for i in range(threshold, maxIntensity):
+                newLayer = f1.copy()
+                pointsBelow = np.nonzero(newLayer[:2] <= i)[0]
+                newLayer = np.delete(newLayer, pointsBelow, axis=0)
+                f2 = np.vstack([f2, newLayer])
+                print 'f2.shape',f2.shape #debug
+            # IDEA:  WE PERFORM CLUSTERING FOR ALL POINTS OF f2 BUT WE USE ONLY RESULTS FOR f1
+            #        WHICH ARE THE DATAPOINTS AT THE TOP OF THE LIST
+            centroids, arr = vq.kmeans2(f2, k=k, *args, **kwargs)   #key line
+            arr = arr[0:len(f1)]
+
         #
         #######################################################################
         if scope == 'full':       # reform the resulting arr into original shape
@@ -2201,7 +2230,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             arr2 = ma.ones((height, width))* (-999)
             arr2.mask = True
             arr2.fill_value= -999
-            X, Y = np.meshgrid(range(width), range(height))       # don't assume that the first two features are x,y
+            X, Y = np.meshgrid(range(width), range(height))       # don't assume that the first two features are x,y #well, in the end, maybe we should, but won't bother changing this for now.
             I, J = Y, X
             I = ma.array(I, mask=featuresMask)
             J = ma.array(J, mask=featuresMask)
