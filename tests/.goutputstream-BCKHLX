@@ -1,0 +1,23 @@
+#from armor import pattern
+from armor import objects4 as ob
+
+may = ob.may2014
+a = may('20140519.1800')[0]
+a.load().show()
+
+a1 = a.above(40)
+x = a1.connectedComponents()
+x.show()
+
+print x.matrix.max()
+
+N = x.matrix.max()
+for i in range(N):
+    size= x.levelSet(i).matrix.sum()
+    if size>10 and size<100000:
+        print i, ":", size, "||",
+
+S = [v for v in range(N) if x.levelSet(v).matrix.sum()>10 and x.levelSet(v).matrix.sum()<100000]
+print S
+
+centroids = [x.levelSet(v).getCentroid().astype(int) for v in S]   

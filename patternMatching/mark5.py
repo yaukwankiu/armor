@@ -170,21 +170,25 @@ def getScore(a, b, weights=[0.01,  #weight for b0
                             1.0,  #weight for abs log b1
                             0.2,  #weight for angle (in radian)
                             0.1,  #weight for aspect ratios
+                            0.002, #weight for distance between centroids
                            ], 
              thres=0,
              ):
     #
-    b0, b1= a.gaussianCorr(b, sigma=0, sigmaWRF=0, thres=0, showImage=False, saveImage=False,
+    b0, b1= a.gaussianCorr(b, sigma=0, sigmaWRF=0, 
+                        #thres=0, 
+                        thres=thres, #2014-09-02
+                        showImage=False, saveImage=False,
                         outputFolder='', outputType="regression")
     angle = a.getRelativeAngle(b, threshold=thres, returnType='radian')
     r0, r1 = a.getAspectRatios(b, threshold=thres)
+    dist  = sum((a.getCentroid()-b.getCentroid())**2)**.5
 
-
-    score = -weights[0]*abs(b0) -weights[1]*abs(np.log(b1)) -weights[1]*abs(angle) \
-            -weights[2]*abs(np.log(r0)) - weights[3]*abs(np.log(r1))
+    score = -weights[0]*abs(b0) -weights[1]*abs(np.log(b1)) -weights[2]*abs(angle) \
+            -weights[3]*abs(np.log(r0)) - weights[3]*abs(np.log(r1)) - weights[4]* dist
     #print a.name, b.name, '\t', score
     print a.name, b.name, "b0, b1, angle, aspect ratios(short, long): score"
-    print b0, '\t', b1, '\t', angle, '\t', r0, '\t', r1, '\t:', score
+    print b0, '\t', b1, '\t', angle, '\t', r0, '\t', r1, '\t', dist,'\t:' score
     return score
     
 #   3.  processing
@@ -315,6 +319,7 @@ def main(radarPath=radarPath, wepsFolder=wepsFolder, key1="", key2="", **kwargs)
     print "comparing", a.name, a.dataTime
     print "to", wepsFolder
     scores = matching(a, wepsFolder,key1=key1, key2=key2, **kwargs)
+    scores = [v for v in scores if str(v['score'])!='nan'] # hack 2014-09-02
     outputPath  = outputFolder + str(int(time.time())) + "matchingOutput_" + a.name + ".txt"
     outputStrings = getOutputStrings(scores, timeInterval=3)
     print "\n========\nTop 10 matches"

@@ -1789,6 +1789,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         import armor.kmeans.clustering as clust
         x = clust.getKmeans(self, *args, **kwargs)
+        self.kmeansResults=x
         return x
 
     def invariantMoments(self, takeRoots=True, **kwargs):
@@ -2124,6 +2125,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                 threshold=0,
                 scope='full',   #whether to cluster all or just selected points
                 #scope='selected',
+                intensityStep = 5, # parameter for kmeans-with-weight algorithm
                  *args, **kwargs):
         """
         input:  feature vector field
@@ -2210,8 +2212,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             print "k, args, kwargs:", k, args, kwargs #debug
             # assuming the first three features are I, J and intensity
             maxIntensity = int(f1[:,2].max())+1
-            f2 = f1.copy()            
-            for i in range(threshold, maxIntensity):
+            f2 = f1.copy()
+            for i in range(threshold, maxIntensity, intensityStep):
                 newLayer = f1.copy()
                 pointsBelow = np.nonzero(newLayer[:2] <= i)[0]
                 newLayer = np.delete(newLayer, pointsBelow, axis=0)
