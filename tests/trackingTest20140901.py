@@ -1,12 +1,15 @@
 #from armor import pattern
 import numpy as np
-from armor import objects4 as ob
+from . import objects4 as ob
+from . import defaultParameters as dp
 
 may = ob.may2014
 a = may('20140519.1830')[0]
 a.load().show()
 
-a1 = a.above(35)
+#a1 = a.above(35)
+a1 = a.above(40)
+
 x = a1.connectedComponents()
 x.show()
 
@@ -39,5 +42,29 @@ for i in range(int(N2)):
     print i, a2.getRegionForValue(i)
     a.drawRectangle(*a2.getRegionForValue(i), newObject=False)
     
+a.show()
+
+import time
+
+a.load()
+a.show()
+for i in range(int(N2)):
+    print i, a2.getRegionForValue(i)
+    a3 = a.getWindow(*a2.getRegionForValue(i))
+    a3.matrix.mask = (a3.matrix<-dp.defaultMissingDataThreshold) #hack
+    #print a3.matrix.mask.sum()
+    #print a3.matrix.sum(), a3.matrix.shape
+    #a3.show()
+    #time.sleep(2)
+    print a3.matrix.sum()
+    print a3.matrix.shape[0]*a3.matrix.shape[1]*20 
+    #if a3.matrix.sum()< 10000 or (a3.matrix.shape[0]*a3.matrix.shape[1]*10 > a3.matrix.sum()):
+    if a3.matrix.sum()< 30000 or (a3.matrix.shape[0]*a3.matrix.shape[1]* > a3.matrix.sum()):
+ 
+    #if (a3.matrix.shape[0]*a3.matrix.shape[1]*20 < a3.matrix.sum()):
+        pass
+    else:
+        a.drawRectangle(*a2.getRegionForValue(i), newObject=False)
+
 a.show()
 

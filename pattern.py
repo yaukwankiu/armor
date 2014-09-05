@@ -2021,6 +2021,14 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if display:
             plt.show()
 
+    def stormTracking(self, newObject=True, *args, **kwargs):
+        """
+        wrapper of armor.kmeans.stormTracking.stormTracking()
+        """
+        from kmeans import stormTracking as st
+        results = st.stormTracking(self, newObject=newObject, *args, **kwargs)
+        return results
+
     # end function on object
     ############################################################
 
