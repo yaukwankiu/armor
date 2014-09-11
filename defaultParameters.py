@@ -19,7 +19,8 @@ elif platform.node() == 'zxc-Aspire-E1-571G':
     computer = 'k-acer'  # ubuntu 12.04/Win7 acer laptop
 elif platform.node()== 'Qoo-PC':
     computer = 'Qoo-PC'
-
+elif platform.node() =='user-PC':  #2014-09-10
+    computer = 'user-PC'
 
 #computer = 'i5-desktop'
 
@@ -51,8 +52,8 @@ elif computer == 'k-801':
     externalHardDriveName2= 'k/A4ECB939ECB90718'
     hardDriveName   = '../home/k'
 
-elif computer == 'k-acer':      #acer- ubuntu - main platform 2014-02-19
-    #usbDriveName    = 'KINGSTON'
+elif computer == 'k-acer' or computer=='user-PC':      #acer- ubuntu - main platform 2014-02-19
+    #usbDriveName    = 'KINGSTON'                       #user-PC  : 2014-09-10
     #externalHardDriveName = 'FreeAgent Drive' #?!
     #externalHardDriveName2= 'A4ECB939ECB90718'
     #hardDriveName    = 'home/k'
@@ -91,6 +92,12 @@ elif computer == 'k-acer':
     usbDriveLetter ='I'     #don't know yet
     externalHardDriveLetter = 'G'  #don't know yet
     hardDriveLetter = 'D'    #don't know yet
+elif computer == 'user-PC':     #2014-09-10
+    usbDriveLetter ='F'     #don't know yet
+    externalHardDriveLetter = 'F'  #don't know yet
+    hardDriveLetter = 'F'    #don't know yet
+    hardDriveLetter2 = 'F'    #don't know yet
+
 elif computer =='Qoo-PC':
     usbDriveLetter ='D'     
     externalHardDriveLetter = 'D'  

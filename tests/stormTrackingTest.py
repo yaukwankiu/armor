@@ -7,7 +7,8 @@ dbz = pattern.DBZ
 a = ob.may2014('0519.1830')[0]
 a.load().show()
 
-x=a.stormTracking(upperThreshold=40,lowerThreshold=15)
+x=a.stormTracking(upperThreshold=40, lowerThreshold=15)
 
 x.keys()
 x['regionsToTrack']
+
