@@ -17,6 +17,7 @@ def stormTracking(a0,
         a = a0.copy()
     else:
         a = a0
+    a.backupMatrix(0)
     a1 = a.above(upperThreshold)
     x = a1.connectedComponents()
     x.show(block=block)
@@ -34,13 +35,16 @@ def stormTracking(a0,
 
     centroids = [x.levelSet(v).getCentroid().astype(int) for v in S]    
     if display:
-        a.load()
+        a.restoreMatrix(0)
         for i, j in centroids:
-            a.drawRectangle(max(0, i-30), max(0,j-30), min(880-30-i, 60), min(920-30-j, 60), newObject=False)
+            try:
+                a.drawRectangle(max(0, i-30), max(0,j-30), min(880-30-i, 60), min(920-30-j, 60), newObject=False)
+            except:
+                pass
 
         a.show(block=block)
 
-    a.load() #for safety
+    a.restoreMatrix(0) #for safety
     y = a.getKmeans(threshold=lowerThreshold, k=np.vstack(centroids), minit='matrix')
     a2 = y['pattern']
 
@@ -49,7 +53,7 @@ def stormTracking(a0,
     regionsToTrack = [a2.getRegionForValue(v) for v in range(int(N2))]
     regionsToTrack = [v for v in regionsToTrack if v!=(-1,-1,0,0)]
 
-    a.load()    
+    a.restoreMatrix(0)   
 
     for i, R in enumerate(regionsToTrack):
         print i, R

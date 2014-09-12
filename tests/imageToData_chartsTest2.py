@@ -22,6 +22,7 @@ from armor import defaultParameters as dp
 #inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
 inputFolder= dp.CWBfolder+'charts2/2014-08-16/'
 outputFolder = dp.root + 'labLogs2/charts/'
+block=False
 #outputFolder  = dp.CWBfolder+'temp/'
 
 if not os.path.exists(outputFolder):
@@ -37,7 +38,7 @@ for imageName in imageNames:
 
 
     l   = plt.imread(inputFolder+imageName)
-    plt.imshow(l, origin='lower') ; plt.show(block=False)
+    plt.imshow(l, origin='lower') ; plt.show(block=block)
 
     l2  = np.zeros((600,600))
     l2  = l[:,:,0].astype(int) + l[:,:,1].astype(int) * 256 + l[:,:,2].astype(int) * 65536 
@@ -45,7 +46,7 @@ for imageName in imageNames:
 
     l5=cluster.vq.kmeans2(l2.flatten(), k=50)
     l6=l5[1].reshape((600,600))
-    plt.imshow(l6, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=False)
+    plt.imshow(l6, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=block)
 
     l3  = l[:,:,2].astype(int) + l[:,:,1].astype(int) * 256 + l[:,:,0].astype(int) * 65536 
 
@@ -53,7 +54,7 @@ for imageName in imageNames:
     l4  = (l[:,:,2].astype(int)< thres) * (l[:,:,1].astype(int)<thres) * (l[:,:,0].astype(int)<thres)
 
     l4.sum()
-    imshow(l4, origin='lower') ; plt.colorbar() ; plt.show(block=False)
+    imshow(l4, origin='lower') ; plt.colorbar() ; plt.show(block=block)
 
     filterSize=20
     l5= ndimage.filters.median_filter(l[:,:,0], size=filterSize)
@@ -65,9 +66,9 @@ for imageName in imageNames:
     l8[:,:,1] = l6
     l8[:,:,2] = l7
 
-    imshow(l8, origin='lower') ; plt.colorbar() ; plt.show(block=False)
+    imshow(l8, origin='lower') ; plt.colorbar() ; plt.show(block=block)
 
-    imshow(l, origin='lower') ;plt.show(block=False)
+    imshow(l, origin='lower') ;plt.show(block=block)
 
     colourBarY =[273, 253, 238, 219, 206, 193, 175,160, 145, 130, 115, 100, 80,67,52,34,19]
     colourBarX = 25
@@ -89,7 +90,7 @@ for imageName in imageNames:
     plt.close()
     imshow(l, origin='lower')
     plt.savefig(outputFolder+ imageName + "_0_"+str(time.time())+ '.jpg')    
-    plt.show(block=False)
+    plt.show(block=block)
 
 
     for i in range(16):
@@ -97,7 +98,7 @@ for imageName in imageNames:
         l10 = (x[0]==i).reshape((600,600))
         imshow(l10, origin='lower')
         plt.savefig(outputFolder+ imageName + "_" + str(time.time())+'.jpg')
-        plt.show(block=False)
+        plt.show(block=block)
 
 
 
