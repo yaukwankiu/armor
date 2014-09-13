@@ -1,5 +1,8 @@
 #   imageToData_charts2.py
 #   to extract information from CWB charts and convert them to regular data
+
+#interpolation:
+#http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html#multivariate-data-interpolation-griddata
 """
 
 """
@@ -21,7 +24,7 @@ from armor import defaultParameters as dp
 
 #inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
 inputFolder= dp.CWBfolder+'charts2/2014-08-16/'
-outputFolder = dp.root + 'labLogs2/charts/'
+outputFolder = dp.root + 'labLogs2/imageToData/'
 block=False
 #outputFolder  = dp.CWBfolder+'temp/'
 
@@ -100,8 +103,21 @@ for imageName in imageNames:
         plt.savefig(outputFolder+ imageName + "_" + str(time.time())+'.jpg')
         plt.show(block=block)
 
+    l81 = (l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
+    l81[550:, :210] = 1
+    l81[:250, :50] = 1
+    l81 = 1- l81
+    imshow(l81, origin='lower',) ; plt.show(block=block)
+    plt.subplot(221)
+    imshow(l, origin='lower',)
+    plt.subplot(222)
+    imshow(l8, origin='lower',)
+    plt.subplot(223)
+    imshow((x[0]==0).reshape((600,600)), origin='lower')
+    plt.subplot(224)
+    imshow(l81, origin='lower',)
+    plt.savefig(outputFolder+ 'cleaned_'+imageName+"_"+str(time.time())+'.jpg')
+    plt.show(block=block)
 
 
 
-    #interpolation:
-    #http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html#multivariate-data-interpolation-griddata

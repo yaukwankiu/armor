@@ -108,9 +108,6 @@ imshow(l, origin='lower',)
 plt.subplot(222)
 imshow(l8, origin='lower',)
 plt.subplot(223)
-imshow((x[0]==0).reshape((600,600)), origin='lower')
-plt.subplot(224)
 imshow(l81, origin='lower',)
 
 plt.show(block=block)
-

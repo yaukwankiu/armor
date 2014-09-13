@@ -3,7 +3,6 @@
 
 #interpolation:
 #http://docs.scipy.org/doc/scipy/reference/tutorial/interpolate.html#multivariate-data-interpolation-griddata
-
 """
 
 """
@@ -22,13 +21,14 @@ from armor import defaultParameters as dp
 
 #inputFolder='/media/TOSHIBA EXT/CWB/charts2/2014-06-03/'
 #imageName = '2014-06-03_2330.2MOS0.jpg'
+block=True
 inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
 imageName = '2014-05-20_1700.2MOS0.jpg'
 #outputFolder  = dp.CWBfolder+'temp/'
 outputFolder = dp.root + 'labLogs2/charts/'
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
-block=True
+
 
 l   = plt.imread(inputFolder+imageName)
 plt.imshow(l, origin='lower') ; plt.show(block=block)
@@ -95,22 +95,5 @@ for i in range(16):
 
 
 
-l81 = (l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
-l81[550:, :210] = 1
-l81[:250, :50] = 1
-l81 = 1- l81
 
-imshow(l81, origin='lower',) ; plt.show(block=block)
-
-
-plt.subplot(221)
-imshow(l, origin='lower',)
-plt.subplot(222)
-imshow(l8, origin='lower',)
-plt.subplot(223)
-imshow((x[0]==0).reshape((600,600)), origin='lower')
-plt.subplot(224)
-imshow(l81, origin='lower',)
-
-plt.show(block=block)
 
