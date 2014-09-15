@@ -24,6 +24,12 @@ from armor import defaultParameters as dp
 #imageName = '2014-06-03_2330.2MOS0.jpg'
 inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
 imageName = '2014-05-20_1700.2MOS0.jpg'
+#inputFolder= dp.defaultImageDataFolder+'charts2/2014-05-19/'
+#imageName = '2014-05-19_1200.2MOS0.jpg'
+
+#inputFolder= dp.defaultImageDataFolder+'charts2/2014-07-07/'
+#imageName = '2014-07-07_1230.2MOS0.jpg'
+
 #outputFolder  = dp.CWBfolder+'temp/'
 outputFolder = dp.root + 'labLogs2/charts/'
 if not os.path.exists(outputFolder):
@@ -68,14 +74,17 @@ colourBarX = 25
 
 j = colourBarX
 colourBar   = []
+#colourBar   = [0,0,0]
 for i in colourBarY:
     print l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]
     colourBar.append((l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]))
+    #colourBar.append(l[i-2:i+2, j-2:j+2].mean(axis=0).mean(axis=0))    #doesn't work yet
 
 colourbar = colourBar
-
 colourbar   = [np.median(v, axis=0).astype(int).tolist() for v in colourBar]
+
 colourbar   = np.array(colourbar).astype(np.uint8)
+colourbar   = np.vstack([colourbar, [0,0,0],[150, 150, 150], [6, 141, 152], [0,150, 150], [150,0,150], [150,150,0]])
 l9  = l.reshape((600*600, 3))
 x=cluster.vq.vq(l9,colourbar)
 
@@ -86,33 +95,66 @@ plt.savefig(outputFolder+ '0_'+str(time.time())+ '.jpg')
 plt.show(block=block)
 
 
-for i in range(16):
+for i in range(len(colourbar)):
     plt.close()
     l10 = (x[0]==i).reshape((600,600))
+    print i, colourbar[i]
     imshow(l10, origin='lower')
     plt.savefig(outputFolder+str(time.time())+'.jpg')
     plt.show(block=block)
 
+x0= x[0].reshape(600,600)
+y= (x0>=16)
+print "y= (x0>=16)"
+plt.imshow(y, origin='lower'); plt.show(block=block)
+
+z = (x0<=8) * (x0>0)
+print "35+"
+plt.imshow(z, origin='lower'); plt.show(block=block)
 
 
-l81 = (l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
+l81 = 1.*(l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
 l81[550:, :210] = 1
 l81[:250, :50] = 1
 l81 = 1- l81
 
+l82 = l81 + 1.*z  #35+
+
+print "median filter"
 imshow(l81, origin='lower',) ; plt.show(block=block)
 
-
+print "median filter+ threshold35"
 plt.subplot(221)
 imshow(l, origin='lower',)
 plt.subplot(222)
 imshow(l8, origin='lower',)
 plt.subplot(223)
-imshow((x[0]==0).reshape((600,600)), origin='lower')
-plt.subplot(224)
+#imshow((x[0]==0).reshape((600,600)), origin='lower')
 imshow(l81, origin='lower',)
-
+plt.subplot(224)
+imshow(l82, origin='lower',)
 plt.show(block=block)
 
 ###
 #   now, cut out the specific colours!! need: 50+, 45+, 40+, 35+ and perhaps 30+
+#   1. get the average colour values
+#   2. recluster with these colour values
+
+i1 = [201, 187, 171, 155, 138, 124, 109,  93, 76, 64, 50, 33, 25] + [33]
+i2 = [212, 197, 181, 165, 149, 135, 118, 106, 90, 73, 58, 42, 28] + [120]
+j1 = [18]*13 +[63]
+j2 = [31]*13+ [140]
+colourIntensities = range(50, -15, -5) + [-999]
+colourAverages=[]
+N = len(i1)
+for i in range(N):
+    colourValue=int(l2[i1[i]:i2[i], j1[i]:j2[i]].mean())
+    colourAverages.append(colourValue)
+    print i, colourIntensities[i], "+ : ", colourValue, colourValue%256, colourValue//256%256, colourValue//65536 
+
+
+l51=cluster.vq.kmeans2(l2.flatten(), k=np.array(colourAverages+[0]), minit='matrix')
+l61=l51[1].reshape((600,600))
+plt.imshow(l61, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=block)
+
+
