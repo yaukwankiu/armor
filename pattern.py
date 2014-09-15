@@ -124,6 +124,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                   allocateMemory=True,
                   imageTopDown="",
                   missingDataThreshold="",      #added 2014-02-20
+                  imageDataFolder="",           #2014-09-15
                   verbose=False):
         self.timeStamp = str(int(time.time()))
 
@@ -156,36 +157,37 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if isinstance(matrix, ma.MaskedArray):
             matrix.fill_value = -999
         if missingDataThreshold=="":
-            missingDataThreshold = defaultMissingDataThreshold  #added 2014-02-20
+            missingDataThreshold = dp.defaultMissingDataThreshold  #added 2014-02-20
         if isinstance(matrix, np.ndarray) and not isinstance(matrix, ma.MaskedArray):
             matrix     = matrix.view(ma.MaskedArray)
             matrix.mask = (matrix<missingDataThreshold )
             matrix.fill_value = -999
         if dataPath =="":
-            dataPath = defaultInputFolder + "COMPREF." + dataTime +".dat"
+            dataPath =dp. defaultInputFolder + "COMPREF." + dataTime +".dat"
         if outputPath =="":
-            outputPath = defaultOutputFolder + name + '_'+ self.timeStamp + ".dat"
+            outputPath = dp.defaultOutputFolder + name + '_'+ self.timeStamp + ".dat"
         if imagePath =="":
-            imagePath = defaultOutputFolderForImages + name + '_'+self.timeStamp + ".png"
+            imagePath = dp.defaultOutputFolderForImages + name + '_'+self.timeStamp + ".png"
         if coastDataPath == "":
-            coastDataPath = defaultInputFolder + "taiwanCoast.dat"
+            coastDataPath = dp.defaultInputFolder + "taiwanCoast.dat"
         if relief100DataPath == "":
-            relief100DataPath = defaultInputFolder + "relief100.dat"
+            relief100DataPath = dp.defaultInputFolder + "relief100.dat"
         if relief1000DataPath == "":
-            relief1000DataPath = defaultInputFolder + "relief1000.dat"
+            relief1000DataPath = dp.defaultInputFolder + "relief1000.dat"
         if relief2000DataPath == "":
-            relief2000DataPath = defaultInputFolder + "relief2000.dat"
+            relief2000DataPath = dp.defaultInputFolder + "relief2000.dat"
         if relief3000DataPath == "":
-            relief3000DataPath = defaultInputFolder + "relief3000.dat"
+            relief3000DataPath = dp.defaultInputFolder + "relief3000.dat"
         if lowerLeftCornerLatitudeLongitude =="":
-            lowerLeftCornerLatitudeLongitude = defaultLowerLeftCornerLatitudeLongitude
+            lowerLeftCornerLatitudeLongitude = dp.defaultLowerLeftCornerLatitudeLongitude
         if upperRightCornerLatitudeLongitude=="":
-            upperRightCornerLatitudeLongitude = defaultUpperRightCornerLatitudeLongitude
+            upperRightCornerLatitudeLongitude = dp.defaultUpperRightCornerLatitudeLongitude
         if imageTopDown=="":
-            imageTopDown = defaultImageTopDown
+            imageTopDown = dp.defaultImageTopDown
         if database =="":                   # an extra parameter not yet used
-            database = defaultDatabase
-        
+            database = dp.defaultDatabase
+        if imageDataFolder =="":
+            imageDataFolder= dp.defaultImageDataFolder
         ###############################################################################
         # if matrix shape = (881, 921) then by default the origin at Taichung Park
         #                                   (24.145056°N 120.683329°E)
@@ -205,7 +207,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             coordinateOrigin = (492,455)
 
         #coordinateOrigin = (0,0)       # switch it off - will implement coordinate Origin later
-             
+        
         if verbose:
             print "------------------------------------------------------------------"
             print "armor.pattern.DBZ:\nname, dt, dx, dy, dataPath, imagePath ="
@@ -238,6 +240,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.imageTopDown       = imageTopDown
         self.missingDataThreshold = missingDataThreshold
         self.verbose    = verbose
+        #self.imageDataFolder  = imageDataFolder #commented out for now, don't want to set this attribute until we are actually using it, i.e. with the relevant harddisc plugged in.
         #self.features   = 0                  # initialise
         #self.matrix_backups = []            # for storage
         #if verbose:
@@ -410,7 +413,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
     def loadImage(self, *args, **kwargs):
         #   to load an image into matrix (jpg/png), if it's not grey-scale make it so
         from basicio import loadImage
-        return loadImage.loadImage(a=self, *args, **kwargs)
+        if not hasattr(self, 'imageDataFolder'):
+            self.imageDataFolder = dp.defaultImageDataFolder
+        return loadImage.loadImage(a=self, inputFolder=self.imageDataFolder, *args, **kwargs)
 
     def loadCoast(self):
         try:

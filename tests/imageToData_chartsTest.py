@@ -114,3 +114,5 @@ imshow(l81, origin='lower',)
 
 plt.show(block=block)
 
+###
+#   now, cut out the specific colours!! need: 50+, 45+, 40+, 35+ and perhaps 30+

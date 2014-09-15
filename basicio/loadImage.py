@@ -8,6 +8,7 @@ from armor import defaultParameters as dp
 
 
 def loadImage(a, dataTime="", dataPath="", 
+                inputFolder="",
                 #imageType="hs1p", 
                 imageType='charts2',
                 imageSuffix='.jpg', verbose=True, 
@@ -15,16 +16,19 @@ def loadImage(a, dataTime="", dataPath="",
                rawImage=False,
                medianFilterSize=20, #for removing unwanted lines in charts2
                *args, **kwargs):
-
+    print 'inputFolder: ', inputFolder #debug
     if dataPath =="":
+        if inputFolder=="":
+            inputFolder= dp.root + '../CWB/'
         if dataTime!="":
             # '/media/TOSHIBA EXT/CWB/hs1p/2013-09-09/2013-09-09_1100.jpg'
             dataTimeString = a.dataTime[0:4] + '-' + a.dataTime[4:6] + '-' + a.dataTime[6:8] + "_" + a.dataTime[9:13]
-            dataPath = dp.root + '../CWB/' + imageType +  "/"+ dataTimeString[:10] + '/' + dataTimeString + imageSuffix
+            print 'dataTimeString', dataTimeString    # debug
+            dataPath = inputFolder + imageType +  "/"+ dataTimeString[:10] + '/' + dataTimeString + imageSuffix
         elif a.dataTime!='':
             dataTime = a.dataTime
             dataTimeString = a.dataTime[0:4] + '-' + a.dataTime[4:6] + '-' + a.dataTime[6:8] + "_" + a.dataTime[9:13]
-            dataFolder = dp.root + '../CWB/' + imageType + "/"+ dataTimeString[:10] + '/'
+            dataFolder = inputFolder + imageType + "/"+ dataTimeString[:10] + '/'
             try:
                 dataFolderList = os.listdir(dataFolder)
                 dataFileName = [v for v in dataFolderList if dataTimeString in v and imageSuffix in v][0]
