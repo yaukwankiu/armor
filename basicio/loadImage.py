@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from armor import defaultParameters as dp
 
-
 def loadImage(a, dataTime="", dataPath="", 
                 inputFolder="",
                 #imageType="hs1p", 
@@ -15,8 +14,14 @@ def loadImage(a, dataTime="", dataPath="",
                multiplier=50.,
                rawImage=False,
                medianFilterSize=20, #for removing unwanted lines in charts2
+               imageTopDown="",
                *args, **kwargs):
     print 'inputFolder: ', inputFolder #debug
+    if imageTopDown=="":        # this comes with the settings of the operating system: ms windows reads jpg images top-down; linux read jpg images bottom-up
+        if os.sep=="\\":
+            a.imageTopDown=True
+        else:
+            a.imageTopDown=False
     if dataPath =="":
         if inputFolder=="":
             inputFolder= dp.root + '../CWB/'
@@ -78,9 +83,38 @@ def loadImage(a, dataTime="", dataPath="",
             l81[:250, :50] = 1
             if a.imageTopDown:  # ms windows and linux treat the jpg images differently!! one goes from bottom to top, one goes from top to bottom
                 l81 = np.flipud(l81)
-            
             l81 = 1- l81
             img = l81
+            ##########################################################################
+            #   adding the layer for 35+, codes from armor/tests/imageToData_chartsTest.py
+            #   2014-09-16
+            try:
+                from scipy import cluster
+                print 'clustering - for 35+ signals'
+                colourbar = dp.chart2ColourBar 
+                colourbar = [colourbar[v] for v in sorted(colourbar.keys(), reverse=True)]
+                colourbar += [[150, 150, 150], [212, 225, 233]]  #for the black lines, and the backgrounds
+                colourbar = np.array(colourbar)
+                l22  = l.reshape(600*600, 3).astype(int)
+                l52= cluster.vq.kmeans2(l22, k=colourbar, minit='matrix')
+                l62=l52[1].reshape((600,600))
+                #plt.savefig(outputFolder+ 'RGBclustering_'+ imageName)
+                #plt.imshow(l62, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=True)
+                #numberOfLayers = l62.max()+1
+                #for i in range(numberOfLayers):
+                #    print 'layer', i, ':', colourbar[i], (l62==i).sum()
+                #    plt.imshow((l62==i), origin='lower') 
+                #    plt.savefig(outputFolder+ 'RGBclustering_layer' + str(i) +"_"+ imageName)
+                #    plt.show(block=block)
+                z = (l62<=8) 
+                #print "35+"
+                #plt.imshow(z, origin='lower'); plt.show(block=block)
+                img = 1.*img + 1. * img *z  #35+
+            except:
+                print "scipy.cluster module not found."
+            #   end 2014-09-16
+            ##########################################################################
+
             a.matrix = np.ma.array(img, fill_value=-999)
             a.matrix*=multiplier
             a.matrix.mask=False   

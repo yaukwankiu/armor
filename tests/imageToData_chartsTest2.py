@@ -51,6 +51,8 @@ for imageName in imageNames:
 
 
     l   = plt.imread(inputFolder+imageName)
+    if os.sep == '\\':
+        l = np.flipud(l)    #2014-09-16 
     plt.imshow(l, origin='lower') ; plt.show(block=block)
 
     l2  = np.zeros((600,600))

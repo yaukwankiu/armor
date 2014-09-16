@@ -42,11 +42,16 @@ imageName = '2014-05-20_1200.2MOS0.jpg'
 
 #outputFolder  = dp.CWBfolder+'temp/'
 outputFolder = dp.root + 'labLogs2/charts/'
+
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 block=True
 
+  
+
 l   = plt.imread(inputFolder+imageName)
+if os.sep == '\\':
+    l = np.flipud(l)    #2014-09-16
 plt.imshow(l, origin='lower') ; plt.show(block=block)
 
 l2  = np.zeros((600,600))
@@ -172,3 +177,51 @@ l61=l51[1].reshape((600,600))
 plt.imshow(l61, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=block)
 
 
+########################################
+#   clustering with RGB triplets instead of a single scalar - for better accuracy
+colourbar = dp.chart2ColourBar 
+colourbar = [colourbar[v] for v in sorted(colourbar.keys(), reverse=True)]
+colourbar += [[150, 150, 150], [212, 225, 233]]  #for the black lines, and the backgrounds
+colourbar = np.array(colourbar)
+print 'colourbar:', colourbar
+l22  = l.reshape(600*600, 3).astype(int)
+#np.histogram(l2)
+
+l52= cluster.vq.kmeans2(l22, k=colourbar, minit='matrix')
+l62=l52[1].reshape((600,600))
+plt.savefig(outputFolder+ 'RGBclustering_'+ imageName)
+plt.imshow(l62, origin='lower', cmap='jet') ; plt.colorbar() ; plt.show(block=block)
+
+numberOfLayers = l62.max()+1
+for i in range(numberOfLayers):
+    print 'layer', i, ':', colourbar[i], (l62==i).sum()
+    plt.imshow((l62==i), origin='lower') 
+    plt.savefig(outputFolder+ 'RGBclustering_layer' + str(i) +"_"+ imageName)
+    plt.show(block=block)
+ 
+z = (l62<=8) 
+print "35+"
+plt.imshow(z, origin='lower'); plt.show(block=block)
+
+l81 = 1.*(l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
+l81[550:, :210] = 1
+l81[:250, :50] = 1
+l81 = 1- l81
+
+l82 = l81 + 1. *l81 *z  #35+
+
+print "median filter"
+imshow(l81, origin='lower',) ; plt.show(block=block)
+
+print "median filter+ threshold35"
+plt.subplot(221)
+imshow(l, origin='lower',)
+plt.subplot(222)
+imshow(l8, origin='lower',)
+plt.subplot(223)
+#imshow((x[0]==0).reshape((600,600)), origin='lower')
+imshow(l81, origin='lower',)
+plt.subplot(224)
+imshow(l82, origin='lower',)
+plt.savefig(outputFolder+imageName[:20]+'medianFilter+threshold35.png')
+plt.show(block=block)
