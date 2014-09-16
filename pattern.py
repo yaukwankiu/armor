@@ -739,6 +739,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                coordinateOrigin= self.coordinateOrigin,
  lowerLeftCornerLatitudeLongitude = self.lowerLeftCornerLatitudeLongitude, 
  upperRightCornerLatitudeLongitude =self.upperRightCornerLatitudeLongitude,
+                imageTopDown=self.imageTopDown,
                    verbose  =self.verbose)
 
     def setMaxMin(self, vmax="", vmin=""):
@@ -1196,15 +1197,21 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         from armor.advection import semiLagrangian as sl
         return sl.interpolate2(self, *args, **kwargs)    
 
-    def flipud(self):
+    def flipud(self, newObject=True):
         """wrapping the function np.flipud
         """
-        a_flipud = self.copy()
+        if newObject:
+            a_flipud = self.copy()
+        else:
+            a_flipud = self
         a_flipud.matrix = np.flipud(a_flipud.matrix)
         return a_flipud
 
-    def fliplr(self):
-        a_fliplr = self.copy()
+    def fliplr(self, newObject=True):
+        if newObject:
+            a_fliplr = self.copy()
+        else:
+            a_fliplr = self
         a_fliplr.matrix = np.fliplr(a_fliplr.matrix)
         return a_fliplr
 

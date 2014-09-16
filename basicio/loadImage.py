@@ -72,8 +72,13 @@ def loadImage(a, dataTime="", dataPath="",
             l8[:,:,1] = l6
             l8[:,:,2] = l7
             l81 = (l5>160) *( l6>160) *( l7>160)
+            if a.imageTopDown:  # ms windows and linux treat the jpg images differently!! one goes from bottom to top, one goes from top to bottom
+                l81 = np.flipud(l81)
             l81[550:, :210] = 1
             l81[:250, :50] = 1
+            if a.imageTopDown:  # ms windows and linux treat the jpg images differently!! one goes from bottom to top, one goes from top to bottom
+                l81 = np.flipud(l81)
+            
             l81 = 1- l81
             img = l81
             a.matrix = np.ma.array(img, fill_value=-999)

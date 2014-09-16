@@ -145,6 +145,7 @@ defaultLabLogFolder    = defaultLabLogsFolder   #alias
 
 defaultCWBfolder    = defaultRootFolder + '../CWB/'
 CWBfolder           = defaultCWBfolder #alias
+defaultImageDataFolder = defaultCWBfolder # maybe alias, maybe not, it's a local setting
 
 if computer=='acer-laptop':
     if os.path.exists('/media/TOURO S/CWB/'):
