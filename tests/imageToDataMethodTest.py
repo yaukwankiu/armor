@@ -3,7 +3,10 @@ from armor import pattern
 dbz = pattern.DBZ
 plt = pattern.plt
 #
-a = dbz('20140520.1700')
+#a = dbz('20140520.1700')
+a = dbz('201406140.0530')
+#a=dbz('20140719.1330')
+#a=dbz('20140520.1200')
 a.loadImage(type='charts2', rawImage=False) # i am showing the default arguments for clarity
 #
 b=a.copy()
@@ -21,3 +24,4 @@ plt.imshow(b.matrix, origin=origin)
 plt.subplot(122)
 plt.imshow(a.matrix, origin=origin)
 plt.show()
+
