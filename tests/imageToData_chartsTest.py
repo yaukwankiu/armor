@@ -19,16 +19,26 @@ from scipy import cluster
 import time
 from armor import defaultParameters as dp
 
-
+####################################################################
+#   edit here for input
 #inputFolder='/media/TOSHIBA EXT/CWB/charts2/2014-06-03/'
 #imageName = '2014-06-03_2330.2MOS0.jpg'
-inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
-imageName = '2014-05-20_1700.2MOS0.jpg'
+#inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
+#imageName = '2014-05-20_1700.2MOS0.jpg'
 #inputFolder= dp.defaultImageDataFolder+'charts2/2014-05-19/'
 #imageName = '2014-05-19_1200.2MOS0.jpg'
 
 #inputFolder= dp.defaultImageDataFolder+'charts2/2014-07-07/'
 #imageName = '2014-07-07_1230.2MOS0.jpg'
+
+#inputFolder= dp.defaultImageDataFolder+'charts2/2014-07-19/'
+#imageName = '2014-07-19_1330.2MOS0.jpg'
+
+inputFolder= dp.defaultImageDataFolder+'charts2/2014-05-20/'
+imageName = '2014-05-20_1200.2MOS0.jpg'
+
+#
+####################################################################
 
 #outputFolder  = dp.CWBfolder+'temp/'
 outputFolder = dp.root + 'labLogs2/charts/'
@@ -96,12 +106,15 @@ plt.show(block=block)
 
 
 for i in range(len(colourbar)):
-    plt.close()
-    l10 = (x[0]==i).reshape((600,600))
-    print i, colourbar[i]
-    imshow(l10, origin='lower')
-    plt.savefig(outputFolder+str(time.time())+'.jpg')
-    plt.show(block=block)
+    try:
+        plt.close()
+        l10 = (x[0]==i).reshape((600,600))
+        print i, colourbar[i]
+        imshow(l10, origin='lower')
+        plt.savefig(outputFolder+str(time.time())+'.jpg')
+        plt.show(block=block)
+    except AttributeError:
+        print "attribute error!"
 
 x0= x[0].reshape(600,600)
 y= (x0>=16)
@@ -118,7 +131,7 @@ l81[550:, :210] = 1
 l81[:250, :50] = 1
 l81 = 1- l81
 
-l82 = l81 + 1.*z  #35+
+l82 = l81 + 1. *l81 *z  #35+
 
 print "median filter"
 imshow(l81, origin='lower',) ; plt.show(block=block)
@@ -133,6 +146,7 @@ plt.subplot(223)
 imshow(l81, origin='lower',)
 plt.subplot(224)
 imshow(l82, origin='lower',)
+plt.savefig(outputFolder+imageName[:20]+'medianFilter+threshold35.png')
 plt.show(block=block)
 
 ###

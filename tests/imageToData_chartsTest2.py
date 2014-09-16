@@ -23,7 +23,8 @@ from armor import defaultParameters as dp
 #imageName = '2014-06-03_2330.2MOS0.jpg'
 
 #inputFolder= dp.CWBfolder+'charts2/2014-05-20/'
-inputFolder= dp.CWBfolder+'charts2/2014-08-16/'
+#inputFolder= dp.CWBfolder+'charts2/2014-08-16/'
+inputFolder = dp.defaultImageDataFolder + 'charts2-allinone-/'
 outputFolder = dp.root + 'labLogs2/imageToData/'
 block=False
 #outputFolder  = dp.CWBfolder+'temp/'
@@ -31,11 +32,20 @@ block=False
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 
-##
+print 'InputFolder:', inputFolder
+print 'sleeping 2 seconds:'
+time.sleep(2)
+
+################################################
 imageNames = os.listdir(inputFolder)
-imageNames = [v for v in imageNames if '2014-08-16_1200'< v and v<'2014-08-16_1900'] #afternoon convective storms?!
+#imageNames = [v for v in imageNames if '2014-08-16_1200'< v and v<'2014-08-16_1900'] #afternoon convective storms?!
+N = len(imageNames)
+xs = (np.random.random(30)*N).astype(int)
+imageNames = [imageNames[v] for v in xs]
 print '\n'.join(imageNames)
-time.sleep(5)
+print 'sleeping 3 seconds'
+time.sleep(3)
+#################################################
 for imageName in imageNames:
     #imageName = '2014-05-20_1700.2MOS0.jpg'
 
@@ -78,9 +88,16 @@ for imageName in imageNames:
 
     j = colourBarX
     colourBar   = []
+    colourBarSampleFile = open(outputFolder+'colourBarSample.log.txt','a')
     for i in colourBarY:
-        print l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]
-        colourBar.append((l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]))
+        Ri, Rj = (np.random.random(2)*4).astype(int)
+        colourBarSampleString = '\t'.join([str(v) for v in [l[i+Ri,j+Ri], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]]])
+        print colourBarSampleString
+        #colourBar.append((l[i,j], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]))
+        colourBar.append((l[i+Ri,j+Rj], l[i+1, j+1], l[i-1,j-1], l[i+1,j-1], l[i-1,j+1]))
+        colourBarSampleFile.write(imageName+'\t'+str(i)+'\t'+colourBarSampleString+ '\t'+str(Ri)+'\t'+str(Rj) +'\n')
+    colourBarSampleFile.write('\n------------------------------------------------------------------------\n')
+    colourBarSampleFile.close()
 
     colourbar = colourBar
 
@@ -103,19 +120,31 @@ for imageName in imageNames:
         plt.savefig(outputFolder+ imageName + "_" + str(time.time())+'.jpg')
         plt.show(block=block)
 
+    x0= x[0].reshape(600,600)   #2014-09-16
+    y= (x0>=16)
+    print "y= (x0>=16)"
+    plt.imshow(y, origin='lower'); plt.show(block=block)
+    z = (x0<=8) * (x0>0)
+    print "35+"
+    plt.imshow(z, origin='lower'); plt.show(block=block)
+
+
     l81 = (l8[:,:,0]>160) *( l8[:,:,1]>160) *( l8[:,:,2]>160)
     l81[550:, :210] = 1
     l81[:250, :50] = 1
     l81 = 1- l81
+    l82 = l81 + 1. *l81 *z  #35+  #2014-09-16
+
     imshow(l81, origin='lower',) ; plt.show(block=block)
     plt.subplot(221)
     imshow(l, origin='lower',)
     plt.subplot(222)
     imshow(l8, origin='lower',)
     plt.subplot(223)
-    imshow((x[0]==0).reshape((600,600)), origin='lower')
-    plt.subplot(224)
+    #imshow((x[0]==0).reshape((600,600)), origin='lower')
     imshow(l81, origin='lower',)
+    plt.subplot(224)
+    imshow(l82, origin='lower',)
     plt.savefig(outputFolder+ 'cleaned_'+imageName+"_"+str(time.time())+'.jpg')
     plt.show(block=block)
 
