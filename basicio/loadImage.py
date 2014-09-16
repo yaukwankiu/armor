@@ -14,6 +14,7 @@ def loadImage(a, dataTime="", dataPath="",
                multiplier=50.,
                rawImage=False,
                medianFilterSize=20, #for removing unwanted lines in charts2
+               binaryOpeningStructureElement=np.ones((4,4)),
                imageTopDown="",
                *args, **kwargs):
     print 'inputFolder: ', inputFolder #debug
@@ -90,6 +91,7 @@ def loadImage(a, dataTime="", dataPath="",
             #   2014-09-16
             try:
                 from scipy import cluster
+                from scipy import ndimage
                 print 'clustering - for 35+ signals'
                 colourbar = dp.chart2ColourBar 
                 colourbar = [colourbar[v] for v in sorted(colourbar.keys(), reverse=True)]
@@ -107,6 +109,11 @@ def loadImage(a, dataTime="", dataPath="",
                 #    plt.savefig(outputFolder+ 'RGBclustering_layer' + str(i) +"_"+ imageName)
                 #    plt.show(block=block)
                 z = (l62<=8) 
+                try:
+                    print "binary opening with structure element\n", str(binaryOpeningStructureElement)
+                    z = ndimage.morphology.binary_opening(z, structure=binaryOpeningStructureElement)
+                except:
+                    print "binary opening not performed"
                 #print "35+"
                 #plt.imshow(z, origin='lower'); plt.show(block=block)
                 img = 1.*img + 1. * img *z  #35+
