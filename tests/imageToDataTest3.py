@@ -12,7 +12,7 @@ try:
 except:
     print outputFolder, 'exists'
 
-N   = 30
+N   = 300
 ###
 L   = os.listdir(folder)
 print len(L)
@@ -35,8 +35,10 @@ for a in R:
     plt.imshow(b.matrix, origin='lower')
     plt.subplot(122)
     plt.imshow(a.matrix, origin='lower')
+    plt.title(a.dataTime)
     plt.savefig(a.imagePath)
     plt.show(block=False)
     print 'sleeping 2 seconds'
     time.sleep(2)
-
+    if N>=100:
+        a.matrix=np.array([0])  #free up some memory
