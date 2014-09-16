@@ -1,0 +1,40 @@
+import os
+import time
+import numpy as np
+from armor import pattern
+dbz = pattern.DBZ
+dp  = pattern.dp
+plt = pattern.plt
+folder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
+outputFolder = dp.root + 'labLogs2/charts2_extracted/'
+try:
+    os.makedirs(outputFolder)
+except:
+    print outputFolder, 'exists'
+
+N   = 30
+###
+L   = os.listdir(folder)
+print len(L)
+R   = np.random.random(N)
+R   = (R*len(L)).astype(int)
+R   = [L[v] for v in R]
+R[:10]
+R   = [l[:4] + l[5:7] + l[8:10] + '.' + l[11:15] for l in R]
+R[:10]
+R   = [dbz(v) for v in R]
+R[:10]
+for a in R:
+    a.loadImage()
+    a.imagePath = outputFolder+a.dataTime+'.png'
+    b = a.copy()
+    b.loadImage(rawImage=True)
+    plt.subplot(121)
+    plt.imshow(b.matrix, origin='lower')
+    plt.subplot(122)
+    plt.imshow(a.matrix, origin='lower')
+    plt.savefig(a.imagePath)
+    plt.show(block=False)
+    print 'sleeping 2 seconds'
+    time.sleep(2)
+
