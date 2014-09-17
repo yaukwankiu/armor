@@ -20,7 +20,6 @@ except:
     print outputFolder, 'exists'
 
 N   = 500
-###
 L   = os.listdir(inputFolder)
 print len(L)
 R   = np.random.random(N)
@@ -31,6 +30,44 @@ R   = [l[:4] + l[5:7] + l[8:10] + '.' + l[11:15] for l in R]
 R[:10]
 R   = [dbz(v) for v in R]
 R[:10]
+##############
+#   test case
+a = R[0]
+print a.dataTime
+a.loadImage(rawImage=True)
+a.show()
+#
+a.loadImage()
+a.show()
+#
+a1  = a.connectedComponents()
+a2  = a.above(51).connectedComponents()
+a1.show(block=True)
+a2.show(block=True)
+#   get the components
+M1  = a1.matrix.max()
+M2  = a2.matrix.max()
+components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
+components2 = [(a2.matrix==v).sum() for v in range(M2+1)]
+#components1 = sorted([(a1.matrix==v).sum() for v in range(M1+1)][1:], reverse=True)
+#components2 = sorted([(a2.matrix==v).sum() for v in range(M2+1)][1:], reverse=True)
+#components1 = [v for v in components1 if v>=100]
+#components2 = [v for v in components2 if v>=10]
+print sorted(components1, reverse=True)[1:]
+print sorted(components2, reverse=True)[1:]
+#   get the moments
+from armor.geometry import moments as mmt
+HuPowers = np.array([2., 4., 6., 6., 12., 8., 12.])
+HuPowers = (HuPowers)**-1
+moments1 = np.array([mmt.HuMoments(a1.matrix==v)**HuPowers for v in range(len(components1))])
+moments2 = np.array([mmt.HuMoments(a2.matrix==v)**HuPowers for v in range(len(components2))])
+print moments1
+print moments2
+#
+###########
+#   later #
+###########
+"""
 for a in R:
     a.imagePath = outputFolder+a.dataTime+'.png'
     if os.path.exists(a.imagePath):
@@ -49,3 +86,4 @@ for a in R:
     time.sleep(2)
     if N>=100:
         a.matrix=np.array([0])  #free up some memory
+"""
