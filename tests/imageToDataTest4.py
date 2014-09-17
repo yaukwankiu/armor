@@ -1,3 +1,9 @@
+#   attempting the classify the charts, after armor/tests/imageToDataTest3.py
+#   Plan:   1. compute features and store them
+#           2. classify
+#           3. display
+
+#
 import os
 import time
 import numpy as np
@@ -5,8 +11,9 @@ from armor import pattern
 dbz = pattern.DBZ
 dp  = pattern.dp
 plt = pattern.plt
-folder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
-outputFolder = dp.root + 'labLogs2/charts2_extracted/'
+inputFolder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
+imageFolder  = dp.root  + 'labLogs2/charts2_extracted/'
+outputFolder = dp.root + 'labLogs2/charts2_features/'
 try:
     os.makedirs(outputFolder)
 except:
@@ -14,7 +21,7 @@ except:
 
 N   = 500
 ###
-L   = os.listdir(folder)
+L   = os.listdir(inputFolder)
 print len(L)
 R   = np.random.random(N)
 R   = (R*len(L)).astype(int)
