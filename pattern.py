@@ -2121,7 +2121,35 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
     ########################################################
     #   features and classifications
-    
+    def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,):
+        """
+        0.  number of components
+        1.  volume
+        2.  centroid
+        3.  high intensity region volume
+        4.  moments
+        """
+        from .geometry import moments as mmt
+        a1 = self.above(lowerThreshold)
+        a1 = a1.connectedComponents()
+        M1 = a1.matrix.max()
+        components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
+        numberOfComponents = len([v for v in components1[1:] if v>=100])    # the background (labelled as 0) doesn't count
+        volume      = a1.matrix.sum()
+        centroid    = self.getCentroid()
+        #
+        a2  = a.above(upperThreshold)
+        highIntensityRegionVolume = a2.matrix.sum()
+        HuMoments   = mmt.HuMoments(self.matrix)
+        features =  {   'numberOfComponents'    : numberOfComponents,
+                        'volume'                : volume,
+                        'centroid'              : centroid,
+                        'highIntensityRegionVolume' : highIntensityRegionVolume,
+                        'HuMoments'               : HuMoments, 
+                    }
+        self.globalFeatures = features
+        return features
+        
     def showFeatureLayer(self, n=0, n2="", vmin="", vmax=""):
         if n2=="":
             self.show(matrix=self.features[:,:,n], vmin=vmin, vmax=vmax)

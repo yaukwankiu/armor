@@ -151,6 +151,7 @@ if computer=='acer-laptop':
     if os.path.exists('/media/TOURO S/CWB/'):
         defaultImageDataFolder = '/media/TOURO S/CWB/'
     else:
+        print "TOURO S-drive not found!"
         defaultImageDataFolder = root + '../CWB/'
 else:
     defaultImageDataFolder = root + '../CWB/'
