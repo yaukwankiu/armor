@@ -123,7 +123,7 @@ for imageName in L:
                 }
 
 
-    pickle.dump(features, open('features_' + a.dataTime +'.pydump','w'))
+    pickle.dump(features, open(outputFolder+'features_' + a.dataTime +'.pydump','w'))
 
 
 
