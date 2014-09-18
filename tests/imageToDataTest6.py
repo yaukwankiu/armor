@@ -4,10 +4,8 @@
 #          *2. classify
 #                   - basically, put all of the feature vectors in an array and perform k-means or others such as DBSCAN (once i know how to do it)
 #           3. display
-
 #
-
-sleepTime = 14000
+sleepTime = 1800
 import time
 time.sleep(sleepTime)
 import os
@@ -37,24 +35,26 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 k =  30  # k for k-means
-N =  300 # number of images to be tested
+N =  700 # number of images to be tested
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
 open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
+display=False
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
 
-for i in range(0,N,stepSize):
+for i in range(0, len(L),stepSize):
     print "\n============================================================="
     print 'sample:', i
     a           = dbz(dataTime=L[i][9:22])
     print a.dataTime
     open(logFilePath,'a').write(a.dataTime+'\n')
-    a.loadImage(rawImage=True).show()
-    time.sleep(1)
-    a.loadImage().show()
-    time.sleep(1)
+    if display:
+        a.loadImage(rawImage=True).show()
+        time.sleep(1)
+        a.loadImage().show()
+        time.sleep(1)
     a1          = a.connectedComponents()
 
     features    = pickle.load(open(inputFolder+L[i],'r'))
@@ -115,7 +115,8 @@ for j in range(k):
         if a.dataTime != dataTime:
             a   = dbz(dataTime=dataTime, name="chart2_"+dataTime).load()
             a1  = a.connectedComponents()
-        a1.levelSet(j1).show(block=block)
+        if display:
+            a1.levelSet(j1).show(block=block)
         if not block:
             time.sleep(1)    
 
