@@ -15,8 +15,11 @@ dbz = pattern.DBZ
 dp  = pattern.dp
 plt = pattern.plt
 imageFolder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
-inputFolder  = dp.root  + 'labLogs2/charts2_features/'
+inputFolder  = dp.root  + 'labLogs2/charts2_features0/'
 outputFolder = dp.root + 'labLogs2/charts2_classification_local/'
+timeStamp   = str(int(time.time()))
+logFilePath = outputFolder + 'log_' + timeStamp + '.log.txt'
+resultFilePath  = outputFolder + 'result_' + timeStamp + '.pydump'
 try:
     os.makedirs(outputFolder)
 except:
@@ -29,18 +32,21 @@ L[:10]
 L[0][9:22]
 #L = [v[9:22] for v in L]
 
-k =  8  # k for k-means
-N = 6   # number of images to be tested
+k =  30  # k for k-means
+N =  300 # number of images to be tested
+stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
+open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
 
-for i in range(N):
+for i in range(0,N,stepSize):
     print "\n============================================================="
     print 'sample:', i
     a           = dbz(dataTime=L[i][9:22])
     print a.dataTime
+    open(logFilePath,'a').write(a.dataTime+'\n')
     a.loadImage(rawImage=True).show()
     time.sleep(1)
     a.loadImage().show()
@@ -71,6 +77,7 @@ for i in range(N):
             featureMatrix = fmRow
             featureRowToShapeLabel[0] = (a.dataTime, j)
             print "feature level 0:", a.dataTime, 'shape label', j
+open(logFilePath,'a').write('\n===========================\nFeature matrix:\n'+str(featureMatrix))
 #
 #   classification
 #
@@ -80,6 +87,7 @@ print 'feature matrix size: ', featureMatrix.shape
 time.sleep(1)
 print 'clustering....'
 res = cluster.vq.kmeans2(cluster.vq.whiten(featureMatrix), k=k)
+pickle.dump(res, open(resultFilePath,'a'))
 #
 #   display
 #
@@ -89,10 +97,13 @@ time.sleep(1)
 for j in range(k):
     print "\n-----------------------------------------------------------------\n"
     print "Cluster:", j
+    open(logFilePath,'a').write('\n-------------\n')
+    open(logFilePath,'a').write('Cluster:' + str(j) + '\n')
     ind = np.where(res[1]==j)
     for jj in ind[0]:
         dataTime, j1 = featureRowToShapeLabel[jj]
         print 'chart:', dataTime, ' / region index:', j1, 
+        open(logFilePath,'a').write('chart:' + dataTime + ' / region index:' + str(j1) + '\n')
         if block:
             print "  ... waiting"
         else:
