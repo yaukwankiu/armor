@@ -92,7 +92,7 @@ for j in range(k):
     ind = np.where(res[1]==j)
     for jj in ind[0]:
         dataTime, j1 = featureRowToShapeLabel[jj]
-        print 'chart:', dataTime, ' / region index:', jj, 
+        print 'chart:', dataTime, ' / region index:', j1, 
         if block:
             print "  ... waiting"
         else:
@@ -100,7 +100,7 @@ for j in range(k):
         if a.dataTime != dataTime:
             a   = dbz(dataTime=dataTime, name="chart2_"+dataTime).load()
             a1  = a.connectedComponents()
-        a1.levelSet(jj).show(block=block)
+        a1.levelSet(j1).show(block=block)
         if not block:
             time.sleep(1)    
 
