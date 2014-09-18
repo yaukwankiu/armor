@@ -2141,11 +2141,13 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a2  = a.above(upperThreshold)
         highIntensityRegionVolume = a2.matrix.sum()
         HuMoments   = mmt.HuMoments(self.matrix)
+        rectangle   = a1.getRegionForValue(1)        
         features =  {   'numberOfComponents'    : numberOfComponents,
                         'volume'                : volume,
                         'centroid'              : centroid,
                         'highIntensityRegionVolume' : highIntensityRegionVolume,
-                        'HuMoments'               : HuMoments, 
+                        'HuMoments'               : HuMoments,
+                        'rectangle'             : rectangle,
                     }
         self.globalFeatures = features
         return features

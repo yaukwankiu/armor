@@ -75,7 +75,7 @@ volume             = a1.matrix.sum() + a2.matrix.sum()
 
 features  = {   'dataTime'              : a.dataTime,
                 'globalFeatures'        : a1.globalShapeFeatures(lowerThreshold=1, upperThreshold=51,),
-                'localFeatures'         : [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))],
+                'localFeatures'         : [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))], # this includes the "background"
             }
 
 
