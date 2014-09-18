@@ -6,6 +6,10 @@
 #           3. display
 
 #
+
+sleepTime = 14000
+import time
+time.sleep(sleepTime)
 import os
 import time
 import pickle
