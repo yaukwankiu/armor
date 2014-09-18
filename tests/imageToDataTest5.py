@@ -31,9 +31,10 @@ L[0][9:22]
 
 ###############
 #   test case
-k =  4  # k for k-means
+k =  6  # k for k-means
+featureMatrix=0
 #featureMatrix = np.array([])
-i=0
+i=1
 a           = dbz(dataTime=L[i][9:22])
 print a.dataTime
 a.loadImage(rawImage=True).show()
@@ -46,14 +47,16 @@ lf          = features['localFeatures']
 #
 #   constructing the feature matrix
 #
-featureMatrix=0
 for j in range(len(lf)):
+    # key line below:
     #fmRow = np.array([np.log10(lf[j]['volume'])] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
     fmRow = np.array([(lf[j]['volume'])**.5] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
     inds          = np.where(np.isnan(fmRow))
-    fmRow[inds]      = -99
+    #fmRow[inds]      = -99
+    fmRow[inds]      = 0.
     inds          = np.where(np.isinf(fmRow))
-    fmRow[inds]      = -999
+    #fmRow[inds]      = -999
+    fmRow[inds]      = 0.
     print fmRow
     try:
         featureMatrix = np.vstack([featureMatrix, fmRow])
