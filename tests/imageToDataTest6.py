@@ -1,4 +1,5 @@
 #   attempting the classify the charts, after armor/tests/imageToDataTest3.py
+#   this is the loop version of imageToTest5.py
 #   Plan:   1. compute features and store them
 #          *2. classify
 #                   - basically, put all of the feature vectors in an array and perform k-means or others such as DBSCAN (once i know how to do it)
