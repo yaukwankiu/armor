@@ -17,7 +17,6 @@ plt = pattern.plt
 imageFolder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
 inputFolder  = dp.root  + 'labLogs2/charts2_features/'
 outputFolder = dp.root + 'labLogs2/charts2_classification_local/'
-block=True
 try:
     os.makedirs(outputFolder)
 except:
@@ -30,70 +29,81 @@ L[:10]
 L[0][9:22]
 #L = [v[9:22] for v in L]
 
-###############
-#   test case
-k =  6  # k for k-means
+k =  8  # k for k-means
+N = 6   # number of images to be tested
+block= False
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
-i=0
-a           = dbz(dataTime=L[i][9:22])
-print a.dataTime
-a.loadImage(rawImage=True).show()
-time.sleep(1)
-a.loadImage().show()
-a1          = a.connectedComponents()
 
-features    = pickle.load(open(inputFolder+L[i],'r'))
-lf          = features['localFeatures']
-#
-#   constructing the feature matrix
-#
-for j in range(len(lf)):
-    # key line below:
-    #fmRow = np.array([np.log10(lf[j]['volume'])] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
-    fmRow = np.array([(lf[j]['volume'])**.5] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
-    inds          = np.where(np.isnan(fmRow))
-    #fmRow[inds]      = -99
-    fmRow[inds]      = 0.
-    inds          = np.where(np.isinf(fmRow))
-    #fmRow[inds]      = -999
-    fmRow[inds]      = 0.
-    print fmRow
-    try:
-        featureMatrix = np.vstack([featureMatrix, fmRow])
-        featureRowToShapeLabel[len(featureMatrix)-1] = (a.dataTime, j)
-        print "feature level", len(featureMatrix)-1, ":", a.dataTime, 'shape label', j
-    except:
-        featureMatrix = fmRow
-        featureRowToShapeLabel[0] = (a.dataTime, j)
-        print "feature level 0:", a.dataTime, 'shape label', j
+for i in range(N):
+    print "\n============================================================="
+    print 'sample:', i
+    a           = dbz(dataTime=L[i][9:22])
+    print a.dataTime
+    a.loadImage(rawImage=True).show()
+    time.sleep(1)
+    a.loadImage().show()
+    time.sleep(1)
+    a1          = a.connectedComponents()
+
+    features    = pickle.load(open(inputFolder+L[i],'r'))
+    lf          = features['localFeatures']
+    #
+    #   constructing the feature matrix
+    #
+    for j in range(len(lf)):
+        # key line below:
+        #fmRow = np.array([np.log10(lf[j]['volume'])] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
+        fmRow = np.array([(lf[j]['volume'])**.5] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
+        inds          = np.where(np.isnan(fmRow))
+        #fmRow[inds]      = -99
+        fmRow[inds]      = 0.
+        inds          = np.where(np.isinf(fmRow))
+        #fmRow[inds]      = -999
+        fmRow[inds]      = 0.
+        print fmRow
+        try:
+            featureMatrix = np.vstack([featureMatrix, fmRow])
+            featureRowToShapeLabel[len(featureMatrix)-1] = (a.dataTime, j)
+            print "feature level", len(featureMatrix)-1, ":", a.dataTime, 'shape label', j
+        except:
+            featureMatrix = fmRow
+            featureRowToShapeLabel[0] = (a.dataTime, j)
+            print "feature level 0:", a.dataTime, 'shape label', j
 #
 #   classification
 #
 from scipy import cluster
+print "\n======================================================"
+print 'feature matrix size: ', featureMatrix.shape
+time.sleep(1)
+print 'clustering....'
 res = cluster.vq.kmeans2(cluster.vq.whiten(featureMatrix), k=k)
 #
 #   display
 #
+print '\n======================================================='
+print 'Results:'
+time.sleep(1)
 for j in range(k):
-    print "\n------------------------------------------\n"
+    print "\n-----------------------------------------------------------------\n"
     print "Cluster:", j
     ind = np.where(res[1]==j)
     for jj in ind[0]:
         dataTime, j1 = featureRowToShapeLabel[jj]
         print 'chart:', dataTime, ' / region index:', jj, 
-        if a.dataTime != dataTime:
-            a   = dbz(dataTime=dataTime, name="chart2_"+dataTime).load()
-            a1  = a.connectedComponents()
         if block:
             print "  ... waiting"
         else:
             print ''
+        if a.dataTime != dataTime:
+            a   = dbz(dataTime=dataTime, name="chart2_"+dataTime).load()
+            a1  = a.connectedComponents()
         a1.levelSet(jj).show(block=block)
         if not block:
             time.sleep(1)    
 
     
     
-    
+        
