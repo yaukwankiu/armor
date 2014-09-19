@@ -29,9 +29,12 @@ L[:10]
 L[0][9:22]
 #L = [v[9:22] for v in L]
 
-k =  8  # k for k-means
-N = 6   # number of images to be tested
+timeString = str(int(time.time()))
+k =  30  # k for k-means
+N = 100  # number of images to be tested
 block= False
+display=False
+throttle=0.01
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
@@ -41,10 +44,13 @@ for i in range(N):
     print 'sample:', i
     a           = dbz(dataTime=L[i][9:22])
     print a.dataTime
-    a.loadImage(rawImage=True).show()
-    time.sleep(1)
-    a.loadImage().show()
-    time.sleep(1)
+    a.loadImage(rawImage=True)
+    if display:
+        a.show()
+    time.sleep(throttle)
+    a.loadImage()
+    a.show()
+    time.sleep(throttle)
     a1          = a.connectedComponents()
 
     features    = pickle.load(open(inputFolder+L[i],'r'))
@@ -77,7 +83,7 @@ for i in range(N):
 from scipy import cluster
 print "\n======================================================"
 print 'feature matrix size: ', featureMatrix.shape
-time.sleep(1)
+time.sleep(throttle)
 print 'clustering....'
 res = cluster.vq.kmeans2(cluster.vq.whiten(featureMatrix), k=k)
 #
@@ -85,7 +91,8 @@ res = cluster.vq.kmeans2(cluster.vq.whiten(featureMatrix), k=k)
 #
 print '\n======================================================='
 print 'Results:'
-time.sleep(1)
+time.sleep(throttle)
+os.makedirs(outputFolder+timeString+"__k%d__N%d" %(k, N))
 for j in range(k):
     print "\n-----------------------------------------------------------------\n"
     print "Cluster:", j
@@ -101,8 +108,9 @@ for j in range(k):
             a   = dbz(dataTime=dataTime, name="chart2_"+dataTime).load()
             a1  = a.connectedComponents()
         a1.levelSet(j1).show(block=block)
+        a1.levelSet(j1).saveImage(outputFolder + timeString + "__k%d__N%d/cluster%d_%s_region%d.png"% (k, N, j, dataTime, j1)) 
         if not block:
-            time.sleep(1)    
+            time.sleep(throttle)    
 
     
     
