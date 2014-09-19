@@ -18,7 +18,8 @@ def display(resultString):
     b.loadImage(rawimage=False)
     b1 = b.connectedComponents().levelSet(regionNumber)
     region = b1.getRegionForValue(1)
-    b = b.drawRectangle(*region)
+    b.drawRectangle(*region, newObject=False)
+    #print 'b.imageTopDown:',b.imageTopDown #debug
     a.showWith(b)
 
 
