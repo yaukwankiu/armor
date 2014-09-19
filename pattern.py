@@ -592,6 +592,29 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         #self.printToScreen(matrix=matrix, cmap=cmap)
         self.printToScreen(*args, **kwargs)
+
+    def showWith(self, b, block=False, *args, **kwargs):
+        """ showing two charts together
+            minimalistic approach
+        """
+        plt.clf()
+        plt.subplot(121)
+        if self.imageTopDown:
+            imshowOrigin='upper'
+        else:
+            imshowOrigin='lower'
+        plt.imshow(self.matrix, vmin=self.vmin, vmax=self.vmax, cmap=self.cmap, origin=imshowOrigin)
+        plt.title(a.name )
+        plt.subplot(122)
+        if b.imageTopDown:
+            imshowOrigin='upper'
+        else:
+            imshowOrigin='lower'
+        plt.imshow(b.matrix, vmin=b.vmin, vmax=b.vmax, cmap=b.cmap, origin=imshowOrigin)
+        plt.title(b.name)
+        plt.show(block=block)
+
+
     def showWithFlip(self, cmap=""):
         """flip it upside down and show it
         """
