@@ -12,7 +12,7 @@ try:
 except:
     print outputFolder, 'exists'
 
-N   = 1033
+N   = 300
 ###
 L   = os.listdir(folder)
 print "number of files:", len(L)
