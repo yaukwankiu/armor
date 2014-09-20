@@ -2154,6 +2154,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         from .geometry import moments as mmt
         a1 = self.above(lowerThreshold)
+        rectangle   = a1.getRegionForValue(1)        
         a1 = a1.connectedComponents()
         M1 = a1.matrix.max()
         components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
@@ -2164,7 +2165,6 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a2  = a.above(upperThreshold)
         highIntensityRegionVolume = a2.matrix.sum()
         HuMoments   = mmt.HuMoments(self.matrix)
-        rectangle   = a1.getRegionForValue(1)        
         features =  {   'numberOfComponents'    : numberOfComponents,
                         'volume'                : volume,
                         'centroid'              : centroid,
