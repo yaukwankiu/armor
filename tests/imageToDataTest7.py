@@ -5,8 +5,9 @@
 #                   - basically, put all of the feature vectors in an array and perform k-means or others such as DBSCAN (once i know how to do it)
 #           3. display
 #
-sleepTime = 1800
+sleepTime = 10
 import time
+print 'sleeping %d seconds' %sleepTime
 time.sleep(sleepTime)
 import os
 import time
@@ -17,7 +18,7 @@ dbz = pattern.DBZ
 dp  = pattern.dp
 plt = pattern.plt
 imageFolder  = dp.defaultImageDataFolder + 'charts2-allinone-/'
-inputFolder  = dp.root  + 'labLogs2/charts2_features0/'
+inputFolder  = dp.root  + 'labLogs2/charts2_features/'
 outputFolder = dp.root + 'labLogs2/charts2_classification_local/'
 timeStamp   = str(int(time.time()))
 logFilePath = outputFolder + 'log_' + timeStamp + '.log.txt'
@@ -35,8 +36,8 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 timeString = str(int(time.time()))
-k =  30  # k for k-means
-N =  700 # number of images to be tested
+k =  12  # k for k-means
+N =  71 # number of images to be tested
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
 open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
@@ -49,10 +50,15 @@ featureRowToShapeLabel = {}
 for i in range(0, len(L),stepSize):
     print "\n============================================================="
     print 'sample:', i
+
     a           = dbz(dataTime=L[i][9:22])
     print a.dataTime
     open(logFilePath,'a').write(a.dataTime+'\n')
-    a.loadImage(rawImage=True)
+    try:
+        a.loadImage(rawImage=True)
+    except:
+        print 'cannot load file! ', a.dataTime
+        continue
     if display:
         a.show()
     time.sleep(throttle)
@@ -126,6 +132,3 @@ for j in range(k):
         if not block:
             time.sleep(throttle)    
 
-    
-    
-        
