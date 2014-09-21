@@ -5,7 +5,7 @@
 #                   - basically, put all of the feature vectors in an array and perform k-means or others such as DBSCAN (once i know how to do it)
 #           3. display
 #
-sleepTime = 0.1
+sleepTime = 10
 import time
 print 'sleeping %d seconds' %sleepTime
 time.sleep(sleepTime)
@@ -36,13 +36,9 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 timeString = str(int(time.time()))
-k =  60  # k for k-means                    #<-- edit here
-N = 150                                     #<-- edit here
-#N =  len(L) # number of images to be tested
-R = (np.random.random(N)*len(L)).astype(int).tolist()
-R = list(set(R))    #don't want to sort it
+k =  40  # k for k-means
+N =  1000 # number of images to be tested
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
-
 open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
 display=True
@@ -51,12 +47,7 @@ featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
 
-if N > 300:
-    chosenList = range(0, len(L),stepSize)
-else:
-    chosenList = R
-
-for i in chosenList:
+for i in range(0, len(L),stepSize):
     print "\n============================================================="
     print 'sample:', i
 
@@ -101,7 +92,6 @@ for i in chosenList:
             featureRowToShapeLabel[0] = (a.dataTime, j)
             print "feature level 0:", a.dataTime, 'shape label', j
 open(logFilePath,'a').write('\n===========================\nFeature matrix:\n'+str(featureMatrix))
-pickle.dump(featureMatrix, open(outputFolder+'featureMatrix_'+timeString+'.pydump', 'w'))
 #
 #   classification
 #
@@ -112,45 +102,23 @@ time.sleep(throttle)
 print 'clustering....'
 res = cluster.vq.kmeans2(cluster.vq.whiten(featureMatrix), k=k)
 pickle.dump(res, open(resultFilePath,'a'))
-pickle.dump(featureRowToShapeLabel, open('featureRowToShapeLabel_'+timeString+ '.pydump', 'w'))
 #
 #   display
 #
 print '\n======================================================='
 print 'Results:'
 time.sleep(throttle)
-#
-#   writing to the log file
-#
-logFileString=time.asctime() + '\n\n'
-for j in range(k):
-    print "\n-----------------------------------------------------------------\n"
-    print "Cluster:", j
-    logFileString+='\n-------------\n'
-    logFileString+='Cluster:' + str(j) + '\n'
-    ind = np.where(res[1]==j)
-    for jj in ind[0]:
-        dataTime, j1 = featureRowToShapeLabel[jj]
-        print 'chart:', dataTime, ' / region index:', j1, 
-        logFileString+='chart:' + dataTime + ' / region index:' + str(j1) + '\n'
-while os.path.exists(logFilePath):
-    logFilePath = logFilePath[:-4] + '_a' + logFilePath[-4:]    
-open(logFilePath,'w').write(logFileString)
-#
-#
-#   making the pics
-#
 os.makedirs(outputFolder+timeString+"__k%d__N%d" %(k, N))
 for j in range(k):
     print "\n-----------------------------------------------------------------\n"
     print "Cluster:", j
-    #open(logFilePath,'a').write('\n-------------\n')
-    #open(logFilePath,'a').write('Cluster:' + str(j) + '\n')
+    open(logFilePath,'a').write('\n-------------\n')
+    open(logFilePath,'a').write('Cluster:' + str(j) + '\n')
     ind = np.where(res[1]==j)
     for jj in ind[0]:
         dataTime, j1 = featureRowToShapeLabel[jj]
         print 'chart:', dataTime, ' / region index:', j1, 
-        #open(logFilePath,'a').write('chart:' + dataTime + ' / region index:' + str(j1) + '\n')
+        open(logFilePath,'a').write('chart:' + dataTime + ' / region index:' + str(j1) + '\n')
         if block:
             print "  ... waiting"
         else:
@@ -164,39 +132,7 @@ for j in range(k):
         if not block:
             time.sleep(throttle)    
 #
-#
 #   short cut for creating log file
 #
-"""
-#   1. IO - optional
-k=40
-N=1000
-outputFolder='/media/TOSHIBA EXT/ARMOR/labLogs2/charts2_classification_local/'
-resultFileName='result_1411236316.pydump' 
-logFileName='log_1411236316.log.txt'
-featureRowToShapeLabelFile = ''
-logFileString=time.asctime() + '\n\n'
-import pickle
-res = pickle.load(open(outputFolder+resultFileName, 'r'))
-featureRowToShapeLabel = pickle.load(open(outputFolder+'featureRowToShapeLabelFile','r'))
-print 'results loaded'
-print res
-print 'sleeping 2 secs'
-time.sleep(2)
-#   2.  running the code
-for j in range(k):
-    print "\n-----------------------------------------------------------------\n"
-    print "Cluster:", j
-    logFileString+='\n-------------\n'
-    logFileString+='Cluster:' + str(j) + '\n'
-    ind = np.where(res[1]==j)
-    for jj in ind[0]:
-        dataTime, j1 = featureRowToShapeLabel[jj]
-        print 'chart:', dataTime, ' / region index:', j1, 
-        logFileString+='chart:' + dataTime + ' / region index:' + str(j1) + '\n'
+#   0. IO - optional
 
-while os.path.exists(outputFolder+logFileName):
-    logFileName = logFileName[:-4] + '_a' + logFileName[-4:]
-    
-open(outputFolder+logFileName,'w').write(logFileString)
-"""
