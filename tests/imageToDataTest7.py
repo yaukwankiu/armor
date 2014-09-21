@@ -43,9 +43,9 @@ R = (np.random.random(N)*len(L)).astype(int).tolist()
 R = list(set(R))    #don't want to sort it
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
 
-open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
+open(logFilePath,'a').write(time.asctime() + '\n\n'+'k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
-display=True
+display=False
 throttle=0.01
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
@@ -72,7 +72,8 @@ for i in chosenList:
         a.show()
     time.sleep(throttle)
     a.loadImage()
-    a.show()
+    if display:
+        a.show()
     time.sleep(throttle)
     a1          = a.connectedComponents()
 
@@ -133,9 +134,9 @@ for j in range(k):
         dataTime, j1 = featureRowToShapeLabel[jj]
         print 'chart:', dataTime, ' / region index:', j1, 
         logFileString+='chart:' + dataTime + ' / region index:' + str(j1) + '\n'
-while os.path.exists(logFilePath):
-    logFilePath = logFilePath[:-4] + '_a' + logFilePath[-4:]    
-open(logFilePath,'w').write(logFileString)
+#while os.path.exists(logFilePath):
+#    logFilePath = logFilePath[:-4] + '_a' + logFilePath[-4:]    
+open(logFilePath,'a').write(logFileString)
 #
 #
 #   making the pics
