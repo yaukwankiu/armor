@@ -56,7 +56,10 @@ time.sleep(2)
 #x=a.shiiba(b)
 
 ###################################################################################
-testGoal = 'Axes Transformation, Translation and Rotation and intensity adjustment by 20%'
+intensityFactor = 1.01
+axis1factor     = 0.995
+axis2factor     = 1.005
+testGoal = 'Axes Transformation, Translation and Rotation and intensity adjustment by '+str(intensityFactor)
 a=pattern.a.load()
 a2 = a.getRectangle(400,400,200,200)
 #a2.coordinateOrigin= (100,100)
@@ -73,8 +76,8 @@ outputString += "\tC"
 outputString +='\n'
 open(outputFolder+'log.txt', 'a').write(outputString)
 
-for angle in range(1, 6):
-    T = np.array([[0.98,0.],[0.,1.02]])
+for angle in [0.1, 0.2, 0.5, 1.,]:
+    T = np.array([[axis1factor,0.],[0.,axis2factor]])
     T = tr.rotationMatrix(rad=-np.pi*angle/360)*T
     displacement = np.array([[1],[4]])
     T = np.hstack([T,displacement])
@@ -82,7 +85,7 @@ for angle in range(1, 6):
     a2.restoreMatrix(0)
     b2=a2.copy()
     b2= a2.affineTransform(T)
-    b2.matrix *= 1.2
+    b2.matrix *= intensityFactor
     
     print '----------'
     print 'angle:', angle*np.pi/180
