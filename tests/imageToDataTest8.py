@@ -9,7 +9,7 @@ plt = pattern.plt
 classificationResultsFileName = 'log_1411289056.log.txt'
 folder   = pattern.dp.root + 'labLogs2/charts2_classification_local/'
 
-def display(resultString, title1="", title2="", block=True, minBlockSize=1):
+def display(resultString, title1="", title2="", cmap2='jet',block=False, minBlockSize=1):
     """chart:20140525.0400 / region index:6"""
     #plt.close()
     rs = resultString
@@ -19,7 +19,10 @@ def display(resultString, title1="", title2="", block=True, minBlockSize=1):
     b = a.copy()
     a.loadImage(rawImage=True)
     b.loadImage(rawimage=False)
+    b.cmap=cmap2
     b1 = b.connectedComponents().levelSet(regionNumber)
+    b.matrix += b1.matrix*600
+    b.setMaxMin()
     region = b1.getRegionForValue(1)
     if region[2]*region[3] < minBlockSize:
         return "block too small!!"
@@ -51,7 +54,7 @@ def readFile(filePath=folder+classificationResultsFileName):
 
     return clustersList
 
-def main(loops=10, samples=3, filePath=folder+classificationResultsFileName, throttle=1., block=True, minBlockSize=100):
+def main(loops=10, samples=3, filePath=folder+classificationResultsFileName, throttle=1., block=False, minBlockSize=100):
     clustersList = readFile(filePath)
     N = len(clustersList)
     R = (np.random.random(loops) * N).astype(int).tolist()
