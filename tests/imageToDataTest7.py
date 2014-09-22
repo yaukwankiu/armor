@@ -35,8 +35,8 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 timeString = str(int(time.time()))
-k =  30  # k for k-means
-N =  700 # number of images to be tested
+k =  60 # k for k-means
+N =  1000 # number of images to be tested
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
 open(logFilePath,'a').write('k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
 block= False
