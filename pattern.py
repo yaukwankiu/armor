@@ -604,7 +604,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         else:
             imshowOrigin='lower'
         plt.imshow(self.matrix, vmin=self.vmin, vmax=self.vmax, cmap=self.cmap, origin=imshowOrigin)
-        plt.title(a.name )
+        plt.title(self.name )
         plt.subplot(122)
         if b.imageTopDown:
             imshowOrigin='upper'
