@@ -69,9 +69,9 @@ outputFolder = dp.root+'labLogs2/charts2_classification_global/'
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 logFileName  = 'log_imageToDataTest9.txt'
-dates = ['20140520', '20140615', '20140920']
 mins  = ['1200', '1206', '1230', '1300']
-
+dates = ['20140520', '20140615', '20140920']
+#dates = [ '20140920']
 open(outputFolder+logFileName,'a').write('\n------------------------------\n'+time.asctime()+'\n')
 dbz_classified = []
 for d in dates:
