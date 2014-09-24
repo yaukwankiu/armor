@@ -2148,36 +2148,6 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
     ########################################################
     #   features and classifications
-    def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,):
-        """
-        0.  number of components
-        1.  volume
-        2.  centroid
-        3.  high intensity region volume
-        4.  moments
-        """
-        from .geometry import moments as mmt
-        a1 = self.above(lowerThreshold)
-        rectangle   = a1.getRegionForValue(1)        
-        a1 = a1.connectedComponents()
-        M1 = a1.matrix.max()
-        components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
-        numberOfComponents = len([v for v in components1[1:] if v>=100])    # the background (labelled as 0) doesn't count
-        volume      = a1.matrix.sum()
-        centroid    = self.getCentroid()
-        #
-        a2  = a.above(upperThreshold)
-        highIntensityRegionVolume = a2.matrix.sum()
-        HuMoments   = mmt.HuMoments(self.matrix)
-        features =  {   'numberOfComponents'    : numberOfComponents,
-                        'volume'                : volume,
-                        'centroid'              : centroid,
-                        'highIntensityRegionVolume' : highIntensityRegionVolume,
-                        'HuMoments'               : HuMoments,
-                        'rectangle'             : rectangle,
-                    }
-        self.globalFeatures = features
-        return features
         
     def showFeatureLayer(self, n=0, n2="", vmin="", vmax=""):
         if n2=="":
@@ -2422,6 +2392,84 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.features = np.dstack([self.features, m])
         return m
         
+
+    def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,):
+        """
+        0.  number of components
+        1.  volume
+        2.  centroid
+        3.  high intensity region volume
+        4.  moments
+        """
+        from .geometry import moments as mmt
+        a1 = self.above(lowerThreshold)
+        rectangle   = a1.getRegionForValue(1)        
+        a1 = a1.connectedComponents()
+        M1 = a1.matrix.max()
+        components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
+        numberOfComponents = len([v for v in components1[1:] if v>=100])    # the background (labelled as 0) doesn't count
+        volume      = a1.matrix.sum()
+        centroid    = self.getCentroid()
+        #
+        a2  = a.above(upperThreshold)
+        highIntensityRegionVolume = a2.matrix.sum()
+        HuMoments   = mmt.HuMoments(self.matrix)
+        features =  {   'numberOfComponents'    : numberOfComponents,
+                        'volume'                : volume,
+                        'centroid'              : centroid,
+                        'highIntensityRegionVolume' : highIntensityRegionVolume,
+                        'HuMoments'               : HuMoments,
+                        'rectangle'             : rectangle,
+                    }
+        self.globalFeatures = features
+        return features
+
+    def localShapeFeatures(self, block=False, minComponentSize=100):
+        """
+        from armor/tests/imageToDataTest4.py
+        """
+        a   = self
+        a1  = a.connectedComponents()
+        a2  = a.above(51).connectedComponents()
+        #a1.show(block=True)
+        #a2.show(block=True)
+        #   get the components
+        M1  = a1.matrix.max()
+        #M2  = a2.matrix.max()
+        components1 = [(a1.matrix==v).sum() for v in range(M1+1)]
+        #components2 = [(a2.matrix==v).sum() for v in range(M2+1)]
+        #components1 = sorted([(a1.matrix==v).sum() for v in range(M1+1)][1:], reverse=True)
+        #components2 = sorted([(a2.matrix==v).sum() for v in range(M2+1)][1:], reverse=True)
+        components1 = [v for v in components1 if v>=minComponentSize]
+        #components2 = [v for v in components2 if v>=10]
+        print 'Largest components:', sorted(components1, reverse=True)
+        #print sorted(components2, reverse=True)[1:]
+        #   get the moments
+        from armor.geometry import moments as mmt
+        HuPowers = np.array([2., 4., 6., 6., 12., 8., 12.])
+        HuPowers = (HuPowers)**-1
+        moments1 = np.array([mmt.HuMoments(a1.matrix==v)**HuPowers for v in range(len(components1))])
+        #moments2 = np.array([mmt.HuMoments(a2.matrix==v)**HuPowers for v in range(len(components2))])
+        print moments1
+        #print moments2
+
+        #   defining the features
+
+        numberOfComponents = len([v for v in components1[1:] if v>=100])    # region of at least 100 pixels
+        volume             = a1.matrix.sum() + a2.matrix.sum()
+        localFeatures       = [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))]
+        localFeatureVectors = [np.array([(lf['volume'])**.5] + \
+                                (lf['centroid']/10).tolist() + [np.log(v) for v in lf['HuMoments']] + [lf['numberOfComponents']]) \
+                               for lf in localFeatures]
+        features  = {   'dataTime'              : a.dataTime,
+                        'globalFeatures'        : a1.globalShapeFeatures(lowerThreshold=1, upperThreshold=51,),
+                        'localFeatures'         : localFeatures, # this includes the "background"
+                        'localFeatureVectors'   : localFeatureVectors,
+                    }
+        self.localFeatures = features
+        return features
+    
+
     ########################################################
     #   tests
     
