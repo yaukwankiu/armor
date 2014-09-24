@@ -80,8 +80,8 @@ for d in dates:
         a.imagePath = outputFolder + a.name + '.jpg'
         a.saveImage()
         a.loadImage(rawImage=False)
-        a.saveImage(outputFolder+a.name+'_' + str(classes)+'.jpg')
         classes = classify(a)
+        a.saveImage(outputFolder+a.name+'_' + str(classes)+'.jpg')
         dbz_classified.append((a.dataTime, classes))
         open(outputFolder+logFileName,'a').write(a.dataTime + ' , ')
         open(outputFolder+logFileName,'a').write(str(classes) +'\n')
