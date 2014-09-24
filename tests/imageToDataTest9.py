@@ -69,7 +69,7 @@ dbz_classified = []
 for d in dates:
     for m in mins:
         dataTime = str(d) + '.' + str(m)
-        a = dbz(dataTime, name='chart2'+dataTime)
+        a = dbz(dataTime, name='chart2_'+dataTime)
         a.loadImage(rawImage=True)
         a.imagePath = outputFolder + a.name + '.jpg'
         a.saveImage()
@@ -80,21 +80,25 @@ for d in dates:
         open(outputFolder+logFileName,'a').write(a.dataTime + ' , ')
         open(outputFolder+logFileName,'a').write(str(classes) +'\n')
 
-L = os.listdir(dp.defaultDataImageFolder)
+L = os.listdir(dp.defaultImageDataFolder+'charts2-allinone-')
 N = len(L)
 R = (N*np.random.random(300)).astype(int).tolist()
 
+open(outputFolder+logFileName,'a').write('\n------------------------------\n'+time.asctime()+'\n')
+
 for index in R:
-    dataTime = L[index]
-    a = dbz(dataTime= dataTime, name = 'chart2'+dataTime)
+    DT =  L[index]
+    DT = DT[0:4]+DT[5:7] + DT[8:10] + '.' + DT[11:15]
+    dataTime = DT
+    a = dbz(dataTime= dataTime, name = 'chart2_'+dataTime)
     a.loadImage(rawImage=True)
     a.imagePath = outputFolder + a.name + '.jpg'
     a.saveImage()
     a.loadImage(rawImage=False)
-    a.saveImage(outputFolder+a.name+'_2'+'.jpg')
     classes = classify(a)
     dbz_classified.append((a.dataTime, classes))
     open(outputFolder+logFileName,'a').write(a.dataTime + ' , ')
     open(outputFolder+logFileName,'a').write(str(classes) +'\n')
+    a.saveImage(outputFolder+a.name+'_' + str(classes)+'.jpg')
 
 
