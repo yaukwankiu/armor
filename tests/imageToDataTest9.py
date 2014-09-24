@@ -13,20 +13,27 @@ np  = pattern.np
 ###############################
 #   setting up the parameters
 inputFolder = dp.root + 'labLogs2/charts2_classification_local/'
-resultFile  = 'result_1411279570.pydump'
+#resultFile  = 'result_1411378955.pydump'   # for 801-a
+#resultFile  = 'result_1411057730.pydump'   # for 801-a
+resultFile  = 'result_1411279570.pydump'    #for acer
 
 clusters    = pickle.load(open(inputFolder+resultFile))
 centroids   = clusters[0]
 N           = len(centroids)
+
 a   = dbz('20140920.1200')
 a.loadImage()
 b   = dbz('20140920.1206')
 c   = dbz('20140920.1300')
 b.loadImage()
 c.loadImage()
+
 #a.globalShapeFeatures()
 #a.localShapeFeatures()
-
+#
+#
+#
+#
 def classify(a):
     classes = []
     localFeatureVectors = a.localShapeFeatures()['localFeatureVectors']
@@ -53,7 +60,8 @@ print a.dataTime, b.dataTime, c.dataTime
 print classes
 print classes2
 print classes3
-
+print '---------------------------------------------------'
+time.sleep(3)
 ########
 #   2014-09-24
 timeString   = str(int(time.time()))
@@ -74,8 +82,8 @@ for d in dates:
         a.imagePath = outputFolder + a.name + '.jpg'
         a.saveImage()
         a.loadImage(rawImage=False)
-        a.saveImage(outputFolder+a.name+'_2'+'.jpg')
         classes = classify(a)
+        a.saveImage(outputFolder+a.name+'_' + str(classes)+'.jpg')
         dbz_classified.append((a.dataTime, classes))
         open(outputFolder+logFileName,'a').write(a.dataTime + ' , ')
         open(outputFolder+logFileName,'a').write(str(classes) +'\n')
