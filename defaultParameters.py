@@ -275,6 +275,9 @@ chart2ColourBar =   {
 defaultImageSuffix = ".png"
 #defaultDataSuffix1 = ".txt"
 #defaultDataSuffix2 = ".dat"
+###########################################################
+#   parameters for analyses
+defaultMinComponentSize=100 # armor/tests/imageToData11.py , armor/pattern.py localShapeFeatures()
 
 ################################################################
 #   misc
@@ -288,8 +291,6 @@ day         = localtime.tm_mday
 hour        = localtime.tm_hour
 minute      = localtime.tm_min
 second      = localtime.tm_sec
-
-
 
 
 

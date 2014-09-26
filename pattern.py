@@ -772,8 +772,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
     def setMaxMin(self, vmax="", vmin=""):
         if vmax=="":
             self.vmax = self.matrix.max()
+        else:
+            self.vmax = vmax
         if vmin=="":
             self.vmin = self.matrix.min()
+        else:
+            self.vmin=vmin
 
     def drawCross(self, i="", j="", radius=5, intensity=9999, newObject=True):
         """to draw a cross (+) at the marked point
@@ -2424,7 +2428,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.globalFeatures = features
         return features
 
-    def localShapeFeatures(self, block=False, minComponentSize=100):
+    def localShapeFeatures(self, block=False, 
+                            #minComponentSize=100,
+                            minComponentSize=dp.defaultMinComponentSize):
         """
         from armor/tests/imageToDataTest4.py
         """
@@ -2455,7 +2461,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         #   defining the features
 
-        numberOfComponents = len([v for v in components1[1:] if v>=100])    # region of at least 100 pixels
+        numberOfComponents = len([v for v in components1[1:] if v>=minComponentSize])    # region of at least 100 pixels
         volume             = a1.matrix.sum() + a2.matrix.sum()
         localFeatures       = [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))]
         localFeatureVectors = [np.array([(lf['volume'])**.5] + \
