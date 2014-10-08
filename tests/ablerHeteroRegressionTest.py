@@ -56,7 +56,7 @@ time.sleep(2)
 #x=a.shiiba(b)
 
 ###################################################################################
-intensityFactor = 1.01
+intensityFactor = 1.00     #   <-- edit here
 axis1factor     = 0.995
 axis2factor     = 1.005
 testGoal = 'Axes Transformation, Translation and Rotation and intensity adjustment by '+str(intensityFactor)
@@ -66,7 +66,9 @@ a2 = a.getRectangle(400,400,200,200)
 print '\n========================\n'
 a2.backupMatrix(0)
 outputFolder= dp.root+'labLogs2/ABLERselectionIndex/'
-outputString = "\n====================================\nTest Goal: " + testGoal
+outputString = "\n====================================\n"
+outputString += time.asctime() +'\n'
+outputString += "Test Goal: " + testGoal
 outputString +="\n\nangle" 
 outputString +="\tR-squared" 
 outputString +="\tdisplacement" 
@@ -101,18 +103,22 @@ for angle in [0.1, 0.2, 0.5, 1.,]:
     vect.saveImage()
 
     pickle.dump(x2, open(outputFolder+'%d_x.pydump' % int(time.time()),'w'))
-
-
-
     outputString = str(angle)
     outputString += "\t"+str(x2['Rsquared'])
     outputString += "\t"+str(displacement.T)
     outputString +=  "\t"+str(T.round(3).flatten())
     outputString +=  "\t"+str(x2['mn'])
     outputString +=  "\t" + str(x2['C'].round(3).flatten())
-
     outputString += '\n'
+    #open(outputFolder+'log.txt','a').write(outputString)
+    # for excel
+    outputString = outputString.replace('[','')
+    outputString = outputString.replace(']','')
+    outputString = outputString.replace(',','')
+    outputString = outputString.replace('(','')
+    outputString = outputString.replace(')','')
     open(outputFolder+'log.txt','a').write(outputString)
+
 outputString += '\n=========================================================\n'
     
 #   1. build the test examples

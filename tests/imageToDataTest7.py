@@ -36,8 +36,9 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 timeString = str(int(time.time()))
-k =  240  # k for k-means                    #<-- edit here
-N = 1200                                     #<-- edit here
+#k =  240  # k for k-means                    #<-- edit here
+k = 14  #2014-09-29
+N = 30                                   #<-- edit here
 #N =  len(L) # number of images to be tested
 R = (np.random.random(N)*len(L)).astype(int).tolist()
 R = list(set(R))    #don't want to sort it
