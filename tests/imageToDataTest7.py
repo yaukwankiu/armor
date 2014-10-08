@@ -36,17 +36,19 @@ L[0][9:22]
 #L = [v[9:22] for v in L]
 
 timeString = str(int(time.time()))
-k =  240  # k for k-means                    #<-- edit here
-N = 1200                                     #<-- edit here
+#k =  240  # k for k-means                    #<-- edit here
+k = 3000
+N = 6000                                   #<-- edit here
 #N =  len(L) # number of images to be tested
 R = (np.random.random(N)*len(L)).astype(int).tolist()
 R = list(set(R))    #don't want to sort it
 stepSize = len(L)//N  # N is supposed to be smaller than len(L) or else we will have overflow
 
 open(logFilePath,'a').write(time.asctime() + '\n\n'+'k=' + str(k) + '\nN='+str(N) + '\n\nData:\n')
-block= False
-display=False
-throttle=0.01
+saveImage=False                                 #<-- edit here
+block= False                                 #<-- edit here
+display=False                                 #<-- edit here
+throttle=0.01                                 #<-- edit here
 featureMatrix=0         # initialisation
 featureRowToShapeLabel = {}
 #featureMatrix = np.array([])
@@ -85,7 +87,7 @@ for i in chosenList:
     for j in range(len(lf)):
         # key line below:
         #fmRow = np.array([np.log10(lf[j]['volume'])] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
-        fmRow = np.array([(lf[j]['volume'])**.5] + (lf[j]['centroid']/10).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])
+        fmRow = np.array([(lf[j]['volume'])**.5 *10] + (lf[j]['centroid']/600.).tolist() + [np.log(v) for v in lf[j]['HuMoments']] + [lf[j]['numberOfComponents']])       #keyline #edit here
         inds          = np.where(np.isnan(fmRow))
         #fmRow[inds]      = -99
         fmRow[inds]      = 0.
@@ -161,7 +163,8 @@ for j in range(k):
             a1  = a.connectedComponents()
         if display:
             a1.levelSet(j1).show(block=block)
-        a1.levelSet(j1).saveImage(outputFolder + timeString + "__k%d__N%d/cluster%d_%s_region%d.png"% (k, N, j, dataTime, j1)) 
+        if saveImage:
+            a1.levelSet(j1).saveImage(outputFolder + timeString + "__k%d__N%d/cluster%d_%s_region%d.png"% (k, N, j, dataTime, j1)) 
         if not block:
             time.sleep(throttle)    
 #

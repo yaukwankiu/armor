@@ -13,23 +13,23 @@ np  = pattern.np
 ###############################
 #   setting up the parameters
 inputFolder = dp.root + 'labLogs2/charts2_classification_local/'
-#resultFile  = 'result_1411378955.pydump'   # for 801-a
+resultFile  = 'result_1411378955.pydump'   # for 801-a
 #resultFile  = 'result_1411057730.pydump'   # for 801-a
-resultFile  = 'result_1411279570.pydump'    #for acer
+#resultFile  = 'result_1411279570.pydump'    #for acer
 
 
 
 clusters    = pickle.load(open(inputFolder+resultFile))
 centroids   = clusters[0]
 N           = len(centroids)
-
+"""
 a   = dbz('20140920.1200')
 a.loadImage()
 b   = dbz('20140920.1206')
 c   = dbz('20140920.1300')
 b.loadImage()
 c.loadImage()
-
+"""
 #a.globalShapeFeatures()
 #a.localShapeFeatures()
 #
@@ -52,7 +52,7 @@ def classify(a):
         classes.append(minIndex)            #keyline
     return classes
 
-
+"""
 classes = classify(a)
 classes2 = classify(b)
 classes3 = classify(c)
@@ -64,10 +64,13 @@ print classes2
 print classes3
 print '---------------------------------------------------'
 time.sleep(3)
+
+"""
 ########
 #   2014-09-24
 timeString   = str(int(time.time()))
-outputFolder = dp.root+'labLogs2/charts2_classification_global/'
+outputFolder = dp.root+'labLogs2/charts2_classification_global_' + resultFile[-11:-7] + '/'
+print "outputFolder:", outputFolder
 if not os.path.exists(outputFolder):
     os.makedirs(outputFolder)
 logFileName  = 'log_imageToDataTest9.txt'
@@ -96,7 +99,7 @@ for d in dates:
             a.matrix += a2.matrix*classes[i]
             print 'region, class:', regionIndices[i], classes[i]
         a.setMaxMin(vmax=N, vmin=0)
-        a.cmap='jet'
+        #a.cmap='jet'
         a.saveImage(outputFolder+a.name+'_' + str(classes)+'.jpg')
         dbz_classified.append((a.dataTime, classes))
         open(outputFolder+logFileName,'a').write(a.dataTime + ' , ')

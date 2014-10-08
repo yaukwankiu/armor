@@ -9,7 +9,7 @@ plt = pattern.plt
 classificationResultsFileName = 'log_1411289056.log.txt'
 folder   = pattern.dp.root + 'labLogs2/charts2_classification_local/'
 
-def display(resultString, title1="", title2="", cmap2='jet',block=False, minBlockSize=1):
+def makeImage(resultString, title1="", title2="", cmap2='jet',block=False, minBlockSize=1, display=True, outputFolder=""):
     """chart:20140525.0400 / region index:6"""
     #plt.close()
     rs = resultString
@@ -26,6 +26,11 @@ def display(resultString, title1="", title2="", cmap2='jet',block=False, minBloc
     region = b1.getRegionForValue(1)
     if region[2]*region[3] < minBlockSize:
         return "block too small!!"
+    imagePath = outputFolder+title2+'_'+dataTime+"_"+ str(region)+'.jpg'
+    if os.path.exists(imagePath):
+        print 'image exists! - ', dataTime 
+        return 0
+
     print '* '
     print '* Block dimensions:', region[2:4]
     print "*"
@@ -33,8 +38,11 @@ def display(resultString, title1="", title2="", cmap2='jet',block=False, minBloc
     #b.drawCross(*region[0:2], newObject=False, radius=30)
     #print 'b.imageTopDown:',b.imageTopDown #debug
     plt.close()
-    a.showWith(b, block=block, title1=title1, title2=title2)
-
+    if outputFolder!="":
+        b.saveImage(imagePath=imagePath)
+    if display:
+        a.showWith(b, block=block, title1=title1, title2=title2)
+    return b
 
 #display('chart:20140525.0400 / region index:6')
 
@@ -54,10 +62,22 @@ def readFile(filePath=folder+classificationResultsFileName):
 
     return clustersList
 
-def main(loops=10, samples=3, filePath=folder+classificationResultsFileName, throttle=1., block=False, minBlockSize=100):
+def main(loops=10, samples=3, folder=folder, classificationResultsFileName=classificationResultsFileName, throttle=1., 
+            block=False, minBlockSize=100, randomise=True, outputFolder="", display=True):
+    filePath = folder+classificationResultsFileName
     clustersList = readFile(filePath)
-    N = len(clustersList)
-    R = (np.random.random(loops) * N).astype(int).tolist()
+    k = len(clustersList)
+    if outputFolder=="auto":
+        outputFolder=folder+classificationResultsFileName[4:-8]+'_k' +str(k) + '/'
+        if not os.path.exists(outputFolder):
+            os.makedirs(outputFolder)
+        
+    if loops <=0:
+        loops=k
+    if randomise:
+        R = (np.random.random(loops) * k).astype(int).tolist()
+    else:
+        R = range(k)
     for i in R:
         print "\n***************************************************\n"
         print 'Showing the %dth Cluster:' %i 
@@ -65,13 +85,19 @@ def main(loops=10, samples=3, filePath=folder+classificationResultsFileName, thr
         time.sleep(throttle)
         if len(clustersList[i])==0:
             continue
-        for count,j in  enumerate((np.random.random(samples) * len(clustersList[i])).astype(int).tolist()):
+        if samples>0:
+            jList = enumerate((np.random.random(samples) * len(clustersList[i])).astype(int).tolist())
+        else:
+            jList = enumerate(range(len(clustersList[i])))
+        for count,j in jList:
             print '\n=========================\n'
             print count, 'Showing the %dth sample from the %dth cluster:' %(j, i), '\t', clustersList[i][j]
             print 
-            display(clustersList[i][j], block=block, minBlockSize=minBlockSize, title2='%d, Cluster %d, Sample %d' %(count, i, j))
+            #display(clustersList[i][j], block=block, minBlockSize=minBlockSize, title2='%d, Cluster %d, Sample %d' %(count, i, j))
+            makeImage(clustersList[i][j], block=block, minBlockSize=minBlockSize, title2='Cluster_%d' % i, outputFolder=outputFolder, display=display )
             if not block:
-                time.sleep(1)
+                time.sleep(throttle)
 
 if __name__ =="__main__":
     main(block=False)
+    main(block=False, display=False, classificationResultsFileName='log_1412738213.log.txt' ,outputFolder='auto', randomise=False, samples=-1 )
