@@ -4,6 +4,13 @@
 #           3. display
 
 #
+#sleepTime= 140000
+sleepTime =0
+import time
+print time.asctime()
+print 'sleeping now for ', sleepTime, 'seconds'
+time.sleep(sleepTime)
+
 import os
 import time
 import pickle
@@ -21,8 +28,14 @@ except:
     print outputFolder, 'exists'
 
 N   = 500
-#L   = os.listdir(inputFolder)
-L   = os.listdir(imageFolder)
+L   = os.listdir(inputFolder)
+L   = [v for v in L if v.startswith('2014') or v.startswith('2013')]
+#L   = os.listdir(imageFolder)
+if 'MOS' in L[0]:
+    L = [l[:4] + l[5:7] + l[8:10] + '.' + l[11:15] for l in L]
+else:
+    L = [l[:-4] for l in L]
+
 L.sort()
 print len(L)
 print L[:10]
@@ -35,6 +48,8 @@ R[:10]
 R[:10]
 R   = [dbz(v) for v in R]
 R[:10]
+
+"""
 ##############
 #   test case
 a = R[0]
@@ -80,28 +95,34 @@ features  = {   'dataTime'              : a.dataTime,
 
 
 pickle.dump(features, open('features_' + a.dataTime +'.pydump','w'))
-#
+
+#   end test case
+##############################
+"""
+
 ###########
 #   later #
 ###########
 count = 0
 for imageName in L:
     count +=1
-    dataTime = imageName[:-4]
+    dataTime = imageName
     print dataTime
+    if os.path.exists(outputFolder+'features_' + dataTime +'.pydump'):
+        continue
     a=dbz(dataTime)
     a.loadImage()
     a.show()
     a1  = a.connectedComponents()
     a2  = a.above(51).connectedComponents()
-    if count < 1:
-        print 'waiting for check'
-        a1.show(block=True)
-        print 'waiting for check'
-        a2.show(block=True)
+    #if count < 1:
+    #    print 'waiting for check'
+    #    a1.show(block=True)
+    #    print 'waiting for check'
+    #    a2.show(block=True)
         
-    elif count==3:
-        print 'it runs from now on, no more a1.show(block=True)'
+    #elif count==3:
+    #    print 'it runs from now on, no more a1.show(block=True)'
     #   get the components
     M1  = a1.matrix.max()
     M2  = a2.matrix.max()
