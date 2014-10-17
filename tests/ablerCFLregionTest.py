@@ -17,28 +17,65 @@ Y       = dbz(matrix=Y)
 
 a2  = a.affineTransform(tr.rotation(rad=np.pi/3), origin=a2.coordinateOrigin)
 a2.showWith(a)
+#####################################
+#   rotation
 
-T   = tr.rotation(rad=np.pi/180 * 1)
-origin   = (100,100)
-X2  = X.affineTransform(T, origin=origin)
-Y2  = Y.affineTransform(T, origin=origin)
+for N in range(0, 10):
+    print N, ' degrees'
+    T   = tr.rotation(rad=np.pi/180 * N)
+    origin   = (100,100)
+    X2  = X.affineTransform(T, origin=origin)
+    Y2  = Y.affineTransform(T, origin=origin)
 
-diffx   = X2-X
-diffy   = Y2-Y
+    diffx   = X2-X
+    diffy   = Y2-Y
 
-diffx.setMaxMin()
-diffy.setMaxMin()
-diffx.showWith(diffy)
+    diffx.setMaxMin()
+    diffy.setMaxMin()
+    diffx.showWith(diffy)
 
-diffx.matrix = (abs(diffx.matrix)<=1)
-diffx.setMaxMin()
-diffx.show()
-diffy.matrix = (abs(diffy.matrix)<=1)
-diffy.setMaxMin()
-#diffy.show()
+    diffx.matrix = (abs(diffx.matrix)<=1)
+    diffx.setMaxMin()
+    diffx.show()
+    diffy.matrix = (abs(diffy.matrix)<=1)
+    diffy.setMaxMin()
+    #diffy.show()
 
-diffxy = diffx.copy()
-diffxy.matrix = diffx.matrix * diffy.matrix
-diffxy.cmap = 'jet'
-diffxy.show()
+    diffxy = diffx.copy()
+    diffxy.matrix = diffx.matrix * diffy.matrix
+    diffxy.cmap = 'jet'
+    diffxy.name = 'CFL Region for A Rotation of '+str(N) + ' degrees'
+    diffxy.show()
+    time.sleep(1)
+###############################
+#   stretching
 
+for N in range(-4,10):
+    print N, ' percents'
+    T   = np.zeros((2,3))
+    T[0,0] = 1+ 0.01*N
+    T[1,1] = 1+ 0.01*N
+    origin   = (100,100)
+    X2  = X.affineTransform(T, origin=origin)
+    Y2  = Y.affineTransform(T, origin=origin)
+
+    diffx   = X2-X
+    diffy   = Y2-Y
+
+    diffx.setMaxMin()
+    diffy.setMaxMin()
+    diffx.showWith(diffy)
+
+    diffx.matrix = (abs(diffx.matrix)<=1)
+    diffx.setMaxMin()
+    diffx.show()
+    diffy.matrix = (abs(diffy.matrix)<=1)
+    diffy.setMaxMin()
+    #diffy.show()
+
+    diffxy = diffx.copy()
+    diffxy.matrix = diffx.matrix * diffy.matrix
+    diffxy.cmap = 'jet'
+    diffxy.name = 'CFL Region for stretching in both axes of '+str(N) + ' percents'
+    diffxy.show()
+    time.sleep(1)
