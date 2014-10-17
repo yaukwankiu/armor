@@ -1,0 +1,18 @@
+#   localFeaturesValidationTest.py
+#   to test the matching algorithm via local features
+#   1.  load the COMPREF and WRF respectively
+#   2.  construct local features after segmentation
+#   3.  order local features according to volume, descending
+#   4.  match the local features in COMPREF and WRF and compute the distances via the greedy algorithm
+#   5.  compute the weighed distance between two images
+#   6.  look for the closest WRF match to the COMPREF
+#   7.  validation of the above algorithm
+
+import time, os, pickle
+import numpy as np
+from armor import pattern
+dp  = pattern.dp
+plt = pattern.plt
+dbz = pattern.DBZ
+from armor import objects4 as ob
+kongrey = ob.

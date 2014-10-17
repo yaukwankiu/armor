@@ -1326,6 +1326,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         if origin =="":
             origin = self.getCentroid()
+        T = np.matrix(T)
         a2 = self.copy()
         a2.name += '_affineTransformed'
         from .geometry import transforms as tr
@@ -2430,13 +2431,17 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
     def localShapeFeatures(self, block=False, 
                             #minComponentSize=100,
-                            minComponentSize=dp.defaultMinComponentSize):
+                            minComponentSize=dp.defaultMinComponentSize,
+                            lowerThreshold=0,
+                            upperThreshold=51,
+                            ):
         """
         from armor/tests/imageToDataTest4.py
         """
-        a   = self
+        a   = self.copy()
+        a   = a.above(lowerThreshold)
         a1  = a.connectedComponents()
-        a2  = a.above(51).connectedComponents()
+        a2  = a.above(upperThreshold).connectedComponents()
         #a1.show(block=True)
         #a2.show(block=True)
         #   get the components
