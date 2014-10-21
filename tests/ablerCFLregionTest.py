@@ -5,6 +5,8 @@ dbz = pattern.DBZ
 np  = pattern.np
 dp  = pattern.dp
 from armor.geometry import transforms as tr
+outputFolder    = '/media/TOSHIBA EXT/ARMOR/labLogs2/'
+
 
 a = pattern.a.load()
 a = a.getWindow(400,400,200,200)
@@ -15,7 +17,7 @@ I, J    = Y, X
 X       = dbz(matrix=X)
 Y       = dbz(matrix=Y)
 
-a2  = a.affineTransform(tr.rotation(rad=np.pi/3), origin=a2.coordinateOrigin)
+a2  = a.affineTransform(tr.rotation(rad=np.pi/3), origin=a.coordinateOrigin)
 a2.showWith(a)
 #####################################
 #   rotation
@@ -46,6 +48,7 @@ for N in range(0, 10):
     diffxy.cmap = 'jet'
     diffxy.name = 'CFL Region for A Rotation of '+str(N) + ' degrees'
     diffxy.show()
+    diffxy.saveImage(outputFolder+'rotation_'+str(N)+'degrees.jpg')
     time.sleep(1)
 ###############################
 #   stretching
@@ -78,4 +81,5 @@ for N in range(-4,10):
     diffxy.cmap = 'jet'
     diffxy.name = 'CFL Region for stretching in both axes of '+str(N) + ' percents'
     diffxy.show()
+    diffxy.saveImage(outputFolder+'stretching_'+str(N)+'percents.jpg')
     time.sleep(1)

@@ -27,6 +27,18 @@ b2  = wrf('20130829.1500')
 b3  = wrf('20130829.0900')
 B   = b1 +b2 + b3
 
+########
+#   test case
+b = B[0]
+b.load()
+b.localShapeFeatures(lowerThreshold=-5, upperThreshold=35)
+
+b.localFeatures['localFeatures'].__len__()
+b.localFeatures['localFeatures'][0]
+########
+#   real loop
+
 for b in B:
+    b.load()
     b.localShapeFeatures(lowerThreshold=10, upperThreshold=35)
     print 
