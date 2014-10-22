@@ -111,14 +111,16 @@ def shiiba(a,b, gridSize=20, searchWindowHeight=9, searchWindowWidth=9,\
     deformation = regression.convert(C1, a)
     README = 'Results for shiiba global regression.  "mn" = shift, where the first coordinate is i=y, the second is j=x, "vect" =  total vector field, "deformation" = deformation vector field, "corr" = correlation between prediction and ground truth,  "prediction6"= prediction with 6 shiiba coeffs (instead of 9), "results" = list of (m,n), C, Rsquared in descending order of Rsquared'
     
-    return {"mn": (m,n), "C":C, "Rsquared":Rsquared, 
+    return {"mn"            : (m,n), 
+            "C"             :   C, 
+            "Rsquared"      : Rsquared, 
             "prediction"    : prediction,
             "prediction6"   : prediction6,
             "vect"          : vect, 
             "deformation"   : deformation,
             "corr"          : corr, 
             "results"       : results, 
-            "README"        :README}
+            "README"        : README}
 
 
 def shiibaLocal(a, b, windowSize=100, iRange=range(000, 881, 100),\
