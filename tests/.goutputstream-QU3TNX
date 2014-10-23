@@ -54,12 +54,12 @@ DG.show()
 
 #   transformed - radiated from origin
 
-def getParamsList(N= 100, maxRadius=10, minRadius=2):
+def getParamsList(N= 100):
     paramsList = []
     for i in range(N):
         params = np.random.random(5)
-        params *= [200, 200, maxRadius-minRadius+1, maxRadius-minRadius+1, np.pi]
-        params += [0,     0, minRadius, minRadius, 0]
+        params *= [200, 200, 5, 5, np.pi]
+        params += [0,     0, 2, 2, 0]
         params[2] = params[3]   #hack
         #dg  = trc.doubleGaussian(I, J, *params)
         dgs.append(dg)
@@ -95,7 +95,7 @@ def doubleGaussianLandscape(paramsList):
         return sum([dg(i,j) for dg in DGS])
     return img
 
-def constructImage(paramsList, display=False):
+def constructImage(paramsList):
     DGS = [doubleGaussianFunction(*v) for v in paramsList]
     img = sum([dg(I,J) for dg in DGS])
     #plt.imshow(img, origin='lower') ; plt.show()
@@ -103,8 +103,7 @@ def constructImage(paramsList, display=False):
     img.mask=False
     IMG = dbz(matrix=img)
     IMG.setMaxMin()
-    if display:
-        IMG.show()
+    IMG.show()
     return IMG
 
 def rotate(phi, paramsList=paramsList, centre=arrayShape/2,):
@@ -170,12 +169,10 @@ def plotRsquared(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, *ar
     return ys
 
 
-def transform_and_analyse(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, outputFolder=outputFolder, *args, **kwargs):
+def analyse(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, outputFolder=outputFolder, *args, **kwargs):
     timeStamp = str(int(time.time()))
     logFile = open(outputFolder+timeStamp+'_%s_logFile.txt'%transform,'a')
-    logFile.write('#x, Rsquared, c1t, c2t, c4t, c5t, c1, c2, c4, c5\n')
-    print 'output file:', outputFolder+timeStamp+'_%s_logFile.txt'%transform
-    time.sleep(3)
+    logFile.write('#x\tRsquared\tc1t\tc2t\tc4t\tc5t\tc1\tc2\tc4\tc5\n')
     cos = np.cos
     sin = np.sin
     IMG0    = constructImage(p0)
@@ -201,26 +198,24 @@ def transform_and_analyse(p0=paramsList, transform='rotation', rlimit=0.5, step=
 
         IMG1 = constructImage(p1)
         IMG1.name = transform + str(x)
-        #IMG1.show()
+        IMG1.show()
         res  = IMG0.shiiba(IMG1, searchWindowWidth=9, searchWindowHeight=9)
         Rsquared = res['Rsquared']
         C        = res['C']
         c1       = C[0]     # experimental "shiiba" C-values
         c2       = C[1]
-        c4       = C[3]
-        c5       = C[4]
+        c4       = c[3]
+        c5       = c[4]
         print 'x:', x
         print 'Rsquared', Rsquared
         ys.append(Rsquared)
-        outputString = ', '.join([str(v) for v in [x, Rsquared, c1t, c2t, c4t, c5t, c1, c2, c4, c5]]) +'\n'
-        print outputString
-        logFile.write(outputString)
+        logFile.write(str(x)+'\t'+str(Rsquared)+ '\t' +str(c1t)+ '\t' +str(c2t)+ '\t' +str(c4t)+ '\t' +str(c5t)+\
+                             '\t' +str(c1)+ '\t' +str(c2)+ '\t' +str(c4)+ '\t' +str(c5)+'\n')        
     plt.clf()
     plt.plot(xs, ys)
     title = transform+": Rsquared versus change" + "(degree)" * (transform=='rotation') + " relative stretching" *(transform=='stretching')
     plt.title(title)
     plt.savefig(outputFolder+ timeStamp + "_Rsquared versus change plot - " + transform + '.jpg')
-    logFile.close()
     return ys
 
 
@@ -260,27 +255,27 @@ a.saveImage()
 b.saveImage()
 
 #   test case ABLER
-#ys1 = plotRsquared(paramsList, transform='rotation')
-#ys2 = plotRsquared(paramsList, step=0.02, rlimit=0.5, transform='stretching')
+ys1 = plotRsquared(paramsList, transform='rotation')
+ys2 = plotRsquared(paramsList, step=0.02, rlimit=0.5, transform='stretching')
 
 #   looping
 for count in range(30):
-    paramsList = getParamsList(100)
+    paramsList = getParamsList(30)
     a   = constructImage(paramsList)
     #   rotation
     timeStamp = str(int(time.time()))
     paramsList1 = rotate(np.pi/18, paramsList)
     a   = constructImage(paramsList)
     b   = constructImage(paramsList1)
-    a.name='original'
-    b.name='rotation'
     #c   = a-b
     #c.setMaxMin()
+
     a.imagePath = outputFolder + timeStamp +"_a.jpg"
     b.imagePath = outputFolder + timeStamp +"_b.jpg"
     a.drawCross(newObject=False)
     b.drawCross(newObject=False)
-    a.saveImage()
+    b.name='rotation'
+    #a.saveImage()
     b.saveImage()
 
     #   stretch
@@ -288,13 +283,12 @@ for count in range(30):
     paramsList1 = stretch(0.9, 1.1, paramsList)
     a   = constructImage(paramsList)
     b   = constructImage(paramsList1)
-    a.name='original'
-    b.name='stretching'
     a.imagePath = outputFolder + timeStamp +"_a.jpg"
     b.imagePath = outputFolder + timeStamp +"_b.jpg"
     a.drawCross(newObject=False)
     b.drawCross(newObject=False)
+    b.name='stretching'
     b.saveImage()
-    ys1 = transform_and_analyse(paramsList, transform='rotation')
-    ys2 = transform_and_analyse(paramsList, step=0.02, rlimit=0.5, transform='stretching')
+    ys1 = plotRsquared(paramsList, transform='rotation')
+    ys2 = plotRsquared(paramsList, step=0.02, rlimit=0.5, transform='stretching')
     
