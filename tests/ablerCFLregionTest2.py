@@ -142,7 +142,7 @@ def translate(i, j, paramsList=paramsList):
     return paramsList1
     
     
-def plotRsquared(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, *args, **kwargs):
+def plotRsquared(p0=paramsList, transform='rotation', rlimit=0.05, step=0.002, *args, **kwargs):
     timeStamp = str(int(time.time()))
     IMG0    = constructImage(p0)
     plt.close()
@@ -164,13 +164,13 @@ def plotRsquared(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, *ar
         ys.append(Rsquared)
     plt.clf()
     plt.plot(xs, ys)
-    title = transform+": Rsquared versus change" + "(degree)" * (transform=='rotation') + " relative stretching" *(transform=='stretching')
+    title = transform+": Rsquared versus change" + "(radians)" * (transform=='rotation') + " relative stretching" *(transform=='stretching')
     plt.title(title)
     plt.savefig(outputFolder+ timeStamp + "_Rsquared versus change plot - " + transform + '.jpg')
     return ys
 
 
-def transform_and_analyse(p0=paramsList, transform='rotation', rlimit=0.5, step=0.02, outputFolder=outputFolder, *args, **kwargs):
+def transform_and_analyse(p0=paramsList, transform='rotation', rlimit=0.20, step=0.01, outputFolder=outputFolder, *args, **kwargs):
     timeStamp = str(int(time.time()))
     logFile = open(outputFolder+timeStamp+'_%s_logFile.txt'%transform,'a')
     logFile.write('#x, Rsquared, c1t, c2t, c4t, c5t, c1, c2, c4, c5\n')
@@ -217,7 +217,7 @@ def transform_and_analyse(p0=paramsList, transform='rotation', rlimit=0.5, step=
         logFile.write(outputString)
     plt.clf()
     plt.plot(xs, ys)
-    title = transform+": Rsquared versus change" + "(degree)" * (transform=='rotation') + " relative stretching" *(transform=='stretching')
+    title = transform+": Rsquared versus change" + "(radians)" * (transform=='rotation') + " relative stretching" *(transform=='stretching')
     plt.title(title)
     plt.savefig(outputFolder+ timeStamp + "_Rsquared versus change plot - " + transform + '.jpg')
     logFile.close()
@@ -264,7 +264,7 @@ b.saveImage()
 #ys2 = plotRsquared(paramsList, step=0.02, rlimit=0.5, transform='stretching')
 
 #   looping
-for count in range(30):
+for count in range(10):
     paramsList = getParamsList(100)
     a   = constructImage(paramsList)
     #   rotation
@@ -295,6 +295,8 @@ for count in range(30):
     a.drawCross(newObject=False)
     b.drawCross(newObject=False)
     b.saveImage()
-    ys1 = transform_and_analyse(paramsList, transform='rotation')
-    ys2 = transform_and_analyse(paramsList, step=0.02, rlimit=0.5, transform='stretching')
-    
+    ys1 = transform_and_analyse(paramsList, transform='rotation',  rlimit=0.20, step=0.01)
+    ys1a = transform_and_analyse(paramsList, transform='rotation',  rlimit=0.05, step=0.002)
+    ys2 = transform_and_analyse(paramsList, transform='stretching',  rlimit=0.20, step=0.01)
+    ys2a = transform_and_analyse(paramsList, transform='stretching',  rlimit=0.05, step=0.002)
+
