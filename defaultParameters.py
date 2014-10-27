@@ -143,6 +143,9 @@ defaultLabReportFolder  = defaultLabReportsFolder   #alias
 defaultLabLogsFolder    = 'labLogs/'
 defaultLabLogFolder    = defaultLabLogsFolder   #alias
 
+defaultTestScriptFolder   = defaultRootFolder+ 'python/armor/tests/'
+testFolder          = defaultTestScriptFolder
+
 defaultCWBfolder    = defaultRootFolder + '../CWB/'
 CWBfolder           = defaultCWBfolder #alias
 defaultImageDataFolder = defaultCWBfolder # maybe alias, maybe not, it's a local setting

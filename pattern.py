@@ -2416,7 +2416,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         volume      = a1.matrix.sum()
         centroid    = self.getCentroid()
         #
-        a2  = a.above(upperThreshold)
+        a2  = a1.above(upperThreshold)
         highIntensityRegionVolume = a2.matrix.sum()
         HuMoments   = mmt.HuMoments(self.matrix)
         features =  {   'numberOfComponents'    : numberOfComponents,
@@ -2453,7 +2453,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         #components2 = sorted([(a2.matrix==v).sum() for v in range(M2+1)][1:], reverse=True)
         components1 = [v for v in components1 if v>=minComponentSize]
         #components2 = [v for v in components2 if v>=10]
-        print 'Largest components:', sorted(components1, reverse=True)
+        print 'Largest components for %s:' %self.name, sorted(components1, reverse=True)
         #print sorted(components2, reverse=True)[1:]
         #   get the moments
         from armor.geometry import moments as mmt
@@ -2469,6 +2469,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         numberOfComponents = len([v for v in components1[1:] if v>=minComponentSize])    # region of at least 100 pixels
         volume             = a1.matrix.sum() + a2.matrix.sum()
         localFeatures       = [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))]
+        localFeatures.sort(key=lambda(v):v['volume'], reverse=True)
         localFeatureVectors = [np.array([(lf['volume'])**.5] + \
                                 (lf['centroid']/10).tolist() + [np.log(v) for v in lf['HuMoments']] + [lf['numberOfComponents']]) \
                                for lf in localFeatures]
