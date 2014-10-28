@@ -95,8 +95,12 @@ from armor import objects4 as ob
 compref    = ob.march2014             #<-- edit here
 wrf       = pattern.DBZstream(name='March2014 WRF', dataFolder=dp.root+'data/march2014/WRFEPS[regridded]/all/')          #<-- edit here
 
-compref   = ob.may2014
-wrf      = ob.may2014wrf19.list + ob.may2014wrf20.list + ob.may2014wrf21.list + ob.may2014wrf22.list + ob.may2014wrf23.list
+#compref   = ob.may2014 #doesn't work
+#wrf      = ob.may2014wrf19.list + ob.may2014wrf20.list + ob.may2014wrf21.list + ob.may2014wrf22.list + ob.may2014wrf23.list
+
+compref   = ob.may2014('20140520')
+wrf      = ob.may2014wrf20
+wrf.fix()
 
 ########
 #   test case
@@ -145,7 +149,11 @@ def experimentLoop(a,B, N=5, sampleSize=30, exactNumberOfComponents=False, *args
         plt.clf()
         a.above(10).showWith(b.above(-5), block=False)
         #time.sleep(2)
-        b.saveImage(outputFolder+str(round(np.log(score),6)).ljust(9,'0') + '.jpg')
+        if score < np.inf:
+            b.saveImage(outputFolder+str(round(np.log(score),6)).ljust(9,'0') + '.jpg')
+        else:
+            b.saveImage(outputFolder+"inf_" + b.name +'.jpg')
+        
         if score < bestScoreSoFar:
             bestScoreSoFar=score
             bestMatch = b
@@ -187,5 +195,7 @@ for ra in Ra:
                                                     weights = [0.2, 1./60., 1., 1./100.]  ,
                                                     powers=[0.75, 1, 1, 1],
                                                     )
-    results.append((a.name, bestMatch.name, bestScore, sample))
-
+    try:
+        results.append((a.name, bestMatch.name, bestScore, sample))
+    except:
+        pass
