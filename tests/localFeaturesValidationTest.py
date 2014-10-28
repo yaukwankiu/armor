@@ -7,7 +7,7 @@
 #   5.  compute the weighed distance between two images
 #   6.  look for the closest WRF match to the COMPREF
 #   7.  validation of the above algorithm
-import time, os, pickle
+import time, os, pickle, shutil
 from armor import pattern
 dbz = pattern.DBZ
 dp  = pattern.dp
@@ -23,7 +23,9 @@ def compareLocalShapeFeatures(lf1, lf2,
                                 keys=['volume', 'centroid', 'HuMoments','highIntensityRegionVolume',],  
                                 powers=[.5,  1, 1, 1,],
                                 useLogScale=[False, False, True, True,],
-                                weights=[10., 1./600., 1., 1.,]):
+                                #weights=[10., 1./600., 1., 1.,],
+                                weights = [0.1, 1./60., 1., 1./200.]  # new weights for COMPREF, 2014-10-28
+                                ):
 
     fmRows=[]
     for lf in lf1, lf2:
@@ -76,20 +78,25 @@ def compareLocalShapes(a, b, N=5, exactNumberOfComponents=True, volumeWeightPowe
 #   constructing the test objects
 
 from armor import objects4 as ob
-compref    = ob.kongrey
-wrf       = ob.kongreywrf2
-wrf.fix()
+#a   = ob.kongrey('20130829.1100')[0]
+#a.show()
+#a.localShapeFeatures(lowerThreshold=10, upperThreshold=35)
+#b1  = ob.kongreywrf2('20130829.1200')
+#b2  = ob.kongreywrf2('20130829.1500')
+#b3  = ob.kongreywrf2('20130829.0900')
+#b4  = ob.kongreywrf2('20130829.0600')
+#b5  = ob.kongreywrf2('20130829.1800')
+#B   = b1 +b2 + b3 + b4 + b5
 
-a   = compref('20130829.1300')[0].load()
-a.show()
-a.localShapeFeatures(lowerThreshold=10, upperThreshold=35)
+#compref    = ob.kongrey             #<-- edit here
+#wrf       = ob.kongreywrf2          #<-- edit here
+#wrf.fix()
 
-b1  = wrf('20130829.1200')
-b2  = wrf('20130829.1500')
-b3  = wrf('20130829.0900')
-b4  = wrf('20130829.0600')
-b5  = wrf('20130829.1800')
-B   = b1 +b2 + b3 + b4 + b5
+compref    = ob.march2014             #<-- edit here
+wrf       = pattern.DBZstream(name='March2014 WRF', dataFolder=dp.root+'data/march2014/WRFEPS[regridded]/all/')          #<-- edit here
+
+compref   = ob.may2014
+wrf      = ob.may2014wrf19.list + ob.may2014wrf20.list + ob.may2014wrf21.list + ob.may2014wrf22.list + ob.may2014wrf23.list
 
 ########
 #   test case
@@ -103,49 +110,82 @@ b.localFeatures['localFeatures'][0]
 
 score = compareLocalShapes(a,b)
 '''  
-########
-#   experiment loop
-timeString = str(int(time.time()))
-outputFolder=dp.root+'labLogs2/charts2_local_global_matching/' + timeString +'/'
-if not os.path.exists(outputFolder):
-    os.makedirs(outputFolder)
 
-shutil.copyfile(dp.testFolder + thisScript, outputFolder+thisScript)
-scores = []
-#B.sort(reverse=True)
-bestScoreSoFar = np.inf
-bestMatch=""
-a.saveImage(outputFolder+'0.png')
+def experimentLoop(a,B, N=5, sampleSize=30, exactNumberOfComponents=False, *args, **kwargs):
+    ########
+    #   experiment loop
+    print 'experiment starts'
+    timeString = str(int(time.time()))
+    outputFolder=dp.root+'labLogs2/charts2_local_global_matching/' + timeString +'/'
+    if not os.path.exists(outputFolder):
+        os.makedirs(outputFolder)
 
-R   = (np.random.random(30)*len(B)).astype(int)
-R   = list(set(R))
+    shutil.copyfile(dp.testFolder + thisScript, outputFolder+thisScript)
+    scores = []
+    #B.sort(reverse=True)
+    bestScoreSoFar = np.inf
+    bestMatch=""
+    a.saveImage(outputFolder+'0.png')
 
-#for b in B:
-for r in R:
-    b = B[r]
-    print '---------------------'
-    print b.name
-    b.load()
-    if not hasattr(b, 'localFeatures'):
-        b.localShapeFeatures(lowerThreshold=-5, upperThreshold=35)
-    score= compareLocalShapes(a,b, N=8)
-    print b.name, ':', score
-    scores.append((b.name, score))
-    plt.clf()
-    a.above(10).showWith(b.above(-5), block=False)
-    #time.sleep(2)
-    b.saveImage(outputFolder+str(round(np.log(score),6)).ljust(9,'0') + '.jpg')
-    if score < bestScoreSoFar:
-        bestScoreSoFar=score
-        bestMatch = b
-        #b.saveImage(outputFolder+ 'b' + str(len(os.listdir(outputFolder))-1) + '.png')
-    else:
+    R   = (np.random.random(sampleSize)*len(B)).astype(int)
+    R   = list(set(R))
+
+    #for b in B:
+    for r in R:
+        b = B[r]
+        print '---------------------'
+        print b.name
+        b.load()
+        b.show()
+        if not hasattr(b, 'localFeatures'):
+            b.localShapeFeatures(lowerThreshold=-5, upperThreshold=35)
+        score= compareLocalShapes(a,b, exactNumberOfComponents=exactNumberOfComponents, N=N, *args, **kwargs)
+        print b.name, ':', score
+        scores.append((b.name, score))
         plt.clf()
-        #a.above(10).showWith(bestMatch.above(-5), block=False)
-    
-    try:
-        print "BEST MATCH SO FAR:", bestMatch.name, bestScoreSoFar
-    except:
-        pass
-    print '---------------------'
+        a.above(10).showWith(b.above(-5), block=False)
+        #time.sleep(2)
+        b.saveImage(outputFolder+str(round(np.log(score),6)).ljust(9,'0') + '.jpg')
+        if score < bestScoreSoFar:
+            bestScoreSoFar=score
+            bestMatch = b
+            #b.saveImage(outputFolder+ 'b' + str(len(os.listdir(outputFolder))-1) + '.png')
+        else:
+            plt.clf()
+            #a.above(10).showWith(bestMatch.above(-5), block=False)
+        
+        try:
+            print "BEST MATCH SO FAR:", bestMatch.name, bestScoreSoFar
+        except:
+            pass
+        print '---------------------'
+    sample = [B[v].name for v in R]
+    return bestMatch, bestScoreSoFar, sample 
+
+#####################################################
+#   general test case
+
+Ra   = (np.random.random(30)*len(compref)).astype(int)
+Ra   = list(set(Ra))
+results = []
+for ra in Ra:
+    a = compref[ra].load()
+    T0 = a.getDataTime(a.datetime(dh=-6))
+    T1 = a.getDataTime(a.datetime(dh=+6))
+    B  = [v for v in wrf if v.dataTime>=T0 and v.dataTime<=T1]
+    print "========================"
+    print "Test case:"
+    print a.name
+    print "number of wrf outputs to match:", len(B)
+    #bestMatch, bestScore, sample = experimentLoop(a,B, sampleSize=60)
+    bestMatch, bestScore, sample = experimentLoop(a,B, sampleSize=60,
+                                                    volumeWeightPower=0.5,
+                                                    exactNumberOfComponents=True,
+                                                    N=5,
+                                                    keys=['volume', 'centroid', 'HuMoments','highIntensityRegionVolume',], 
+                                                    #weights = [0.1, 1./60., 1., 1./200.]  ,
+                                                    weights = [0.2, 1./60., 1., 1./100.]  ,
+                                                    powers=[0.75, 1, 1, 1],
+                                                    )
+    results.append((a.name, bestMatch.name, bestScore, sample))
 
