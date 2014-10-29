@@ -1688,23 +1688,27 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         return self.eigenvalues, self.eigenvectors                                           
      
-    def getRelativeAngle(self, b, returnType="degree", threshold=0):
+    def getRelativeAngle(self, b="", returnType="degree", resultInFirstQuadrant=True, threshold=0):
         """2014-08-04
         to get the relative angle between the axes
         """
-        arr1 = self.matrix.copy()
-        arr2 = b.matrix.copy()
+        arr1 = self.matrix.copy()       #backup
         self.matrix = self.threshold(threshold).matrix
-        b.matrix    = b.threshold(threshold).matrix
-        ###
         self.getEigens()
+        ###
+        if b=="":
+            b = DBZ(matrix=np.ones((20,30)))
+        arr2 = b.matrix.copy()
+        b.matrix    = b.threshold(threshold).matrix
         b.getEigens()
         ###
-        cos = (self.eigenvectors[0,:] * b.eigenvectors[0,:]).sum()
+        #cos = (self.eigenvectors[0,:] * b.eigenvectors[0,:]).sum()
+        cos = (self.eigenvectors[:,0] * b.eigenvectors[:,0]).sum()  #2014-10-29
         angle = np.arccos(cos)
-
+        if resultInFirstQuadrant and angle > np.pi/2:           #2014-10-29
+            angle = np.pi - angle
         self.matrix = arr1
-        b.matrix    = arr2
+        b.matrix    = arr2        
         if returnType == "deg" or returnType=="degree":
             angle = angle / np.pi * 180
         return angle
@@ -2415,6 +2419,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         numberOfComponents = len([v for v in components1[1:] if v>=100])    # the background (labelled as 0) doesn't count
         volume      = a1.matrix.sum()
         centroid    = self.getCentroid()
+        eigenvalues, eigenvectors = a1.getEigens()
         #
         a2  = a1.above(upperThreshold)
         highIntensityRegionVolume = a2.matrix.sum()
@@ -2425,6 +2430,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                         'highIntensityRegionVolume' : highIntensityRegionVolume,
                         'HuMoments'               : HuMoments,
                         'rectangle'             : rectangle,
+                        'eigenvalues'           : eigenvalues,
+                        'eigenvectors'          : eigenvectors,
                     }
         self.globalFeatures = features
         return features

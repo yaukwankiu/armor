@@ -98,9 +98,9 @@ wrf       = pattern.DBZstream(name='March2014 WRF', dataFolder=dp.root+'data/mar
 #compref   = ob.may2014 #doesn't work
 #wrf      = ob.may2014wrf19.list + ob.may2014wrf20.list + ob.may2014wrf21.list + ob.may2014wrf22.list + ob.may2014wrf23.list
 
-compref   = ob.may2014('20140520')
-wrf      = ob.may2014wrf20
-wrf.fix()
+#compref   = ob.may2014('20140520')
+#wrf      = ob.may2014wrf20
+#wrf.fix()
 
 ########
 #   test case
@@ -192,8 +192,8 @@ for ra in Ra:
                                                     N=5,
                                                     keys=['volume', 'centroid', 'HuMoments','highIntensityRegionVolume',], 
                                                     #weights = [0.1, 1./60., 1., 1./200.]  ,
-                                                    weights = [0.2, 1./60., 1., 1./100.]  ,
-                                                    powers=[0.75, 1, 1, 1],
+                                                    weights = [0.2, 1./30., 1., 1./100.]  ,
+                                                    powers=[1, 1, 1, 1],
                                                     )
     try:
         results.append((a.name, bestMatch.name, bestScore, sample))
