@@ -206,6 +206,11 @@ def march2014wrffix(ds=march2014wrf):
         #w.imagePath=
 
 print "batch 5 done" #debug
+
+comprefs = [monsoon, kongrey, soulik, march2014, may2014]
+wrfs     = [kongreywrf, march2014wrf11, march2014wrf12, march2014wrf13, 
+            may2014wrf19, may2014wrf20, may2014wrf21, may2014wrf22, may2014wrf23]
+
 print "now fixing" #debug
 monsoon.fix= monsoonfix
 soulik.fix = soulikfix
