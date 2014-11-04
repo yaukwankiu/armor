@@ -110,6 +110,8 @@ for fileName in L:
         featsArr = np.vstack([featsArr, feats])
         print feats[:4]
 
+featsArr = featsArr[1:,:]   #2014-11-04
+
 featsFile = open(folder+str(int(time.time()))+'featuresArr.dat','a')
 featsFile.write('#' + '  '.join(keysFull) + '\n')
 np.savetxt(featsFile, featsArr)

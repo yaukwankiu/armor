@@ -35,16 +35,28 @@ DG.name = 'Centroid = ' + str(params[0:2].round(2)) + ', sigma i,j = ' + str(par
 DG.show()
 
 #   test case: 100 double gaussians
+#dgs = []
+#paramsList = []
+#N   = 100
+#for i in range(N):
+#    params = np.random.random(5)
+#    params *= [200, 200, 20, 30, np.pi]
+#    params[2] = params[3]   #hack
+#    paramsList.append(params)
+
 dgs = []
 paramsList = []
-N   = 100
-for i in range(N):
+N=20
+for i in range(N):                 #2014-11-04
     params = np.random.random(5)
-    params *= [200, 200, 20, 30, np.pi]
+    params *= [50, 50, 20, 15, np.pi]
     params[2] = params[3]   #hack
-    dg  = trc.doubleGaussian(I, J, *params)
-    dgs.append(dg)
+    params += [75, 75, 0, 0, 0]
     paramsList.append(params)
+
+for i in range(N):
+    dg  = trc.doubleGaussian(I, J, *paramsList[i])
+    dgs.append(dg)
 
 DG  = dbz(matrix = sum(dgs))
 DG.setMaxMin()
