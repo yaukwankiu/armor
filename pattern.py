@@ -2402,7 +2402,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return m
         
 
-    def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,):
+    def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,
+                            computeSkewness=True):  # 2014-11-11
         """
         0.  number of components
         1.  volume
@@ -2433,6 +2434,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                         'eigenvalues'           : eigenvalues,
                         'eigenvectors'          : eigenvectors,
                     }
+
+        if computeSkewness:             #2014-11-11
+            features['skewness'] = mmt.skewness2(a1.matrix)
+
         self.globalFeatures = features
         return features
 
@@ -2441,6 +2446,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                             minComponentSize=dp.defaultMinComponentSize,
                             lowerThreshold=0,
                             upperThreshold=51,
+                            *args, **kwargs #2014-11-11
                             ):
         """
         from armor/tests/imageToDataTest4.py
@@ -2475,7 +2481,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         numberOfComponents = len([v for v in components1[1:] if v>=minComponentSize])    # region of at least 100 pixels
         volume             = a1.matrix.sum() + a2.matrix.sum()
-        localFeatures       = [a1.levelSet(v).globalShapeFeatures() for v in range(len(components1))]
+        localFeatures       = [a1.levelSet(v).globalShapeFeatures(lowerThreshold=lowerThreshold, upperThreshold=upperThreshold ,*args, **kwargs)  #2014-11-11 
+                                    for v in range(len(components1))]
         localFeatures.sort(key=lambda(v):v['volume'], reverse=True)
         localFeatureVectors = [np.array([(lf['volume'])**.5] + \
                                 (lf['centroid']/10).tolist() + [np.log(v) for v in lf['HuMoments']] + [lf['numberOfComponents']]) \

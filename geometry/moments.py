@@ -145,8 +145,30 @@ def HuMoments(phi, **kwargs):
 
 
 
-
-
+def skewness(phi, lower="", upper="", axis=1, *args, **kwargs):  #2014-11-11
+    """http://en.wikipedia.org/wiki/Skewness#Definition
+    return: skewness in the j axis
+    """
+    if lower=="":
+        lower = phi.min()
+    if upper=="":
+        upwer = phi.max()
+    if axis == 1:
+        M03 = mu(phi=phi, p=0, q=3, lower=lower, upper=upper, *args, **kwargs)
+        M02 = mu(phi=phi, p=0, q=2, lower=lower, upper=upper, *args, **kwargs)
+    elif axis == 0:
+        M03 = mu(phi=phi, p=3, q=0, lower=lower, upper=upper, *args, **kwargs)
+        M02 = mu(phi=phi, p=2, q=0, lower=lower, upper=upper, *args, **kwargs)
+    gamma = 1.* M03 / M02**1.5
+    return gamma
+    
+def skewness2(phi, lower="", upper="", *args, **kwargs): #2014-11-11
+    """http://en.wikipedia.org/wiki/Skewness#Definition
+    return:  skewnesses in the (i,j) axes
+    """
+    gamma0 = skewness(phi, lower, upper, axis=0, *args, **kwargs)
+    gamma1 = skewness(phi, lower, upper, axis=1, *args, **kwargs)
+    return gamma0, gamma1
 
 
 

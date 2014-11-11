@@ -14,5 +14,4 @@ PLAN:
 #   1.  local features +1:  normalised third moment / normalised fourth moment
 #   1a. fix the angle feature with the third moment
 #   2.  plot the physically related and physically unrelated comparisons
-#   3.  
 
