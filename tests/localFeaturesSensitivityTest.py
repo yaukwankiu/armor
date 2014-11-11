@@ -288,13 +288,14 @@ for fileName in Ls:
 feats0 = featsArrs[0][:,4:6]   # take the cosine of  the relative angle
 feats1 = featsArrs[1][:,4:6]   
 featsDotProduct = (feats0 * feats1).sum(axis=1)
-featsRelativeAngle = np.arccos(featsDotProduct)
+#featsRelativeAngle = np.arccos(featsDotProduct)
+featsRelativeAngle = np.arccos(abs(featsDotProduct))
 
-featsRelativeAngle[526] = 0 #hack
+#featsRelativeAngle[526] = 0 #hack
 y, x = np.histogram(featsRelativeAngle, 50)
 plt.plot(x[:-1], y)
 plt.title('Distribution of Changes in Relative Angles\nafter Perturbation')
 plt.legend(['unit:  radians'])
-plt.savefig(outputFolder+ 'perturbationRatio/'  + "relativeAngle" + '.jpg')
+plt.savefig(outputFolder+ 'perturbationRatio/'  + "absoluteRelativeAngle" + '.jpg')
 plt.show(block=False)
 
