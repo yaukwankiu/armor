@@ -1452,8 +1452,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         a1.name = self.name + "gaussian-sigma" + str(sigma)
         a1.imagePath    = self.imagePath[:-4]  + "gaussian-sigma" + str(sigma) +  self.imagePath[-4:]  #hack
         a1.outputPath   = self.outputPath[:-4] + "gaussian-sigma" + str(sigma) + self.outputPath[-4:]  #hack
-        mx = a1.matrix.max()
-        mn = a1.matrix.min()
+        #mx = a1.matrix.max()
+        #mn = a1.matrix.min()
         #a1.vmax = mx + (mx-mn)*0.2  # to avoid red top     # replaced by lines below 2014-02-20
         #a1.vmin = mn
         a1.matrix.mask = (a1.matrix< self.missingDataThreshold)
@@ -1688,27 +1688,36 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
 
         return self.eigenvalues, self.eigenvectors                                           
      
-    def getRelativeAngle(self, b="", returnType="degree", resultInFirstQuadrant=True, threshold=0):
+    def getRelativeAngle(self, b="", returnType="radian", resultInFirstQuadrant=True, threshold=0):
         """2014-08-04
         to get the relative angle between the axes
         """
         arr1 = self.matrix.copy()       #backup
         self.matrix = self.threshold(threshold).matrix
+        #if not hasattr(self,'eigenvectors'):
+        #    self.getEigens()
         self.getEigens()
         ###
         if b=="":
-            b = DBZ(matrix=np.ones((20,30)))
-        arr2 = b.matrix.copy()
-        b.matrix    = b.threshold(threshold).matrix
-        b.getEigens()
-        ###
-        #cos = (self.eigenvectors[0,:] * b.eigenvectors[0,:]).sum()
-        cos = (self.eigenvectors[:,0] * b.eigenvectors[:,0]).sum()  #2014-10-29
-        angle = np.arccos(cos)
-        if resultInFirstQuadrant and angle > np.pi/2:           #2014-10-29
-            angle = np.pi - angle
-        self.matrix = arr1
-        b.matrix    = arr2        
+            cos = (self.eigenvectors[0,0])
+            sin = (self.eigenvectors[1,0])
+            angle = np.arccos(cos)
+            if sin < 0 :
+                angle = 2 * np.pi -angle
+            self.matrix = arr1
+        else:
+            arr2 = b.matrix.copy()
+            b.matrix    = b.threshold(threshold).matrix
+            b.getEigens()
+            ###
+            #cos = (self.eigenvectors[0,:] * b.eigenvectors[0,:]).sum()
+            cos = (self.eigenvectors[:,0] * b.eigenvectors[:,0]).sum()  #2014-10-29
+            angle = np.arccos(cos)
+            if resultInFirstQuadrant and angle > np.pi/2:           #2014-10-29
+                angle = np.pi - angle
+            self.matrix = arr1
+            b.matrix    = arr2        
+
         if returnType == "deg" or returnType=="degree":
             angle = angle / np.pi * 180
         return angle
@@ -1856,6 +1865,32 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             x[6] = np.sign(x[6])*abs(x[6])**(1./12)
         self.invMom = x     #storing it for the future
         return x
+
+    def skewness(self, *args, **kwargs):
+        """ to compute the skewnesses along the major and minor axes
+        """
+        #   1. compute the angle
+        #   2. compute the transformation matrix
+        #   3. compute the skewnesses in the x- and y- directions
+        #from .geometry import tranforms as tr
+        from .geometry import moments as mmt
+        self.getEigens()
+        angle   = self.getRelativeAngle()
+        v0      = self.eigenvectors[:,0]
+        v1      = np.array([-v0[1], v0[0]])
+        #I, J    = self.IJ()
+        a2      = self.affineTransform(T=np.vstack([v0,v1]), origin="")
+        a2      = a2.threshold(0)
+
+        results = {}
+        results['skewness'] = mmt.skewness2(a2.matrix, *args, **kwargs)
+        results['kurtosis'] = mmt.kurtosis2(a2.matrix, *args, **kwargs)
+        return results
+        #a2.show()   #debug
+        #a2.getEigens()  #debug
+        #return a2   #debug
+            
+
 
     def spline(self):
         """
@@ -2100,6 +2135,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         self.matrix = self.matrix + (self.matrix<threshold) * (threshold-self.matrix) #setting the threshold to 0
         self.matrix.mask = mask
         
+
     # end functions altering (attributes) of object
     ############################################################
 
@@ -2436,8 +2472,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
                     }
 
         if computeSkewness:             #2014-11-11
-            features['skewness'] = mmt.skewness2(a1.matrix)
-
+            #features['skewness'] = mmt.skewness2(a1.matrix)    # skewness with fixed x- y-axes 2014-11-11
+            #features['kurtosis'] = mmt.kurtosis2(a1.matrix)
+            instrinsicSkewness   = a1.skewness(lower=lowerThreshold)
+            features['skewness'] = instrinsicSkewness['skewness']     # skewness with intrinsic moment arms 2014-11-12
+            features['kurtosis'] = instrinsicSkewness['kurtosis']
+            
         self.globalFeatures = features
         return features
 

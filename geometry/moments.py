@@ -170,9 +170,30 @@ def skewness2(phi, lower="", upper="", *args, **kwargs): #2014-11-11
     gamma1 = skewness(phi, lower, upper, axis=1, *args, **kwargs)
     return gamma0, gamma1
 
-
-
-
+def kurtosis(phi, lower="", upper="", axis=1, *args, **kwargs):  #2014-11-11
+    """http://en.wikipedia.org/wiki/Kurtosis#Pearson_moments
+    return: excess kurtosis in the j axis
+    """
+    if lower=="":
+        lower = phi.min()
+    if upper=="":
+        upwer = phi.max()
+    if axis == 1:
+        M04 = mu(phi=phi, p=0, q=4, lower=lower, upper=upper, *args, **kwargs)
+        M02 = mu(phi=phi, p=0, q=2, lower=lower, upper=upper, *args, **kwargs)
+    elif axis == 0:
+        M04 = mu(phi=phi, p=4, q=0, lower=lower, upper=upper, *args, **kwargs)
+        M02 = mu(phi=phi, p=2, q=0, lower=lower, upper=upper, *args, **kwargs)
+    gamma = 1.* M04 / M02**2 -3
+    return gamma
+    
+def kurtosis2(phi, lower="", upper="", *args, **kwargs): #2014-11-11
+    """http://en.wikipedia.org/wiki/Skewness#Definition
+    return:  skewnesses in the (i,j) axes
+    """
+    gamma0 = kurtosis(phi, lower, upper, axis=0, *args, **kwargs)
+    gamma1 = kurtosis(phi, lower, upper, axis=1, *args, **kwargs)
+    return gamma0, gamma1
 
 
 
