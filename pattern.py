@@ -439,7 +439,7 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         """
         return ma.filled(self.matrix)
 
-    def save(self):
+    def save(self, outputPath=""):
         """
         * We convert the masked array into a standard array with masked data filled by -999
         * adapted from basics.writeArrayToTxtFile(arr, path, as_integer=False):
@@ -448,7 +448,9 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
             else:
                 np.savetxt(path, arr, fmt='%.2f')       # two decimal places as default
         """
-        np.savetxt(self.outputPath, self.toArray())
+        if outputPath =="":
+            outputPath = self.outputPath
+        np.savetxt(outputPath, self.toArray())
 
     def constructFromFunction(self, func, funcParameters={},  
                                 origin="", height="", width="", newName="",
@@ -494,10 +496,10 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         #del self.dataPath
         return Z                
 
-    def saveMatrix(self):
+    def saveMatrix(self, *args, **kwargs):
         """ alias for self.save()
         """
-        self.save()
+        return self.save(*args, **kwargs)
 
     def makeImage(self, matrix="", vmin=99999, vmax=-99999, cmap="", title="",\
                   showColourbar=True, closeAll=True,
@@ -2439,7 +2441,8 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         
 
     def globalShapeFeatures(self, lowerThreshold= 0., upperThreshold=35.,
-                            computeSkewness=True):  # 2014-11-11
+                            computeSkewness=True,   # 2014-11-11
+                            computeAngle=True):     #2014-11-24
         """
         0.  number of components
         1.  volume
@@ -2474,10 +2477,12 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         if computeSkewness:             #2014-11-11
             #features['skewness'] = mmt.skewness2(a1.matrix)    # skewness with fixed x- y-axes 2014-11-11
             #features['kurtosis'] = mmt.kurtosis2(a1.matrix)
-            instrinsicSkewness   = a1.skewness(lower=lowerThreshold)
+            #instrinsicSkewness   = a1.skewness(lower=lowerThreshold)
+            instrinsicSkewness   = a1.skewness(lower=0, upper=M1+1)
             features['skewness'] = instrinsicSkewness['skewness']     # skewness with intrinsic moment arms 2014-11-12
             features['kurtosis'] = instrinsicSkewness['kurtosis']
-            
+        if computeAngle:
+            features['angle'] = a1.getRelativeAngle()
         self.globalFeatures = features
         return features
 
