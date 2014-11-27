@@ -34,6 +34,11 @@ def sigmoid(X, L=1):
     """
     return 1./ (1 + np.exp(-X/L))
 
+def sigmoidFunction(centre=0, L=1):
+    def sigmoid(X):
+        return 1./ (1+np.exp(-(X-centre)/L))
+    return sigmoid
+    
 def mexHat(x, a=1):
     A = 2/ (np.sqrt(3*a)*np.pi**1/3)
     return A * (1 - x**2/a**2) *np.exp(-x**2/a**2)

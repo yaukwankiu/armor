@@ -11,6 +11,7 @@ np  = pattern.np
 dp  = pattern.dp
 plt = pattern.plt
 ma  = pattern.plt
+from armor import misc
 from armor.geometry import transforms
 from armor.geometry import transformedCorrelations as trc
 
@@ -34,6 +35,34 @@ I, J = m.IJ()
 #DG  = dbz(matrix=np.ma.array(dg))
 #DG.vmin=0
 
+
+########################################################
+#   empirical values
+#   2014-11-25
+#localFeaturesSensitivityTest4.py
+
+sigmoidWidths = {
+                 'eigenvectors'             :   0.1,
+                 'numberOfComponents'       :   0.05,
+                 'skewness'                 :   0.3,
+                 'angle'                    :   0.2,
+                 'highIntensityRegionVolume':   1.,     # didn't test it this time
+                 'volume'                   :  0.1, # taking log first
+                 'centroid'                 : 0.1,
+                 'eigenvalues'              : 10.,
+                 'kurtosis'                 : 0.5,
+                 ('HuMoments',0)            :  20.,
+                 ('HuMoments',1)            : 2000., # can't get accurate figures for these
+                 ('HuMoments',2)            :0.02,
+                 ('HuMoments',3)            : 0.01,
+                 ('HuMoments',4)            : 0.01,
+                 ('HuMoments',5)            : 0.05,
+                 ('HuMoments',6)            : 0.05,
+                 'rectangle'                : 4,
+                }
+
+sigmoidWidths = [(v, sigmoidWidths[v]*0.2) for v in sigmoidWidths]
+sigmoidWidths = dict(sigmoidWidths)
 ##########################################################
 #   preliminary functions
 
@@ -201,10 +230,12 @@ def loadFeaturesList(folder=outputFolder, key1='a'):
     return list_a
     
 def compareFeature(featureKey, list_a, list_b, toShow=False, block=False, relativeResults=False,
-                   bins=50):
+                   bins=50, takeLog=False):
     arr1 = getKeywordArray(list_a, featureKey)
     arr2 = getKeywordArray(list_b, featureKey)
-    if relativeResults:
+    if takeLog:
+        arr3 = np.log(arr2) - np.log(arr1)
+    elif relativeResults:
         arr3 = (arr2-arr1)/arr1
     else:
         arr3 = (arr2-arr1)
@@ -218,6 +249,33 @@ def compareFeature(featureKey, list_a, list_b, toShow=False, block=False, relati
         plt.show(block=block)
     return x,y
     
+def degreeOfSimilarity(key, sigmoidWidth, feats_a, feats_b, takeLog=False, relative=False,
+                        verbose=False):
+    """
+    return the degrees of similiarity from the numerical features 
+    computed from the empirical sigmoid function
+    """
+    if type(key)==str:
+        fa = feats_a[key]
+        fb = feats_b[key]
+    else:
+        fa = feats_a[key[0]][key[1]]
+        fb = feats_b[key[0]][key[1]]
+    if verbose:
+        print 'fa:', fa
+        print 'fb:', fb
+    if takeLog:
+        diff = np.log(fa) - np.log(fb)
+    elif relative:
+        diff = 1. * (fa-fb)/fa
+    else:
+        diff = fa - fb
+    if verbose:
+        print "diff, L:", diff, L
+    similarity = m.sigmoid(X=diff, L=sigmoidWidth)
+    return similarity
+
+
 def analyseFeature(featureKey, dataFolder,outputFolder):
     pass
 
@@ -245,10 +303,12 @@ if __name__=='__main__':
         plt.show()
     """
     # generating the data
+    numberOfNewData=0   # <-- edit here
     L = os.listdir(outputFolder)
-    L1 = [v for v in L if v.startswith('a') and '.dat' in v]
+    L1 = [v for v in L if v.startswith('b') and '.dat' in v]
     N = len(L1)
-    constructGlobalFeaturesLists(N0=N, N1=N+300)
+    constructGlobalFeaturesLists(N0=N, N1=N+numberOfNewData)
+    # generating the features
     fromImagesToFeatures(folder=outputFolder, key1='a', verbose=True, recompute=False)
     fromImagesToFeatures(folder=outputFolder, key1='b', verbose=True, recompute=False)
     # analysing the data
@@ -258,10 +318,48 @@ if __name__=='__main__':
     #key=('centroid', 0)
     keys = getKeys(list_a)
     plt.clf()
-    bins= N/5
+    bins= N/40
     for key in keys:
-        x, y   = compareFeature(key, list_a, list_b, bins=bins)
-        x2, y2 = compareFeature(key, list_a, list_c, bins=bins)
+        takeLog = ('volume' in str(key).lower())
+        x, y   = compareFeature(key, list_a, list_b, bins=bins, takeLog=takeLog)
+        x2, y2 = compareFeature(key, list_a, list_c, bins=bins, takeLog=takeLog)
+        plt.legend(['Perturbation(A/B)', 'Control(A/C)'])
+        if type(key)==str:
+            fileName = key + '.png'
+        else:
+            fileName = key[0] + str(key[1]) + '.png'
+        plt.savefig(outputFolder+fileName)
         plt.show(block=True)
+
+if __name__=='__main__':
+    #   degrees of similarity
     
+    #subjects = ['a0', 'b0', 'a1', 'b1', 'a2', 'b2', 'a3', 'b3', 'a0']
+    subjects = range(40)
+    subjects = [['a'+str(v), 'b'+str(v)] for v in subjects]
+    subjects = sum(subjects,[]) + ['a0']
+
+    #keys = getKeys(list_a)
+    keys = ['volume', 'angle', ('eigenvalues',0), ('eigenvalues',1),  ('skewness',0), ('skewness',1), ('kurtosis',0), ('kurtosis',1)]
+    outputStrings = []
+    for i in range(len(subjects)-1):
+        name_a, name_b = subjects[i:i+2]
+        feats_a = pickle.load(open(outputFolder+name_a+'_features.pydump'))
+        feats_b = pickle.load(open(outputFolder+name_b+'_features.pydump'))
+        outputString =""
+        outputString+= '-----------------------------\n'
+        outputString+= 'degrees of similarity for: ' + name_a + ', ' + name_b + '\n'
+        for key in keys:
+            takeLog= ('volume' in str(key).lower())
+            try:
+                sigmoidWidth = sigmoidWidths[key]
+            except KeyError:
+                sigmoidWidth = sigmoidWidths[key[0]]
+            degrSim = degreeOfSimilarity(key=key, sigmoidWidth=sigmoidWidth, feats_a=feats_a, feats_b=feats_b, takeLog=takeLog, relative=False)
+            degrSim = round(degrSim,4)
+            outputString+= str(key) + ':\t' + str(degrSim)  + '\n'
+        print outputString
+        outputStrings.append(outputString)
+    open(outputFolder+'degreesOfSimilarity.log.txt','a').write('=================================\n'+time.asctime()+'\n')
+    open(outputFolder+'degreesOfSimilarity.log.txt','a').write('\n\n'.join(outputStrings))
     
