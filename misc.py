@@ -28,11 +28,11 @@ def getRectangularHull(L):
 
 
 #   mathematical functions for signal processing
-def sigmoid(X, L=1):
+def sigmoid(X, L=1, a=0):
     """sigmoid function, on a scalar or an array
     c.f. https://en.wikipedia.org/wiki/Sigmoid_function
     """
-    return 1./ (1 + np.exp(-X/L))
+    return 1./ (1 + np.exp(-(X-a)/L))
 
 def sigmoidFunction(centre=0, L=1):
     def sigmoid(X):

@@ -116,6 +116,7 @@ def perturb(DG, N2=5):
 
 
 def getLargestComponents(a, N=3, threshold=0):
+    #   default threshold=0
     a1 = a.above(threshold).connectedComponents()
     indices = range(a1.matrix.min(), a1.matrix.max()+1)
     indices = [(v, (a1.matrix==v).sum()) for v in indices]
@@ -271,8 +272,9 @@ def degreeOfSimilarity(key, sigmoidWidth, feats_a, feats_b, takeLog=False, relat
     else:
         diff = fa - fb
     if verbose:
-        print "diff, L:", diff, L
-    similarity = m.sigmoid(X=diff, L=sigmoidWidth)
+        print "diff, L:", diff, sigmoidWidth
+    diff = abs(diff)        # taking the absolute value
+    similarity = misc.sigmoid(X=-(diff-sigmoidWidth*5), L=sigmoidWidth)
     return similarity
 
 
@@ -332,23 +334,33 @@ if __name__=='__main__':
         plt.show(block=True)
 
 if __name__=='__main__':
+    testObject='a14'
+
     #   degrees of similarity
     
     #subjects = ['a0', 'b0', 'a1', 'b1', 'a2', 'b2', 'a3', 'b3', 'a0']
-    subjects = range(40)
-    subjects = [['a'+str(v), 'b'+str(v)] for v in subjects]
-    subjects = sum(subjects,[]) + ['a0']
+    #subjects = range(40)
+    #subjects = [['a'+str(v), 'b'+str(v)] for v in subjects]
+    #subjects = sum(subjects,[]) + ['a0']
+    #outputFileName ='degreesOfSimilarity.log.txt'
+    #    
+    subjects = range(100)
+    subjects = [[testObject, 'b'+str(v)] for v in subjects] #edit here
+    #subjects = sum(subjects,[]) 
 
+    outputFileName = 'degreesOfSimilarity_%s_.log.txt' %testObject
     #keys = getKeys(list_a)
     keys = ['volume', 'angle', ('eigenvalues',0), ('eigenvalues',1),  ('skewness',0), ('skewness',1), ('kurtosis',0), ('kurtosis',1)]
     outputStrings = []
-    for i in range(len(subjects)-1):
-        name_a, name_b = subjects[i:i+2]
+    scores = []
+    for i in range(len(subjects)):
+        name_a, name_b = subjects[i]
         feats_a = pickle.load(open(outputFolder+name_a+'_features.pydump'))
         feats_b = pickle.load(open(outputFolder+name_b+'_features.pydump'))
         outputString =""
         outputString+= '-----------------------------\n'
         outputString+= 'degrees of similarity for: ' + name_a + ', ' + name_b + '\n'
+        score = 1.
         for key in keys:
             takeLog= ('volume' in str(key).lower())
             try:
@@ -358,8 +370,14 @@ if __name__=='__main__':
             degrSim = degreeOfSimilarity(key=key, sigmoidWidth=sigmoidWidth, feats_a=feats_a, feats_b=feats_b, takeLog=takeLog, relative=False)
             degrSim = round(degrSim,4)
             outputString+= str(key) + ':\t' + str(degrSim)  + '\n'
+            score *= degrSim    # combine by multiplication
         print outputString
+        scores.append((i, score))
         outputStrings.append(outputString)
-    open(outputFolder+'degreesOfSimilarity.log.txt','a').write('=================================\n'+time.asctime()+'\n')
-    open(outputFolder+'degreesOfSimilarity.log.txt','a').write('\n\n'.join(outputStrings))
-    
+    open(outputFolder+outputFileName,'a').write('=================================\n'+time.asctime()+'\nTest Object:'+testObject+'\n')
+    open(outputFolder+outputFileName,'a').write('\n\n'.join(outputStrings))
+    scores.sort(key=lambda v:v[1], reverse=True)
+    open(outputFolder+outputFileName,'a').write('\n\nTop matches:\n')    
+    open(outputFolder+outputFileName,'a').write('\n'.join([str(v[0])+':\t'+str(v[1]) for v in scores][:10]))
+    print 'top matches:'
+    print '\n'.join([str(v[0])+':\t'+str(v[1]) for v in scores][:10])
