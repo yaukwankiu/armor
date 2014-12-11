@@ -849,11 +849,11 @@ DBZ20120612.0300_times_DBZ20120612.0330initialised.  Use the command '___.load()
         return a 
        
 
-    def drawCoast(self, intensity=9999, matrix="", newCopy=False):
+    def drawCoast(self, intensity=9999, matrix="", newCopy=False, newObject=False):
         """
         adapted from DBZ.show2()
         """
-        if newCopy:
+        if newCopy or newObject:
             a = self.copy()  # no need for this i guess!!!
         else:
             a = self
